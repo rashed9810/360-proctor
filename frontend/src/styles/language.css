@@ -1,0 +1,44 @@
+/* Language-specific styling */
+
+/* Default (English) */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Bengali */
+body.lang-bn {
+  font-family: 'Hind Siliguri', sans-serif;
+}
+
+/* Adjust font sizes for Bengali text which may need more space */
+.lang-bn h1, 
+.lang-bn h2, 
+.lang-bn h3 {
+  line-height: 1.4;
+}
+
+.lang-bn p, 
+.lang-bn button, 
+.lang-bn input, 
+.lang-bn select, 
+.lang-bn textarea {
+  line-height: 1.6;
+}
+
+/* Adjust spacing for Bengali text in buttons */
+.lang-bn button {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* Adjust form elements for Bengali text */
+.lang-bn input::placeholder,
+.lang-bn textarea::placeholder {
+  font-size: 0.95em;
+}
+
+/* Adjust navigation items for Bengali text */
+.lang-bn .nav-item {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
