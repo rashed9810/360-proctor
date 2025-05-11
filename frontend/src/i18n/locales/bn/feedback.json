@@ -1,0 +1,24 @@
+{
+  "feedback": {
+    "title": "বিষয়",
+    "feedbackType": "ফিডব্যাক ধরন",
+    "message": "আপনার মতামত",
+    "email": "আপনার ইমেইল",
+    "optional": "ঐচ্ছিক",
+    "messagePlaceholder": "আপনার পরামর্শ বা সমস্যা কি?",
+    "emailPlaceholder": "your.email@example.com",
+    "sendFeedback": "মতামত পাঠান",
+    "submitting": "পাঠানো হচ্ছে...",
+    "thankYou": "ধন্যবাদ! আপনার মতামত জমা দেওয়া হয়েছে।",
+    "error": "আপনার মতামত জমা দেওয়ার সময় একটি ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "close": "বন্ধ করুন",
+    "giveFeedback": "মতামত দিন",
+    "suggestion": "পরামর্শ",
+    "bug": "ত্রুটি রিপোর্ট",
+    "question": "প্রশ্ন",
+    "feature": "ফিচার অনুরোধ",
+    "other": "অন্যান্য",
+    "characterCount": "{{count}} অক্ষর বাকি আছে",
+    "invalidEmail": "অবৈধ ইমেইল ঠিকানা"
+  }
+}

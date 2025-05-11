@@ -5,14 +5,18 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 // Import translations
 import enTranslation from './locales/en/translation.json';
 import bnTranslation from './locales/bn/translation.json';
+import enFeedback from './locales/en/feedback.json';
+import bnFeedback from './locales/bn/feedback.json';
 
 // Define the translations
 const resources = {
   en: {
     translation: enTranslation,
+    feedback: enFeedback,
   },
   bn: {
     translation: bnTranslation,
+    feedback: bnFeedback,
   },
 };
 

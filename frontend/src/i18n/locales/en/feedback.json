@@ -1,0 +1,24 @@
+{
+  "feedback": {
+    "title": "Subject",
+    "feedbackType": "Feedback Type",
+    "message": "Your Feedback",
+    "email": "Your Email",
+    "optional": "Optional",
+    "messagePlaceholder": "What's your suggestion or issue?",
+    "emailPlaceholder": "your.email@example.com",
+    "sendFeedback": "Send Feedback",
+    "submitting": "Sending...",
+    "thankYou": "Thank you! Your feedback has been submitted.",
+    "error": "There was an error submitting your feedback. Please try again.",
+    "close": "Close",
+    "giveFeedback": "Give Feedback",
+    "suggestion": "Suggestion",
+    "bug": "Bug Report",
+    "question": "Question",
+    "feature": "Feature Request",
+    "other": "Other",
+    "characterCount": "{{count}} characters remaining",
+    "invalidEmail": "Invalid email address"
+  }
+}
