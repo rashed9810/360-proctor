@@ -31,4 +31,24 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600, // Increase the warning limit slightly
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split vendor chunks
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['@headlessui/react', '@heroicons/react', 'framer-motion'],
+          'vendor-charts': ['recharts'],
+          'vendor-i18n': [
+            'i18next',
+            'react-i18next',
+            'i18next-browser-languagedetector',
+            'i18next-http-backend',
+          ],
+          'vendor-utils': ['date-fns', 'react-hot-toast'],
+        },
+      },
+    },
+  },
 });
