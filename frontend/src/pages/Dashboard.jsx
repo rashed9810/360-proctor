@@ -2,25 +2,43 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth.jsx';
-import { UsersIcon, ClipboardDocumentListIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import {
+  UsersIcon,
+  ClipboardDocumentListIcon,
+  CheckCircleIcon,
+  AcademicCapIcon,
+  ClipboardDocumentCheckIcon,
+  UserGroupIcon,
+  ArrowRightIcon,
+} from '@heroicons/react/24/outline';
 import mockExamService from '../services/mockExams';
 import mockStudentService from '../services/mockStudents';
+import StatCard from '../components/dashboard/StatCard';
 
 const stats = [
   {
     name: 'totalStudents',
-    icon: UsersIcon,
-    color: 'bg-blue-500',
+    icon: UserGroupIcon,
+    value: 42,
+    trend: 8,
+    color: 'blue',
+    linkTo: '/students',
   },
   {
     name: 'activeExams',
-    icon: ClipboardDocumentListIcon,
-    color: 'bg-green-500',
+    icon: AcademicCapIcon,
+    value: 3,
+    trend: 12,
+    color: 'green',
+    linkTo: '/exams',
   },
   {
     name: 'completedExams',
-    icon: CheckCircleIcon,
-    color: 'bg-purple-500',
+    icon: ClipboardDocumentCheckIcon,
+    value: 12,
+    trend: -5,
+    color: 'purple',
+    linkTo: '/exams',
   },
 ];
 
@@ -91,181 +109,156 @@ const Dashboard = () => {
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Total Students */}
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <UsersIcon className="h-6 w-6 text-blue-600" aria-hidden="true" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    {t('totalStudents')}
-                  </dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900">42</div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-blue-50 px-5 py-3">
-            <div className="text-sm">
-              <Link to="/students" className="font-medium text-blue-700 hover:text-blue-900">
-                {t('viewAll')}
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Active Exams */}
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ClipboardDocumentListIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">{t('activeExams')}</dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900">3</div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-green-50 px-5 py-3">
-            <div className="text-sm">
-              <Link to="/exams" className="font-medium text-green-700 hover:text-green-900">
-                {t('viewAll')}
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Completed Exams */}
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckCircleIcon className="h-6 w-6 text-purple-600" aria-hidden="true" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    {t('completedExams')}
-                  </dt>
-                  <dd>
-                    <div className="text-lg font-medium text-gray-900">12</div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-purple-50 px-5 py-3">
-            <div className="text-sm">
-              <Link to="/exams" className="font-medium text-purple-700 hover:text-purple-900">
-                {t('viewAll')}
-              </Link>
-            </div>
-          </div>
-        </div>
+        {stats.map(stat => (
+          <StatCard
+            key={stat.name}
+            title={t(stat.name)}
+            value={stat.value}
+            icon={stat.icon}
+            trend={stat.trend}
+            color={stat.color}
+            linkTo={stat.linkTo}
+            linkText={t('viewAll')}
+          />
+        ))}
       </div>
 
       {/* Upcoming Exams */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">{t('upcomingExams')}</h2>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            {t('upcomingExams')}
+          </h2>
           <Link
             to="/exams"
-            className="inline-flex items-center text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+            className="inline-flex items-center px-3 py-1.5 rounded-md bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-800/50 text-sm font-medium transition-colors duration-150"
           >
             {t('viewAll')}
-            <svg
-              className="ml-1 h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <ArrowRightIcon className="ml-1 h-4 w-4" />
           </Link>
         </div>
 
         {upcomingExams.length === 0 ? (
           <div className="p-6 text-center">
-            <p className="text-gray-500">{t('noExamsFound')}</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('noExamsFound')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('title')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('date')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('time')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('duration')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  >
+                    {t('status')}
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {upcomingExams.map(exam => (
-                  <tr key={exam.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{exam.title}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{exam.date}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{exam.time}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {exam.duration} {t('minutes')}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link
-                        to={`/exams/${exam.id}`}
-                        className="inline-flex items-center px-3 py-1.5 border border-indigo-600 text-xs font-medium rounded text-indigo-600 bg-white hover:bg-indigo-50"
-                      >
-                        {t('view')}
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {upcomingExams.map(exam => {
+                  // Calculate time until exam
+                  const examDate = new Date(exam.date + ' ' + exam.time);
+                  const now = new Date();
+                  const timeUntil = examDate - now;
+                  const hoursUntil = Math.floor(timeUntil / (1000 * 60 * 60));
+
+                  // Determine status and color based on time until exam
+                  let statusColor =
+                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                  let statusText = t('scheduled');
+                  let progressWidth = '25%';
+
+                  if (hoursUntil < 24) {
+                    statusColor =
+                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+                    statusText = t('upcoming');
+                    progressWidth = '75%';
+                  }
+
+                  if (hoursUntil < 2) {
+                    statusColor = 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+                    statusText = t('imminent');
+                    progressWidth = '90%';
+                  }
+
+                  return (
+                    <tr
+                      key={exam.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {exam.title}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{exam.date}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{exam.time}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                          {exam.duration} {t('minutes')}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col space-y-1">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}`}
+                          >
+                            {statusText}
+                          </span>
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                            <div
+                              className="bg-primary-500 h-1.5 rounded-full"
+                              style={{ width: progressWidth }}
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <Link
+                          to={`/exams/${exam.id}`}
+                          className="inline-flex items-center px-3 py-1.5 border border-primary-500 text-xs font-medium rounded text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors duration-150"
+                        >
+                          {t('view')}
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -273,88 +266,119 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Exams */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">{t('recentExams')}</h2>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            {t('recentExams')}
+          </h2>
+          <Link
+            to="/exams"
+            className="inline-flex items-center px-3 py-1.5 rounded-md bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-800/50 text-sm font-medium transition-colors duration-150"
+          >
+            {t('viewAll')}
+            <ArrowRightIcon className="ml-1 h-4 w-4" />
+          </Link>
         </div>
 
         {recentExams.length === 0 ? (
           <div className="p-6 text-center">
-            <p className="text-gray-500">{t('noExamsFound')}</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('noExamsFound')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('title')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('date')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('score')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('trustScore')}
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                   >
                     {t('actions')}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {recentExams.map(exam => (
-                  <tr key={exam.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{exam.title}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{exam.date}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{exam.score}%</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                        ${
-                          exam.trustScore > 0.8
-                            ? 'bg-green-100 text-green-800'
-                            : exam.trustScore > 0.6
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {(exam.trustScore * 100).toFixed(0)}%
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link
-                        to={`/exams/${exam.id}/results`}
-                        className="inline-flex items-center px-3 py-1.5 border border-indigo-600 text-xs font-medium rounded text-indigo-600 bg-white hover:bg-indigo-50"
-                      >
-                        {t('viewResults')}
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {recentExams.map(exam => {
+                  // Determine trust score color and class
+                  let trustScoreClass = '';
+
+                  if (exam.trustScore > 0.8) {
+                    trustScoreClass =
+                      'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+                  } else if (exam.trustScore > 0.6) {
+                    trustScoreClass =
+                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+                  } else {
+                    trustScoreClass =
+                      'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+                  }
+
+                  return (
+                    <tr
+                      key={exam.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {exam.title}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{exam.date}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {exam.score}%
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mt-1">
+                          <div
+                            className="bg-primary-500 h-1.5 rounded-full"
+                            style={{ width: `${exam.score}%` }}
+                          ></div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${trustScoreClass}`}
+                        >
+                          {(exam.trustScore * 100).toFixed(0)}%
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <Link
+                          to={`/exams/${exam.id}/results`}
+                          className="inline-flex items-center px-3 py-1.5 border border-primary-500 text-xs font-medium rounded text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors duration-150"
+                        >
+                          {t('viewResults')}
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

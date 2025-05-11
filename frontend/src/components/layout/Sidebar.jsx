@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 
 const navigation = [
   { name: 'dashboard', href: '/', icon: HomeIcon },
@@ -27,6 +28,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
   const { t } = useTranslation();
   const location = useLocation();
   const { user } = useAuth();
+  const { theme } = useTheme();
   // Start with collapsed sidebar
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -52,7 +54,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
+            <Dialog.Overlay className="fixed inset-0 bg-gray-600 dark:bg-gray-800 bg-opacity-75" />
           </Transition.Child>
 
           {/* Sliding sidebar panel */}
@@ -65,7 +67,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
-            <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-xl">
+            <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-gray-800 shadow-xl theme-transition">
               {/* Close button */}
               <Transition.Child
                 as={Fragment}
@@ -90,9 +92,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
 
               {/* Sidebar content */}
               <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                <div className="flex-shrink-0 flex items-center justify-center px-4 mb-5">
-                  <img className="h-8 w-auto sm:h-10" src="/logo.svg" alt="360° Proctor" />
-                </div>
                 <nav className="mt-2 px-2 sm:px-3 space-y-1">
                   {navigation.map(item => (
                     <Link
@@ -126,7 +125,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
               </div>
 
               {/* User profile section */}
-              <div className="flex-shrink-0 flex border-t border-gray-200 p-3 sm:p-4 bg-gray-50">
+              <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-3 sm:p-4 bg-gray-50 dark:bg-gray-900 theme-transition">
                 <div className="flex-shrink-0 group block w-full">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -137,10 +136,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
                       />
                     </div>
                     <div className="ml-3 max-w-[calc(100%-40px)]">
-                      <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 truncate">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white truncate">
                         {user?.name}
                       </p>
-                      <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700 capitalize truncate">
+                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 capitalize truncate">
                         {user?.role}
                       </p>
                     </div>
@@ -171,28 +170,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
           left: 0,
         }}
       >
-        <div className="h-full flex flex-col border-r border-gray-200 bg-white shadow-lg">
+        <div className="h-full flex flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg theme-transition">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto scrollbar-thin">
-            {/* Logo */}
-            <div
-              className={classNames(
-                'flex items-center justify-center flex-shrink-0 mb-5',
-                isExpanded ? 'px-4' : 'px-2'
-              )}
-            >
-              <img
-                className={classNames(
-                  'transition-all duration-300',
-                  isExpanded ? 'h-10 w-auto' : 'h-8 w-auto'
-                )}
-                src="/logo.svg"
-                alt="360° Proctor"
-              />
-            </div>
-
             {/* Navigation links */}
             <nav
-              className={classNames('mt-2 flex-1 bg-white space-y-1', isExpanded ? 'px-3' : 'px-2')}
+              className={classNames(
+                'mt-2 flex-1 bg-white dark:bg-gray-800 space-y-1 theme-transition',
+                isExpanded ? 'px-3' : 'px-2'
+              )}
             >
               {navigation.map(item => (
                 <Link
@@ -202,8 +187,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
                     location.pathname === item.href ||
                       (item.href === '/' && location.pathname === '/') ||
                       (item.href !== '/' && location.pathname.startsWith(item.href))
-                      ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-4 border-transparent',
+                      ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-l-4 border-indigo-600'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white border-l-4 border-transparent',
                     'group flex items-center rounded-r-md transition-all duration-200',
                     isExpanded
                       ? 'px-3 py-2.5 text-sm font-medium justify-start'
@@ -236,7 +221,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
           {/* User profile section */}
           <div
             className={classNames(
-              'flex-shrink-0 flex border-t border-gray-200 bg-gray-50',
+              'flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 theme-transition',
               isExpanded ? 'p-4' : 'p-2'
             )}
           >
@@ -251,10 +236,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
                 </div>
                 {isExpanded && (
                   <div className="ml-3 transition-opacity duration-200 overflow-hidden">
-                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900 truncate">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white truncate">
                       {user?.name}
                     </p>
-                    <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700 capitalize truncate">
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 capitalize truncate">
                       {user?.role}
                     </p>
                   </div>
@@ -266,7 +251,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
           {/* Toggle button */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="absolute top-3 -right-3 bg-white rounded-full p-1 shadow-md border border-gray-200 text-gray-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="absolute top-3 -right-3 bg-white dark:bg-gray-700 rounded-full p-1 shadow-md border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 theme-transition"
             aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
           >
             <ChevronRightIcon

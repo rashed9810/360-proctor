@@ -9,8 +9,9 @@ This is the frontend application for the 360° Proctor System, built with React.
 - Live violation alerts
 - Exam calendar
 - Multilingual support (English and Bengali)
+- Dark/Light theme toggle with persistent preferences
 - Responsive design
-- Modern UI with animations
+- Modern UI with animations and smooth transitions
 
 ## Prerequisites
 
@@ -63,7 +64,8 @@ npm test
 src/
   ├── components/
   │   ├── common/
-  │   │   └── LanguageSwitcher.jsx
+  │   │   ├── LanguageSwitcher.jsx
+  │   │   └── ThemeToggle.jsx
   │   └── dashboard/
   │       ├── Dashboard.jsx
   │       ├── LiveProctoring.jsx
@@ -73,6 +75,9 @@ src/
   │       └── StatCard.jsx
   ├── hooks/
   │   └── useWebSocket.js
+  ├── context/
+  │   ├── AuthContext.jsx
+  │   └── ThemeContext.jsx
   ├── locales/
   │   ├── en/
   │   │   └── translation.json
@@ -86,12 +91,13 @@ src/
 ## Technologies Used
 
 - React.js
-- Tailwind CSS
-- Framer Motion
+- Tailwind CSS (with dark mode support)
+- Framer Motion (for smooth animations)
 - Recharts
-- i18next
+- i18next (for multilingual support)
 - WebSocket
 - date-fns
+- Context API (for theme and auth state management)
 
 ## Contributing
 

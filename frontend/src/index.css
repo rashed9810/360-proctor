@@ -13,13 +13,42 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Light theme variables */
+    --bg-color: #f9fafb;
+    --card-bg-color: #ffffff;
+    --text-color: #111827;
+    --text-muted-color: #6b7280;
+    --border-color: #e5e7eb;
+    --accent-color: #0ea5e9;
+    --hover-color: #f3f4f6;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .dark {
+    /* Dark theme variables */
+    --bg-color: #111827;
+    --card-bg-color: #1f2937;
+    --text-color: #f9fafb;
+    --text-muted-color: #9ca3af;
+    --border-color: #374151;
+    --accent-color: #38bdf8;
+    --hover-color: #374151;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+  }
+
   html {
     @apply scroll-smooth;
     font-family: 'Inter', system-ui, sans-serif;
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply font-sans;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 }
 
@@ -45,7 +74,12 @@
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-sm p-6;
+    @apply rounded-xl shadow-sm p-6;
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease;
   }
 
   .alert {
@@ -53,14 +87,23 @@
   }
 
   .alert-warning {
-    @apply bg-yellow-50 text-yellow-800 border border-yellow-200;
+    @apply bg-yellow-50 text-yellow-800 border border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-200 dark:border-yellow-800/30;
   }
 
   .alert-danger {
-    @apply bg-red-50 text-red-800 border border-red-200;
+    @apply bg-red-50 text-red-800 border border-red-200 dark:bg-red-900/20 dark:text-red-200 dark:border-red-800/30;
   }
 
   .alert-success {
-    @apply bg-green-50 text-green-800 border border-green-200;
+    @apply bg-green-50 text-green-800 border border-green-200 dark:bg-green-900/20 dark:text-green-200 dark:border-green-800/30;
+  }
+
+  /* Theme transition classes */
+  .theme-transition {
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
   }
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import '../../styles/languageSwitcher.css';
 
 const languages = [
   { code: 'en', name: 'English' },
@@ -39,20 +40,23 @@ const LanguageSwitcher = ({ variant = 'dropdown', position = 'navbar' }) => {
         animate={{ opacity: 1, y: 0 }}
         className="relative"
       >
-        <div className="flex items-center space-x-1 sm:space-x-2">
-          <GlobeAltIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
-          <select
-            onChange={e => changeLanguage(e.target.value)}
-            value={i18n.language}
-            className="bg-transparent border-none focus:ring-0 text-xs sm:text-sm font-medium text-gray-700 cursor-pointer py-1 pl-0 pr-4"
-            aria-label={t('common.language')}
-          >
-            {languages.map(lang => (
-              <option key={lang.code} value={lang.code}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
+        <div className="language-switcher-container">
+          <GlobeAltIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 language-switcher-icon" />
+          <div className="relative">
+            <select
+              onChange={e => changeLanguage(e.target.value)}
+              value={i18n.language}
+              className="language-select text-xs sm:text-sm text-gray-700 py-1"
+              aria-label={t('common.language')}
+              style={{ backgroundImage: 'none' }}
+            >
+              {languages.map(lang => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </motion.div>
     );
@@ -67,13 +71,13 @@ const LanguageSwitcher = ({ variant = 'dropdown', position = 'navbar' }) => {
     >
       <button
         type="button"
-        className={`inline-flex items-center justify-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 ${positionStyles[position]}`}
+        className={`language-dropdown-button ${positionStyles[position]}`}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
         <GlobeAltIcon
-          className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500"
+          className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-gray-500 language-switcher-icon"
           aria-hidden="true"
         />
         <span className="hidden xs:inline">{currentLanguage.name}</span>

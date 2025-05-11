@@ -9,6 +9,8 @@ import {
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   ChevronDownIcon,
+  ShieldCheckIcon,
+  UsersIcon,
 } from '@heroicons/react/24/outline';
 
 function classNames(...classes) {
@@ -50,7 +52,6 @@ export default function UserProfileDropdown() {
         <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 sm:w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none z-50">
           <div className="px-4 py-3">
             <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
-            <p className="text-xs sm:text-sm text-gray-500 truncate">{user?.email}</p>
           </div>
           <div className="py-1">
             <Menu.Item>
@@ -87,6 +88,46 @@ export default function UserProfileDropdown() {
                 </Link>
               )}
             </Menu.Item>
+
+            {/* Admin-specific menu items */}
+            {user?.role === 'admin' && (
+              <>
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link
+                      to="/admin/users"
+                      className={classNames(
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'group flex items-center px-4 py-2 text-sm transition-colors duration-150'
+                      )}
+                    >
+                      <UsersIcon
+                        className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                        aria-hidden="true"
+                      />
+                      {t('admin.manageUsers')}
+                    </Link>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link
+                      to="/admin/security"
+                      className={classNames(
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'group flex items-center px-4 py-2 text-sm transition-colors duration-150'
+                      )}
+                    >
+                      <ShieldCheckIcon
+                        className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                        aria-hidden="true"
+                      />
+                      {t('admin.security')}
+                    </Link>
+                  )}
+                </Menu.Item>
+              </>
+            )}
           </div>
           <div className="py-1">
             <Menu.Item>

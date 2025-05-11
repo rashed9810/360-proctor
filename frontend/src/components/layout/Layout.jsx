@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 
@@ -8,6 +9,7 @@ export default function Layout() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const { theme } = useTheme();
 
   // Function to handle window resize and detect device type
   useEffect(() => {
@@ -33,11 +35,11 @@ export default function Layout() {
   }, [sidebarOpen]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col theme-transition bg-gray-50 dark:bg-gray-900">
       {/* Mobile sidebar overlay - darkens the screen when sidebar is open */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-75 z-20 transition-opacity lg:hidden"
+          className="fixed inset-0 bg-gray-600 dark:bg-gray-800 bg-opacity-75 z-20 transition-opacity lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -65,7 +67,7 @@ export default function Layout() {
         <Navbar onMenuClick={() => setSidebarOpen(true)} isMobile={isMobile} isTablet={isTablet} />
 
         {/* Main content area */}
-        <main className="flex-1 relative overflow-y-auto focus:outline-none">
+        <main className="flex-1 relative overflow-y-auto focus:outline-none theme-transition">
           <div className="py-3 sm:py-4 md:py-6">
             <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
               <div className="content-wrapper">
