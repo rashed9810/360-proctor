@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import {
   UserIcon,
   Cog6ToothIcon,
-  ArrowRightOnRectangleIcon,
+  ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
   ShieldCheckIcon,
   UsersIcon,
@@ -24,17 +24,20 @@ export default function UserProfileDropdown() {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex items-center justify-center rounded-md border border-gray-300 shadow-sm px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-          <img
-            className="h-7 w-7 sm:h-8 sm:w-8 rounded-full sm:mr-2"
-            src={user?.avatar || 'https://via.placeholder.com/40'}
-            alt={user?.name || 'User'}
-          />
+        <Menu.Button className="inline-flex items-center justify-center rounded-md border border-gray-300 shadow-sm px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 group">
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="relative">
+            <img
+              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full sm:mr-2 ring-2 ring-transparent group-hover:ring-indigo-500 transition-all duration-200"
+              src={user?.avatar || 'https://via.placeholder.com/40'}
+              alt={user?.name || 'User'}
+            />
+            <span className="absolute -bottom-1 -right-1 block h-2 w-2 rounded-full bg-green-400 ring-1 ring-white"></span>
+          </motion.div>
           <span className="hidden md:block max-w-[100px] lg:max-w-[150px] truncate">
             {user?.name}
           </span>
           <ChevronDownIcon
-            className="hidden sm:block ml-1 -mr-1 h-4 w-4 sm:h-5 sm:w-5"
+            className="hidden sm:block ml-1 -mr-1 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:rotate-180"
             aria-hidden="true"
           />
         </Menu.Button>
@@ -139,7 +142,7 @@ export default function UserProfileDropdown() {
                     'group flex items-center px-4 py-2 text-sm w-full transition-colors duration-150'
                   )}
                 >
-                  <ArrowRightOnRectangleIcon
+                  <ArrowRightStartOnRectangleIcon
                     className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                     aria-hidden="true"
                   />

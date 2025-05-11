@@ -117,7 +117,7 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, 
       </div>
 
       {trend && (
-        <div className="mt-4 flex items-center">
+        <div className="mt-4 flex items-center group relative">
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
               trend > 0
@@ -134,6 +134,13 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, 
           <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
             {t('fromLastMonth')}
           </span>
+
+          {/* Tooltip for percentage change */}
+          <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block pointer-events-none z-10">
+            <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
+              {trend > 0 ? t('percentIncrease') : t('percentDecrease')} {t('fromLastMonth')}
+            </div>
+          </div>
         </div>
       )}
 
@@ -142,10 +149,10 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, 
         <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
           <Link
             to={linkTo}
-            className={`inline-flex items-center text-sm font-medium ${classes.text} hover:underline`}
+            className={`inline-flex items-center text-sm font-medium ${classes.text} hover:underline transition-all duration-300 ease-in-out transform hover:translate-x-1 group`}
           >
             {linkText || t('viewAll')}
-            <ArrowRightIcon className="ml-1 h-4 w-4" />
+            <ArrowRightIcon className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
       )}

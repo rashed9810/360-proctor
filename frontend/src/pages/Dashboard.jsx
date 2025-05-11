@@ -14,6 +14,8 @@ import {
 import mockExamService from '../services/mockExams';
 import mockStudentService from '../services/mockStudents';
 import StatCard from '../components/dashboard/StatCard';
+import QuickActionPanel from '../components/dashboard/QuickActionPanel';
+import FeedbackForm from '../components/common/FeedbackForm';
 
 const stats = [
   {
@@ -102,10 +104,16 @@ const Dashboard = () => {
   return (
     <div className="space-y-8 px-1">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           {t('welcomeBack')}, {user?.name}
         </h1>
       </div>
+
+      {/* Quick Action Panel */}
+      <QuickActionPanel />
+
+      {/* Feedback Form */}
+      <FeedbackForm />
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -218,8 +226,21 @@ const Dashboard = () => {
                       className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {exam.title}
+                        <div className="flex flex-col">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {exam.title}
+                          </div>
+                          {hoursUntil < 48 && (
+                            <div className="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">
+                              {hoursUntil < 1
+                                ? t('startsInMinutes', {
+                                    minutes: Math.max(1, Math.floor(timeUntil / 60000)),
+                                  })
+                                : hoursUntil < 24
+                                  ? t('startsInHours', { hours: Math.floor(hoursUntil) })
+                                  : t('startsInDays', { days: Math.floor(hoursUntil / 24) })}
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -242,8 +263,11 @@ const Dashboard = () => {
                           </span>
                           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
                             <div
-                              className="bg-primary-500 h-1.5 rounded-full"
-                              style={{ width: progressWidth }}
+                              className="bg-primary-500 h-1.5 rounded-full transition-all duration-1000 ease-in-out animate-pulse"
+                              style={{
+                                width: progressWidth,
+                                animation: hoursUntil < 2 ? 'pulse 1.5s infinite' : 'none',
+                              }}
                             ></div>
                           </div>
                         </div>
