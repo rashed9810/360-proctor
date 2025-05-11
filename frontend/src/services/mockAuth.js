@@ -30,7 +30,7 @@ const mockUsers = [
 ];
 
 // Helper to simulate API delay
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Get current user from storage
 const getCurrentUser = () => {
@@ -42,34 +42,34 @@ const getCurrentUser = () => {
 const login = async (email, password) => {
   // Simulate API delay
   await delay(800);
-  
+
   const user = mockUsers.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
   );
-  
+
   if (!user) {
     throw new Error('Invalid email or password');
   }
-  
+
   // Create a copy without the password
   const { password: _, ...userWithoutPassword } = user;
-  
+
   // Store in localStorage
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userWithoutPassword));
-  
+
   return userWithoutPassword;
 };
 
 // Mock register
-const register = async (userData) => {
+const register = async userData => {
   // Simulate API delay
   await delay(800);
-  
+
   // Check if email already exists
-  if (mockUsers.some((u) => u.email.toLowerCase() === userData.email.toLowerCase())) {
+  if (mockUsers.some(u => u.email.toLowerCase() === userData.email.toLowerCase())) {
     throw new Error('Email already in use');
   }
-  
+
   // Create new user
   const newUser = {
     id: mockUsers.length + 1,
@@ -79,16 +79,16 @@ const register = async (userData) => {
     role: 'student', // Default role
     avatar: 'https://via.placeholder.com/40',
   };
-  
+
   // Add to mock database
   mockUsers.push(newUser);
-  
+
   // Create a copy without the password
   const { password: _, ...userWithoutPassword } = newUser;
-  
+
   // Store in localStorage
   localStorage.setItem(STORAGE_KEY, JSON.stringify(userWithoutPassword));
-  
+
   return userWithoutPassword;
 };
 
@@ -98,65 +98,67 @@ const logout = () => {
 };
 
 // Mock update profile
-const updateProfile = async (userData) => {
+const updateProfile = async userData => {
   // Simulate API delay
   await delay(800);
-  
+
   const currentUser = getCurrentUser();
-  
+
   if (!currentUser) {
     throw new Error('Not authenticated');
   }
-  
+
   // Update user in mock database
-  const userIndex = mockUsers.findIndex((u) => u.id === currentUser.id);
-  
+  const userIndex = mockUsers.findIndex(u => u.id === currentUser.id);
+
   if (userIndex === -1) {
     throw new Error('User not found');
   }
-  
+
   // Update fields
   mockUsers[userIndex] = {
     ...mockUsers[userIndex],
     name: userData.name || mockUsers[userIndex].name,
     email: userData.email || mockUsers[userIndex].email,
+    avatar: userData.avatar || mockUsers[userIndex].avatar,
+    bio: userData.bio || mockUsers[userIndex].bio,
   };
-  
+
   // Create updated user without password
   const { password: _, ...updatedUser } = mockUsers[userIndex];
-  
+
   // Update in localStorage
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
-  
+
   return updatedUser;
 };
 
 // Mock change password
-const changePassword = async (passwordData) => {
+const changePassword = async passwordData => {
   // Simulate API delay
   await delay(800);
-  
+
   const currentUser = getCurrentUser();
-  
+
   if (!currentUser) {
     throw new Error('Not authenticated');
   }
-  
+
   // Find user in mock database
-  const userIndex = mockUsers.findIndex((u) => u.id === currentUser.id);
-  
+  const userIndex = mockUsers.findIndex(u => u.id === currentUser.id);
+
   if (userIndex === -1) {
     throw new Error('User not found');
   }
-  
+
   // Check current password
   if (mockUsers[userIndex].password !== passwordData.currentPassword) {
     throw new Error('Current password is incorrect');
   }
-  
+
   // Update password
   mockUsers[userIndex].password = passwordData.newPassword;
-  
+
   return { success: true };
 };
 
