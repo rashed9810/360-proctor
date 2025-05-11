@@ -39,7 +39,11 @@
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "signUp": "Sign up",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "registerSubtitle": "Create your account to get started",
+    "loginSubtitle": "Sign in to your account",
+    "orContinueWith": "Or continue with",
+    "notImplemented": "This feature is not implemented yet"
   },
   "exam": {
     "start": "Start Exam",

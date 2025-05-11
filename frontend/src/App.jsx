@@ -4,6 +4,7 @@ import i18n from './i18n/i18n.js';
 import { AuthProvider, useAuth } from './hooks/useAuth.jsx';
 import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -38,6 +39,29 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <NotificationProvider>
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  background: 'var(--card-bg-color)',
+                  color: 'var(--text-color)',
+                  border: '1px solid var(--border-color)',
+                },
+                success: {
+                  iconTheme: {
+                    primary: '#0ea5e9',
+                    secondary: 'white',
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: 'white',
+                  },
+                },
+              }}
+            />
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
