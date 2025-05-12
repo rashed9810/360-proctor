@@ -97,9 +97,19 @@
   },
   "errors": {
     "speechRecognitionNotSupported": "Speech recognition is not supported by your browser",
+    "firefoxSpeechRecognitionLimited": "Firefox has limited support for speech recognition",
+    "safariSpeechRecognitionLimited": "Safari has limited support for speech recognition",
     "microphoneAccessDenied": "Microphone access denied",
     "audioContextError": "Error initializing audio context",
     "startError": "Error starting speech recognition",
-    "unknown": "An unknown error occurred"
+    "initializationError": "Error initializing speech recognition",
+    "unknown": "An unknown error occurred",
+    "browserSuggestion": "To use speech recognition, try the following:",
+    "tryChrome": "Use Google Chrome for best compatibility",
+    "checkMicrophonePermissions": "Check microphone permissions in your browser settings",
+    "refreshPage": "Refresh the page and try again",
+    "microphoneSuggestion": "To fix microphone issues, try the following:",
+    "allowMicrophoneAccess": "Allow microphone access when prompted by your browser",
+    "checkMicrophoneConnected": "Make sure your microphone is properly connected"
   }
 }

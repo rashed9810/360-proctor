@@ -15,14 +15,45 @@ const enhancedSpeechRecognition = () => {
   const hasSpeechRecognition = 'SpeechRecognition' in window;
   const hasWebkitSpeechRecognition = 'webkitSpeechRecognition' in window;
 
+  // Check if browser is Chrome, which is known to support speech recognition
+  const isChrome = navigator.userAgent.indexOf('Chrome') > -1;
+  // Check if browser is Firefox, which has limited support
+  const isFirefox = navigator.userAgent.indexOf('Firefox') > -1;
+  // Check if browser is Safari, which has limited support
+  const isSafari = navigator.userAgent.indexOf('Safari') > -1 && !isChrome;
+  // Check if browser is Edge, which has good support
+  const isEdge = navigator.userAgent.indexOf('Edg') > -1;
+
+  // Log browser detection for debugging
+  console.log('Browser detection:', { isChrome, isFirefox, isSafari, isEdge });
+  console.log('Speech Recognition support:', { hasSpeechRecognition, hasWebkitSpeechRecognition });
+
   if (!hasSpeechRecognition && !hasWebkitSpeechRecognition) {
     console.warn('Speech Recognition API not supported in this browser');
+
+    // Provide more specific error based on browser
+    let specificError = 'speechRecognitionNotSupported';
+    if (isFirefox) {
+      specificError = 'firefoxSpeechRecognitionLimited';
+    } else if (isSafari) {
+      specificError = 'safariSpeechRecognitionLimited';
+    }
+
     return {
       recognition: null,
-      error: 'speechRecognitionNotSupported',
+      error: specificError,
       browserSupport: {
         native: hasSpeechRecognition,
         webkit: hasWebkitSpeechRecognition,
+        browser: isChrome
+          ? 'chrome'
+          : isFirefox
+            ? 'firefox'
+            : isSafari
+              ? 'safari'
+              : isEdge
+                ? 'edge'
+                : 'other',
       },
     };
   }
@@ -38,6 +69,12 @@ const enhancedSpeechRecognition = () => {
     recognition.maxAlternatives = 3; // Get multiple alternatives for better accuracy
     recognition.lang = 'en-US'; // Default language
 
+    // Test if the recognition instance is valid by accessing a property
+    // This can catch some initialization errors early
+    if (!recognition || typeof recognition.start !== 'function') {
+      throw new Error('Speech recognition instance is invalid');
+    }
+
     // Add additional properties for enhanced functionality
     return {
       recognition,
@@ -45,6 +82,15 @@ const enhancedSpeechRecognition = () => {
       browserSupport: {
         native: hasSpeechRecognition,
         webkit: hasWebkitSpeechRecognition,
+        browser: isChrome
+          ? 'chrome'
+          : isFirefox
+            ? 'firefox'
+            : isSafari
+              ? 'safari'
+              : isEdge
+                ? 'edge'
+                : 'other',
       },
       isWebkit: hasWebkitSpeechRecognition && !hasSpeechRecognition,
     };
@@ -57,6 +103,15 @@ const enhancedSpeechRecognition = () => {
       browserSupport: {
         native: hasSpeechRecognition,
         webkit: hasWebkitSpeechRecognition,
+        browser: isChrome
+          ? 'chrome'
+          : isFirefox
+            ? 'firefox'
+            : isSafari
+              ? 'safari'
+              : isEdge
+                ? 'edge'
+                : 'other',
       },
     };
   }
@@ -451,43 +506,53 @@ const AudioAnalysis = ({
     setAnalysis(null);
   };
 
+  // Determine if we should show the fallback UI
+  const showFallbackUI =
+    error === 'speechRecognitionNotSupported' ||
+    error === 'firefoxSpeechRecognitionLimited' ||
+    error === 'safariSpeechRecognitionLimited';
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t('audioAnalysis')}</h3>
 
         <div className="flex space-x-2">
-          {/* Volume indicator */}
-          <div className="flex items-center">
-            {isSpeaking ? (
-              <SpeakerWaveIcon className="h-5 w-5 text-green-500" />
-            ) : (
-              <SpeakerXMarkIcon className="h-5 w-5 text-gray-400" />
-            )}
+          {/* Volume indicator - only show if not in fallback mode */}
+          {!showFallbackUI && (
+            <div className="flex items-center">
+              {isSpeaking ? (
+                <SpeakerWaveIcon className="h-5 w-5 text-green-500" />
+              ) : (
+                <SpeakerXMarkIcon className="h-5 w-5 text-gray-400" />
+              )}
 
-            <div className="ml-1 w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full ${isSpeaking ? 'bg-green-500' : 'bg-gray-400'}`}
-                style={{ width: `${volume * 100}%` }}
-              />
+              <div className="ml-1 w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${isSpeaking ? 'bg-green-500' : 'bg-gray-400'}`}
+                  style={{ width: `${volume * 100}%` }}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Recording toggle button */}
-          <button
-            onClick={toggleRecording}
-            className={`p-2 rounded-full ${
-              isRecording
-                ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400'
-                : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
-            } hover:bg-opacity-80 transition-colors`}
-            aria-label={isRecording ? t('stopRecording') : t('startRecording')}
-          >
-            <MicrophoneIcon className={`h-5 w-5 ${isRecording ? 'animate-pulse' : ''}`} />
-          </button>
+          {/* Recording toggle button - only show if not in fallback mode */}
+          {!showFallbackUI && (
+            <button
+              onClick={toggleRecording}
+              className={`p-2 rounded-full ${
+                isRecording
+                  ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400'
+                  : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+              } hover:bg-opacity-80 transition-colors`}
+              aria-label={isRecording ? t('stopRecording') : t('startRecording')}
+            >
+              <MicrophoneIcon className={`h-5 w-5 ${isRecording ? 'animate-pulse' : ''}`} />
+            </button>
+          )}
 
-          {/* Clear transcript button */}
-          {transcript && (
+          {/* Clear transcript button - only show if not in fallback mode and there's a transcript */}
+          {!showFallbackUI && transcript && (
             <button
               onClick={clearTranscript}
               className="p-2 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 hover:bg-opacity-80 transition-colors"
@@ -499,10 +564,36 @@ const AudioAnalysis = ({
         </div>
       </div>
 
-      {/* Error message */}
+      {/* Error message with more detailed information */}
       {error && (
         <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-md text-sm">
           {t(`errors.${error}`, { defaultValue: t('errors.unknown') })}
+
+          {/* Show browser-specific help for speech recognition issues */}
+          {(error === 'speechRecognitionNotSupported' ||
+            error === 'firefoxSpeechRecognitionLimited' ||
+            error === 'safariSpeechRecognitionLimited') && (
+            <div className="mt-2 text-xs">
+              <p>{t('errors.browserSuggestion')}</p>
+              <ul className="list-disc pl-4 mt-1">
+                <li>{t('errors.tryChrome')}</li>
+                <li>{t('errors.checkMicrophonePermissions')}</li>
+                <li>{t('errors.refreshPage')}</li>
+              </ul>
+            </div>
+          )}
+
+          {/* Show help for microphone access issues */}
+          {(error === 'microphoneAccessDenied' || error === 'microphoneError') && (
+            <div className="mt-2 text-xs">
+              <p>{t('errors.microphoneSuggestion')}</p>
+              <ul className="list-disc pl-4 mt-1">
+                <li>{t('errors.allowMicrophoneAccess')}</li>
+                <li>{t('errors.checkMicrophoneConnected')}</li>
+                <li>{t('errors.refreshPage')}</li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
