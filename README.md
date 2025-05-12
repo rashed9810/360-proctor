@@ -36,9 +36,11 @@ A full-featured, multilingual (Bangla & English) online exam proctoring system d
 
 - Fully responsive admin and teacher dashboards
 - Multilingual support (Bangla & English) with easy language switching
-- Intuitive exam management interface
-- Real-time violation alerts
+- Intuitive exam management interface with consistent navigation
+- Elegant back button and page header components for improved navigation
+- Real-time violation alerts with notification system
 - Detailed student performance analytics
+- Feedback system with form validation and accessibility features
 
 ### Technical Features
 
@@ -92,9 +94,17 @@ The application features a comprehensive responsive design that works across all
 - Full-featured tables and data visualization
 - Advanced filtering and search capabilities
 
+### UI Components
+
+- **BackButton**: Clean, integrated back navigation with proper styling and accessibility
+- **PageHeader**: Consistent page headers with title and optional actions
+- **FeedbackForm**: Interactive feedback system with validation and character counting
+- **NotificationBell**: Real-time notification system with unread indicators
+- **DarkModeToggle**: Persistent theme preference with smooth transitions
+
 ## Project Structure
 
-```
+```bash
 360-proctor/
 ├── backend/                # FastAPI backend
 │   ├── app/
@@ -112,8 +122,10 @@ The application features a comprehensive responsive design that works across all
 │   │   └── favicon.svg     # 360° Proctor favicon
 │   ├── src/
 │   │   ├── components/     # Reusable UI components
-│   │   │   ├── common/     # Common UI elements
-│   │   │   └── layout/     # Layout components
+│   │   │   ├── common/     # Common UI elements (BackButton, FeedbackForm, etc.)
+│   │   │   ├── layout/     # Layout components (PageHeader, Sidebar, etc.)
+│   │   │   ├── dashboard/  # Dashboard-specific components
+│   │   │   └── notifications/ # Notification system components
 │   │   ├── hooks/          # Custom React hooks
 │   │   ├── pages/          # Page components
 │   │   ├── services/       # API service functions
@@ -182,9 +194,9 @@ yarn dev
 
 ### Accessing the Application
 
-- Backend API: http://localhost:8000
-- Frontend: http://localhost:3000
-- API Documentation: http://localhost:8000/docs
+- Backend API: `http://localhost:8000`
+- Frontend: `http://localhost:3000`
+- API Documentation: `http://localhost:8000/docs`
 
 ## Development Guidelines
 
