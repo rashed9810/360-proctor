@@ -9,6 +9,8 @@ import enFeedback from './locales/en/feedback.json';
 import bnFeedback from './locales/bn/feedback.json';
 import enNotifications from './locales/en/notifications.json';
 import bnNotifications from './locales/bn/notifications.json';
+import enProctoring from './locales/en/proctoring.json';
+import bnProctoring from './locales/bn/proctoring.json';
 
 // Define the translations
 const resources = {
@@ -16,11 +18,13 @@ const resources = {
     translation: enTranslation,
     feedback: enFeedback,
     notifications: enNotifications,
+    proctoring: enProctoring,
   },
   bn: {
     translation: bnTranslation,
     feedback: bnFeedback,
     notifications: bnNotifications,
+    proctoring: bnProctoring,
   },
 };
 

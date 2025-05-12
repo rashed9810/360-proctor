@@ -7,6 +7,7 @@ import {
   Cog6ToothIcon,
   XMarkIcon,
   ChevronRightIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
@@ -17,6 +18,7 @@ const navigation = [
   { name: 'dashboard', href: '/', icon: HomeIcon },
   { name: 'students', href: '/students', icon: UsersIcon },
   { name: 'exams', href: '/exams', icon: ClipboardDocumentListIcon },
+  { name: 'proctor', href: '/proctor', icon: ShieldCheckIcon },
   { name: 'settings', href: '/settings', icon: Cog6ToothIcon },
 ];
 

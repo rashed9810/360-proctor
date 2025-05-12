@@ -32,6 +32,9 @@ A full-featured, multilingual (Bangla & English) online exam proctoring system d
   - Phone usage detection
 - Trust Score system based on suspicious activities
 - Comprehensive exam reports with screenshots and timelines
+- Multilingual proctoring interface with real-time violation detection
+- Fullscreen monitoring with exit detection
+- Window focus tracking to prevent cheating attempts
 
 ### User Experience
 

@@ -14,6 +14,7 @@ import Exams from './pages/Exams';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import TestPage from './pages/TestPage';
+import ProctorDemo from './pages/ProctorDemo';
 
 const PrivateRoute = () => {
   const { user, loading } = useAuth();
@@ -72,6 +73,7 @@ function App() {
                 <Route path="exams" element={<Exams />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="proctor" element={<ProctorDemo />} />
               </Route>
             </Routes>
           </NotificationProvider>
