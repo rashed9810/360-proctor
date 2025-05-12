@@ -212,7 +212,7 @@ const AudioAnalysis = ({
 
         // Show appropriate error message based on browser support
         if (result.error === 'speechRecognitionNotSupported') {
-          toast.error(t('proctoring.errors.speechRecognitionNotSupported'), {
+          toast.error(t('errors.speechRecognitionNotSupported'), {
             duration: 5000,
             icon: '🎤',
           });
@@ -274,13 +274,19 @@ const AudioAnalysis = ({
 
             // Show toast notification for high severity violations
             if (result.severity === 'high') {
-              toast.error(t('proctoring.highSeveritySpeechDetected'), {
+              toast.error(t('highSeveritySpeechDetected'), {
                 duration: 5000,
                 icon: '⚠️',
               });
             } else if (result.severity === 'medium') {
-              toast.warning(t('proctoring.mediumSeveritySpeechDetected'), {
+              toast(t('mediumSeveritySpeechDetected'), {
                 duration: 4000,
+                icon: '⚠️',
+                style: {
+                  backgroundColor: '#FEF3C7',
+                  color: '#92400E',
+                  border: '1px solid #F59E0B',
+                },
               });
             }
           }
