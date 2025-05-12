@@ -86,9 +86,9 @@ const NotificationBell = ({ size = 'md', position = 'navbar' }) => {
         transition={isAnimating ? { duration: 0.5 } : {}}
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-1.5 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
-        aria-label={t('notifications.title')}
+        aria-label={t('notifications:notifications.title')}
       >
-        <span className="sr-only">{t('notifications.title')}</span>
+        <span className="sr-only">{t('notifications:notifications.title')}</span>
         {unreadCount > 0 ? (
           <BellAlertIcon className={`${currentSize.bell}`} aria-hidden="true" />
         ) : (
@@ -120,7 +120,7 @@ const NotificationBell = ({ size = 'md', position = 'navbar' }) => {
             className="absolute left-1/2 -translate-x-1/2 -bottom-8 hidden group-hover:block pointer-events-none"
           >
             <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-              {t('notifications.viewNotifications')}
+              {t('notifications:notifications.viewNotifications')}
             </div>
           </motion.div>
         )}

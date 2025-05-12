@@ -204,19 +204,19 @@ const Dashboard = () => {
                   // Determine status and color based on time until exam
                   let statusColor =
                     'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-                  let statusText = t('scheduled');
+                  let statusText = t('scheduled', { defaultValue: 'Scheduled' });
                   let progressWidth = '25%';
 
                   if (hoursUntil < 24) {
                     statusColor =
                       'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
-                    statusText = t('upcoming');
+                    statusText = t('upcoming', { defaultValue: 'Upcoming' });
                     progressWidth = '75%';
                   }
 
                   if (hoursUntil < 2) {
                     statusColor = 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-                    statusText = t('imminent');
+                    statusText = t('imminent', { defaultValue: 'Imminent' });
                     progressWidth = '90%';
                   }
 
@@ -235,6 +235,7 @@ const Dashboard = () => {
                               {hoursUntil < 1
                                 ? t('startsInMinutes', {
                                     minutes: Math.max(1, Math.floor(timeUntil / 60000)),
+                                    defaultValue: `Starts in ${Math.max(1, Math.floor(timeUntil / 60000))} minutes`,
                                   })
                                 : hoursUntil < 24
                                   ? t('startsInHours', { hours: Math.floor(hoursUntil) })

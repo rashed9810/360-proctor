@@ -22,21 +22,21 @@ const QuickActionPanel = () => {
   const actions = [
     {
       id: 'create-exam',
-      name: t('quickActions.createExam'),
+      name: t('quickActions.createExam', { defaultValue: 'Create Exam' }),
       icon: DocumentPlusIcon,
       to: '/exams/create',
       color: 'bg-blue-500 hover:bg-blue-600',
     },
     {
       id: 'add-student',
-      name: t('quickActions.addStudent'),
+      name: t('quickActions.addStudent', { defaultValue: 'Add Student' }),
       icon: UserPlusIcon,
       to: '/students/add',
       color: 'bg-green-500 hover:bg-green-600',
     },
     {
       id: 'export-data',
-      name: t('quickActions.exportData'),
+      name: t('quickActions.exportData', { defaultValue: 'Export Data' }),
       icon: ArrowDownTrayIcon,
       to: '/export',
       color: 'bg-purple-500 hover:bg-purple-600',
@@ -51,13 +51,13 @@ const QuickActionPanel = () => {
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         className="bg-primary-600 text-white rounded-full p-3 shadow-lg hover:bg-primary-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        aria-label={isOpen ? t('quickActions.close') : t('quickActions.open')}
+        aria-label={
+          isOpen
+            ? t('quickActions.close', { defaultValue: 'Close Quick Actions' })
+            : t('quickActions.open', { defaultValue: 'Open Quick Actions' })
+        }
       >
-        {isOpen ? (
-          <XMarkIcon className="h-6 w-6" />
-        ) : (
-          <PlusIcon className="h-6 w-6" />
-        )}
+        {isOpen ? <XMarkIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}
       </motion.button>
 
       {/* Actions panel */}
@@ -70,14 +70,12 @@ const QuickActionPanel = () => {
             transition={{ duration: 0.2 }}
             className="absolute bottom-16 right-0 bg-white rounded-lg shadow-xl p-4 w-64 border border-gray-200"
           >
-            <h3 className="text-sm font-medium text-gray-900 mb-3">{t('quickActions.title')}</h3>
+            <h3 className="text-sm font-medium text-gray-900 mb-3">
+              {t('quickActions.title', { defaultValue: 'Quick Actions' })}
+            </h3>
             <div className="space-y-2">
-              {actions.map((action) => (
-                <motion.div
-                  key={action.id}
-                  whileHover={{ x: 5 }}
-                  className="block"
-                >
+              {actions.map(action => (
+                <motion.div key={action.id} whileHover={{ x: 5 }} className="block">
                   <Link
                     to={action.to}
                     className={`flex items-center p-2 rounded-md ${action.color} text-white transition-colors duration-150`}
@@ -94,7 +92,7 @@ const QuickActionPanel = () => {
                 onClick={() => setIsOpen(false)}
                 className="text-xs text-gray-500 hover:text-gray-700 transition-colors duration-150"
               >
-                {t('quickActions.close')}
+                {t('quickActions.close', { defaultValue: 'Close Quick Actions' })}
               </button>
             </div>
           </motion.div>

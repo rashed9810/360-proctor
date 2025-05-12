@@ -27,11 +27,11 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function ResponsiveSidebar({ 
-  sidebarOpen, 
-  setSidebarOpen, 
+export default function ResponsiveSidebar({
+  sidebarOpen,
+  setSidebarOpen,
   onExpandChange,
-  isMobile
+  isMobile,
 }) {
   const location = useLocation();
   // Start with collapsed sidebar on desktop
@@ -48,11 +48,7 @@ export default function ResponsiveSidebar({
     <>
       {/* Mobile sidebar - slides in from the left */}
       <Transition.Root show={sidebarOpen} as={Fragment}>
-        <Dialog 
-          as="div" 
-          className="fixed inset-0 flex z-50 md:hidden" 
-          onClose={setSidebarOpen}
-        >
+        <Dialog as="div" className="fixed inset-0 flex z-50 md:hidden" onClose={setSidebarOpen}>
           {/* Overlay */}
           <Transition.Child
             as={Fragment}
@@ -65,7 +61,7 @@ export default function ResponsiveSidebar({
           >
             <Dialog.Overlay className="fixed inset-0 bg-gray-600 bg-opacity-75" />
           </Transition.Child>
-          
+
           {/* Sidebar panel */}
           <Transition.Child
             as={Fragment}
@@ -98,14 +94,14 @@ export default function ResponsiveSidebar({
                   </button>
                 </div>
               </Transition.Child>
-              
+
               {/* Sidebar content */}
               <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                 <div className="flex-shrink-0 flex items-center justify-center px-4 mb-5">
                   <img className="h-10 w-auto" src="/logo.svg" alt="Admin Dashboard" />
                 </div>
                 <nav className="mt-5 px-2 space-y-1">
-                  {navigation.map((item) => (
+                  {navigation.map(item => (
                     <Link
                       key={item.name}
                       to={item.href}
@@ -133,7 +129,7 @@ export default function ResponsiveSidebar({
                   ))}
                 </nav>
               </div>
-              
+
               {/* User profile section */}
               <div className="flex-shrink-0 flex border-t border-gray-200 p-4 bg-gray-50">
                 <div className="flex-shrink-0 group block w-full">
@@ -141,7 +137,7 @@ export default function ResponsiveSidebar({
                     <div className="flex-shrink-0">
                       <img
                         className="inline-block h-10 w-10 rounded-full border-2 border-white shadow"
-                        src="https://via.placeholder.com/40"
+                        src="/assets/images/default-avatar.svg"
                         alt="User avatar"
                       />
                     </div>
@@ -198,12 +194,12 @@ export default function ResponsiveSidebar({
                 alt="Admin Dashboard"
               />
             </div>
-            
+
             {/* Navigation links */}
             <nav
               className={classNames('mt-2 flex-1 bg-white space-y-2', isExpanded ? 'px-3' : 'px-2')}
             >
-              {navigation.map((item) => (
+              {navigation.map(item => (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -238,7 +234,7 @@ export default function ResponsiveSidebar({
               ))}
             </nav>
           </div>
-          
+
           {/* User profile section */}
           <div
             className={classNames(
@@ -251,7 +247,7 @@ export default function ResponsiveSidebar({
                 <div className="flex-shrink-0">
                   <img
                     className="inline-block h-10 w-10 rounded-full border-2 border-white shadow"
-                    src="https://via.placeholder.com/40"
+                    src="/assets/images/default-avatar.svg"
                     alt="User avatar"
                   />
                 </div>
@@ -268,17 +264,17 @@ export default function ResponsiveSidebar({
               </div>
             </div>
           </div>
-          
+
           {/* Toggle button */}
-          <button 
+          <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="absolute top-3 -right-3 bg-white rounded-full p-1 shadow-md border border-gray-200 text-gray-500 hover:text-indigo-600 focus:outline-none"
           >
-            <ChevronRightIcon 
+            <ChevronRightIcon
               className={classNames(
                 'h-4 w-4 transition-transform duration-300',
                 isExpanded ? 'rotate-180' : ''
-              )} 
+              )}
             />
           </button>
         </div>

@@ -116,7 +116,7 @@ export default function ResponsiveNavbar({ onMenuClick, isMobile, isTablet }) {
                 <span className="sr-only">Open user menu</span>
                 <img
                   className="h-8 w-8 rounded-full"
-                  src="https://via.placeholder.com/40"
+                  src="/assets/images/default-avatar.svg"
                   alt="User avatar"
                 />
               </Menu.Button>

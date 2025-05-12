@@ -1,0 +1,34 @@
+{
+  "notifications": {
+    "title": "Notifications",
+    "viewNotifications": "View Notifications",
+    "markAsRead": "Mark as Read",
+    "clearAll": "Clear All",
+    "noNotifications": "No notifications",
+    "total": "Total",
+    "new": "New",
+    "all": "All",
+    "unread": "Unread",
+    "read": "Read",
+    "settings": "Notification Settings",
+    "enable": "Enable Notifications",
+    "disable": "Disable Notifications",
+    "emailNotifications": "Email Notifications",
+    "pushNotifications": "Push Notifications",
+    "inAppNotifications": "In-App Notifications",
+    "types": {
+      "system": "System",
+      "exam": "Exam",
+      "violation": "Violation",
+      "message": "Message",
+      "alert": "Alert"
+    },
+    "filters": {
+      "all": "All Notifications",
+      "unread": "Unread",
+      "system": "System",
+      "exams": "Exams",
+      "violations": "Violations"
+    }
+  }
+}

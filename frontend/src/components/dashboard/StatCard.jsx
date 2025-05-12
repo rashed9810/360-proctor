@@ -1,8 +1,9 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { Link } from 'react-router-dom';
-import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ArrowRightIcon, ArrowPathIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 /**
  * Enhanced StatCard component with consistent styling and animations
@@ -14,11 +15,59 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
  * @param {string} props.color - Color theme ('primary', 'blue', 'green', 'purple', 'red', 'yellow')
  * @param {string} props.linkTo - Link destination for "View all" button
  * @param {string} props.linkText - Text for the link button
+ * @param {Function} props.fetchData - Function to fetch updated data
+ * @param {string} props.detailsPath - Path to detailed view
+ * @param {boolean} props.isLoading - Loading state
+ * @param {string} props.dataKey - Key identifier for this stat
  */
-const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, linkText }) => {
+const StatCard = ({
+  title,
+  value,
+  icon: Icon,
+  trend,
+  color = 'primary',
+  linkTo,
+  linkText,
+  fetchData,
+  detailsPath,
+  isLoading: externalLoading,
+  dataKey,
+}) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const [isLoading, setIsLoading] = useState(externalLoading || false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+
+  // Function to refresh data
+  const handleRefresh = async () => {
+    if (fetchData && typeof fetchData === 'function') {
+      setIsLoading(true);
+      try {
+        await fetchData(dataKey);
+        setLastUpdated(new Date());
+      } catch (error) {
+        console.error('Error refreshing data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  // Auto-refresh every 5 minutes
+  useEffect(() => {
+    if (!fetchData) return;
+
+    const intervalId = setInterval(
+      () => {
+        handleRefresh();
+      },
+      5 * 60 * 1000
+    ); // 5 minutes
+
+    return () => clearInterval(intervalId);
+  }, [fetchData]);
 
   const colorClasses = {
     primary: {
@@ -95,6 +144,33 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, 
       {/* Background pattern for visual interest */}
       <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-10 bg-gradient-to-br from-current to-transparent" />
 
+      {/* Action buttons */}
+      <div className="absolute top-2 right-2 flex space-x-1">
+        {fetchData && (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className={`p-1 rounded-full ${classes.text} hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150`}
+            title={t('refreshData')}
+          >
+            <ArrowPathIcon className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </motion.button>
+        )}
+        {detailsPath && (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setShowDetails(!showDetails)}
+            className={`p-1 rounded-full ${classes.text} hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150`}
+            title={t('viewDetails')}
+          >
+            <ChartBarIcon className="h-4 w-4" />
+          </motion.button>
+        )}
+      </div>
+
       <div className="flex items-center justify-between relative">
         <div>
           <p className={`text-sm font-medium ${classes.text}`}>{title}</p>
@@ -103,8 +179,17 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, 
             animate={{ scale: 1 }}
             className={`mt-2 text-3xl font-bold ${classes.value}`}
           >
-            {value}
+            {isLoading ? (
+              <span className="inline-block w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
+            ) : (
+              value
+            )}
           </motion.p>
+          {lastUpdated && fetchData && (
+            <p className="text-xs text-gray-400 mt-1">
+              {t('lastUpdated')}: {lastUpdated.toLocaleTimeString()}
+            </p>
+          )}
         </div>
         <motion.div
           initial={{ scale: 0 }}
@@ -138,7 +223,16 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, 
           {/* Tooltip for percentage change */}
           <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block pointer-events-none z-10">
             <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
-              {trend > 0 ? t('percentIncrease') : t('percentDecrease')} {t('fromLastMonth')}
+              {trend > 0
+                ? t('percentIncrease', {
+                    percent: Math.abs(trend),
+                    defaultValue: `${Math.abs(trend)}% increase`,
+                  })
+                : t('percentDecrease', {
+                    percent: Math.abs(trend),
+                    defaultValue: `${Math.abs(trend)}% decrease`,
+                  })}{' '}
+              {t('fromLastMonth')}
             </div>
           </div>
         </div>
@@ -154,6 +248,53 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'primary', linkTo, 
             {linkText || t('viewAll')}
             <ArrowRightIcon className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
+        </div>
+      )}
+
+      {/* Detailed view modal */}
+      {showDetails && detailsPath && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+          >
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                {title} {t('details')}
+              </h3>
+              <button
+                onClick={() => setShowDetails(false)}
+                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+              >
+                <span className="sr-only">{t('close')}</span>
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 p-6 overflow-y-auto">
+              <iframe
+                src={detailsPath}
+                className="w-full h-full border-0"
+                title={`${title} ${t('details')}`}
+              />
+            </div>
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+              <button
+                onClick={() => setShowDetails(false)}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-150"
+              >
+                {t('close')}
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
     </motion.div>

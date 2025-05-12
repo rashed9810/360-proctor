@@ -1,0 +1,34 @@
+{
+  "notifications": {
+    "title": "বিজ্ঞপ্তি",
+    "viewNotifications": "বিজ্ঞপ্তি দেখুন",
+    "markAsRead": "পঠিত হিসাবে চিহ্নিত করুন",
+    "clearAll": "সব মুছুন",
+    "noNotifications": "কোন বিজ্ঞপ্তি নেই",
+    "total": "মোট",
+    "new": "নতুন",
+    "all": "সব",
+    "unread": "অপঠিত",
+    "read": "পঠিত",
+    "settings": "বিজ্ঞপ্তি সেটিংস",
+    "enable": "বিজ্ঞপ্তি সক্রিয় করুন",
+    "disable": "বিজ্ঞপ্তি নিষ্ক্রিয় করুন",
+    "emailNotifications": "ইমেইল বিজ্ঞপ্তি",
+    "pushNotifications": "পুশ বিজ্ঞপ্তি",
+    "inAppNotifications": "অ্যাপ বিজ্ঞপ্তি",
+    "types": {
+      "system": "সিস্টেম",
+      "exam": "পরীক্ষা",
+      "violation": "লঙ্ঘন",
+      "message": "বার্তা",
+      "alert": "সতর্কতা"
+    },
+    "filters": {
+      "all": "সব বিজ্ঞপ্তি",
+      "unread": "অপঠিত",
+      "system": "সিস্টেম",
+      "exams": "পরীক্ষা",
+      "violations": "লঙ্ঘন"
+    }
+  }
+}

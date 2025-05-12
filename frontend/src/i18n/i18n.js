@@ -7,16 +7,20 @@ import enTranslation from './locales/en/translation.json';
 import bnTranslation from './locales/bn/translation.json';
 import enFeedback from './locales/en/feedback.json';
 import bnFeedback from './locales/bn/feedback.json';
+import enNotifications from './locales/en/notifications.json';
+import bnNotifications from './locales/bn/notifications.json';
 
 // Define the translations
 const resources = {
   en: {
     translation: enTranslation,
     feedback: enFeedback,
+    notifications: enNotifications,
   },
   bn: {
     translation: bnTranslation,
     feedback: bnFeedback,
+    notifications: bnNotifications,
   },
 };
 

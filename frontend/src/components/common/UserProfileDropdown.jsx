@@ -28,7 +28,7 @@ export default function UserProfileDropdown() {
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="relative">
             <img
               className="h-7 w-7 sm:h-8 sm:w-8 rounded-full sm:mr-2 ring-2 ring-transparent group-hover:ring-indigo-500 transition-all duration-200"
-              src={user?.avatar || 'https://via.placeholder.com/40'}
+              src={user?.avatar || '/assets/images/default-avatar.svg'}
               alt={user?.name || 'User'}
             />
             <span className="absolute -bottom-1 -right-1 block h-2 w-2 rounded-full bg-green-400 ring-1 ring-white"></span>

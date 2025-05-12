@@ -22,7 +22,7 @@ export default function Profile() {
     bio: user?.bio || 'System administrator with full access to all features.',
   });
   const [avatarPreview, setAvatarPreview] = useState(
-    user?.avatar || 'https://via.placeholder.com/150'
+    user?.avatar || '/assets/images/default-avatar.svg'
   );
   const [avatarFile, setAvatarFile] = useState(null);
   const [showAvatarModal, setShowAvatarModal] = useState(false);

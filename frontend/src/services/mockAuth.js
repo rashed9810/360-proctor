@@ -9,7 +9,7 @@ const mockUsers = [
     email: 'admin@example.com',
     password: 'password123',
     role: 'admin',
-    avatar: 'https://via.placeholder.com/40',
+    avatar: '/assets/images/default-avatar.svg',
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const mockUsers = [
     email: 'student@example.com',
     password: 'password123',
     role: 'student',
-    avatar: 'https://via.placeholder.com/40',
+    avatar: '/assets/images/default-avatar.svg',
   },
   {
     id: 3,
@@ -25,7 +25,7 @@ const mockUsers = [
     email: 'teacher@example.com',
     password: 'password123',
     role: 'teacher',
-    avatar: 'https://via.placeholder.com/40',
+    avatar: '/assets/images/default-avatar.svg',
   },
 ];
 
@@ -77,7 +77,7 @@ const register = async userData => {
     email: userData.email,
     password: userData.password,
     role: 'student', // Default role
-    avatar: 'https://via.placeholder.com/40',
+    avatar: '/assets/images/default-avatar.svg',
   };
 
   // Add to mock database

@@ -327,5 +327,20 @@
     "passwordMatch": "পাসওয়ার্ড মিলছে না",
     "invalidFileType": "অনুগ্রহ করে একটি ছবি ফাইল আপলোড করুন",
     "fileTooLarge": "ফাইলের আকার ৫ এমবি-এর কম হওয়া উচিত"
-  }
+  },
+  "status": "অবস্থা",
+  "scheduled": "নির্ধারিত",
+  "upcoming": "আসন্ন",
+  "imminent": "আসন্ন",
+  "startsInMinutes": "{{minutes}} মিনিটে শুরু হবে",
+  "quickActions": {
+    "title": "দ্রুত কার্যক্রম",
+    "createExam": "পরীক্ষা তৈরি করুন",
+    "addStudent": "শিক্ষার্থী যোগ করুন",
+    "exportData": "ডাটা এক্সপোর্ট করুন",
+    "open": "দ্রুত কার্যক্রম খুলুন",
+    "close": "দ্রুত কার্যক্রম বন্ধ করুন"
+  },
+  "percentIncrease": "{{percent}}% বৃদ্ধি",
+  "percentDecrease": "{{percent}}% হ্রাস"
 }

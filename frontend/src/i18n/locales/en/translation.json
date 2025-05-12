@@ -331,5 +331,20 @@
     "passwordMatch": "Passwords do not match",
     "invalidFileType": "Please upload an image file",
     "fileTooLarge": "File size should be less than 5MB"
-  }
+  },
+  "status": "Status",
+  "scheduled": "Scheduled",
+  "upcoming": "Upcoming",
+  "imminent": "Imminent",
+  "startsInMinutes": "Starts in {{minutes}} minutes",
+  "quickActions": {
+    "title": "Quick Actions",
+    "createExam": "Create Exam",
+    "addStudent": "Add Student",
+    "exportData": "Export Data",
+    "open": "Open Quick Actions",
+    "close": "Close Quick Actions"
+  },
+  "percentIncrease": "{{percent}}% increase",
+  "percentDecrease": "{{percent}}% decrease"
 }
