@@ -18,7 +18,7 @@ A full-featured, multilingual (Bangla & English) online exam proctoring system d
 ## Features
 
 <div align="center">
-  <img src="docs/images/proctor.png" alt="360° Proctor Features" width="100%">
+  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/proctor.png" alt="360° Proctor Features" width="100%">
 </div>
 
 ### Proctoring Capabilities
@@ -107,13 +107,13 @@ The application features a comprehensive responsive design that works across all
 
 <div align="center">
   <p><strong>Main Dashboard Overview</strong></p>
-  <img src="docs/images/dashboard.png" alt="360° Proctor Dashboard" width="100%">
+  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/dashboard.png" alt="360° Proctor Dashboard" width="100%">
   <br><br>
   <p><strong>Exam Management Interface</strong></p>
-  <img src="docs/images/dashboard2.png" alt="Exam Management Interface" width="100%">
+  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/dashboard2.png" alt="Exam Management Interface" width="100%">
   <br><br>
   <p><strong>Analytics and Reporting</strong></p>
-  <img src="docs/images/dashboard3.png" alt="Analytics and Reporting" width="100%">
+  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/dashboard3.png" alt="Analytics and Reporting" width="100%">
 </div>
 
 ## Project Structure
