@@ -16,6 +16,10 @@ A full-featured, multilingual (Bangla & English) online exam proctoring system d
 
 ## Features
 
+<div align="center">
+  <img src="docs/images/proctor.png" alt="360° Proctor Features" width="100%">
+</div>
+
 ### Proctoring Capabilities
 
 - Real-time AI-powered proctoring
