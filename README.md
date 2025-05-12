@@ -10,6 +10,7 @@ A full-featured, multilingual (Bangla & English) online exam proctoring system d
   <a href="#features">Features</a> •
   <a href="#tech-stack">Tech Stack</a> •
   <a href="#responsive-design">Responsive Design</a> •
+  <a href="#dashboard-showcase">Dashboard Showcase</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#roadmap">Roadmap</a>
 </p>
@@ -101,6 +102,19 @@ The application features a comprehensive responsive design that works across all
 - **FeedbackForm**: Interactive feedback system with validation and character counting
 - **NotificationBell**: Real-time notification system with unread indicators
 - **DarkModeToggle**: Persistent theme preference with smooth transitions
+
+### Dashboard Showcase
+
+<div align="center">
+  <p><strong>Main Dashboard Overview</strong></p>
+  <img src="docs/images/dashboard.png" alt="360° Proctor Dashboard" width="100%">
+  <br><br>
+  <p><strong>Exam Management Interface</strong></p>
+  <img src="docs/images/dashboard2.png" alt="Exam Management Interface" width="100%">
+  <br><br>
+  <p><strong>Analytics and Reporting</strong></p>
+  <img src="docs/images/dashboard3.png" alt="Analytics and Reporting" width="100%">
+</div>
 
 ## Project Structure
 
