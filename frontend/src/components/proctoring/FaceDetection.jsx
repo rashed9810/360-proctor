@@ -159,7 +159,7 @@ const FaceDetection = ({
   // Handle webcam error
   const handleError = error => {
     console.error('Webcam error:', error);
-    toast.error(t('proctoring.webcamError'));
+    toast.error(t('webcamError'));
   };
 
   // Process video frame for face detection
@@ -269,18 +269,18 @@ const FaceDetection = ({
             detectionResult.multipleFaces ? (
               <>
                 <UserGroupIcon className="h-5 w-5 text-red-500 mr-1.5" />
-                <span>{t('proctoring.multipleFacesDetected')}</span>
+                <span>{t('multipleFacesDetected')}</span>
               </>
             ) : (
               <>
                 <FaceSmileIcon className="h-5 w-5 text-green-500 mr-1.5" />
-                <span>{t('proctoring.faceDetected')}</span>
+                <span>{t('faceDetected')}</span>
               </>
             )
           ) : (
             <>
               <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mr-1.5" />
-              <span>{t('proctoring.noFaceDetected')}</span>
+              <span>{t('noFaceDetected')}</span>
             </>
           )}
         </div>

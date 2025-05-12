@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import {
-  VideoCameraIcon,
-  VideoCameraSlashIcon,
-  ArrowPathIcon,
-} from '@heroicons/react/24/outline';
+import { VideoCameraIcon, VideoCameraSlashIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
 /**
@@ -28,7 +24,7 @@ const WebcamStream = ({
   mirrored = true,
   showControls = true,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('proctoring');
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const [isActive, setIsActive] = useState(autoStart);
@@ -56,7 +52,7 @@ const WebcamStream = ({
         streamRef.current = stream;
         setIsActive(true);
         setHasPermission(true);
-        
+
         if (onStream) {
           onStream(stream);
         }
@@ -66,18 +62,18 @@ const WebcamStream = ({
       setIsActive(false);
       setError(err.message);
       setHasPermission(err.name !== 'NotAllowedError');
-      
+
       if (onError) {
         onError(err);
       }
 
       // Show user-friendly error message
       if (err.name === 'NotAllowedError') {
-        toast.error(t('proctoring.cameraPermissionDenied'));
+        toast.error(t('cameraPermissionDenied'));
       } else if (err.name === 'NotFoundError') {
-        toast.error(t('proctoring.cameraNotFound'));
+        toast.error(t('cameraNotFound'));
       } else {
-        toast.error(t('proctoring.cameraError'));
+        toast.error(t('cameraError'));
       }
     } finally {
       setIsLoading(false);
@@ -89,11 +85,11 @@ const WebcamStream = ({
     if (streamRef.current) {
       const tracks = streamRef.current.getTracks();
       tracks.forEach(track => track.stop());
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
-      
+
       streamRef.current = null;
       setIsActive(false);
     }
@@ -147,7 +143,7 @@ const WebcamStream = ({
           >
             <ArrowPathIcon className="h-8 w-8 text-white" />
           </motion.div>
-          <span className="ml-2 text-white">{t('proctoring.initializingCamera')}</span>
+          <span className="ml-2 text-white">{t('initializingCamera')}</span>
         </div>
       )}
 
@@ -156,15 +152,13 @@ const WebcamStream = ({
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 p-4">
           <VideoCameraSlashIcon className="h-12 w-12 text-red-500 mb-2" />
           <p className="text-white text-center mb-4">
-            {!hasPermission
-              ? t('proctoring.cameraPermissionDenied')
-              : t('proctoring.cameraError')}
+            {!hasPermission ? t('cameraPermissionDenied') : t('cameraError')}
           </p>
           <button
             onClick={startWebcam}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
-            {t('proctoring.retryCamera')}
+            {t('retryCamera')}
           </button>
         </div>
       )}
@@ -175,11 +169,9 @@ const WebcamStream = ({
           <button
             onClick={toggleWebcam}
             className={`p-2 rounded-full ${
-              isActive
-                ? 'bg-red-600 hover:bg-red-700'
-                : 'bg-green-600 hover:bg-green-700'
+              isActive ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
             } text-white transition-colors`}
-            aria-label={isActive ? t('proctoring.stopCamera') : t('proctoring.startCamera')}
+            aria-label={isActive ? t('stopCamera') : t('startCamera')}
           >
             {isActive ? (
               <VideoCameraSlashIcon className="h-5 w-5" />
