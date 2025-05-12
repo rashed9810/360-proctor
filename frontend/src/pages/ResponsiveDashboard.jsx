@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { 
-  UserGroupIcon, 
-  AcademicCapIcon, 
-  ClockIcon, 
+import { useTranslation } from 'react-i18next';
+import {
+  UserGroupIcon,
+  AcademicCapIcon,
+  ClockIcon,
   ShieldCheckIcon,
   ArrowUpIcon,
-  ArrowDownIcon
+  ArrowDownIcon,
 } from '@heroicons/react/24/outline';
+import PageHeader from '../components/layout/PageHeader';
 
 // Sample stats data
 const statsData = [
@@ -105,11 +107,7 @@ const StatCard = ({ stat }) => {
           ) : (
             <ArrowDownIcon className="h-4 w-4 text-red-500 mr-1" />
           )}
-          <span
-            className={
-              stat.trendType === 'increase' ? 'text-green-600' : 'text-red-600'
-            }
-          >
+          <span className={stat.trendType === 'increase' ? 'text-green-600' : 'text-red-600'}>
             {Math.abs(stat.trend)}%
           </span>
           <span className="text-gray-500 ml-1">from last month</span>
@@ -120,6 +118,7 @@ const StatCard = ({ stat }) => {
 };
 
 export default function ResponsiveDashboard() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -141,27 +140,30 @@ export default function ResponsiveDashboard() {
   return (
     <div className="w-full">
       {/* Page header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <div className="flex space-x-3">
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Export
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Create Report
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title={t('dashboard.title', 'Dashboard')}
+        showBackButton={true}
+        actions={
+          <div className="flex space-x-3">
+            <button
+              type="button"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {t('common.export', 'Export')}
+            </button>
+            <button
+              type="button"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {t('reports.create', 'Create Report')}
+            </button>
+          </div>
+        }
+      />
 
       {/* Stats grid */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        {statsData.map((stat) => (
+        {statsData.map(stat => (
           <StatCard key={stat.id} stat={stat} />
         ))}
       </div>
@@ -179,22 +181,40 @@ export default function ResponsiveDashboard() {
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900"
+                  >
                     Name
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Subject
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Duration
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Start Time
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     End Time
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
                     Status
                   </th>
                   <th scope="col" className="relative py-3.5 pl-3 pr-6 text-right">
@@ -204,7 +224,7 @@ export default function ResponsiveDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {examsData.map((exam) => (
+                {examsData.map(exam => (
                   <tr key={exam.id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900">
                       {exam.name}
@@ -235,14 +255,10 @@ export default function ResponsiveDashboard() {
                       </span>
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-6 text-right text-sm font-medium">
-                      <button
-                        className="inline-flex items-center px-3 py-1.5 border border-indigo-600 text-xs font-medium rounded text-indigo-600 bg-white hover:bg-indigo-50 mr-2"
-                      >
+                      <button className="inline-flex items-center px-3 py-1.5 border border-indigo-600 text-xs font-medium rounded text-indigo-600 bg-white hover:bg-indigo-50 mr-2">
                         Edit
                       </button>
-                      <button
-                        className="inline-flex items-center px-3 py-1.5 border border-red-600 text-xs font-medium rounded text-red-600 bg-white hover:bg-red-50"
-                      >
+                      <button className="inline-flex items-center px-3 py-1.5 border border-red-600 text-xs font-medium rounded text-red-600 bg-white hover:bg-red-50">
                         Delete
                       </button>
                     </td>
@@ -258,13 +274,11 @@ export default function ResponsiveDashboard() {
       <div className="bg-white shadow rounded-lg">
         <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
           <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Activity</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Latest activities in the system.
-          </p>
+          <p className="mt-1 text-sm text-gray-500">Latest activities in the system.</p>
         </div>
         <div className="p-6">
           <ul className="space-y-6">
-            {[1, 2, 3].map((item) => (
+            {[1, 2, 3].map(item => (
               <li key={item} className="relative flex gap-x-4">
                 <div className="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
                   <div className="w-px bg-gray-200"></div>
