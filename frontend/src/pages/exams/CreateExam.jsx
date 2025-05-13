@@ -12,7 +12,7 @@ import mockExamService from '../../services/mockExams';
  * Create Exam page component
  */
 const CreateExam = () => {
-  const { t } = useTranslation('exams');
+  const { t } = useTranslation(['exams', 'common']);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -80,7 +80,7 @@ const CreateExam = () => {
           className="flex items-center text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 mb-4"
         >
           <ArrowLeftIcon className="h-4 w-4 mr-1" />
-          <span className="text-sm">{t('common.back')}</span>
+          <span className="text-sm">{t('back', { ns: 'common' })}</span>
         </button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           {t('exams.createExam')}
