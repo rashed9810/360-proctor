@@ -99,6 +99,7 @@
     "speechRecognitionNotSupported": "Speech recognition is not supported by your browser",
     "firefoxSpeechRecognitionLimited": "Firefox has limited support for speech recognition",
     "safariSpeechRecognitionLimited": "Safari has limited support for speech recognition",
+    "fallbackModeEnabled": "Fallback mode has been enabled. You can type text manually below.",
     "microphoneAccessDenied": "Microphone access denied",
     "audioContextError": "Error initializing audio context",
     "startError": "Error starting speech recognition",
@@ -110,6 +111,11 @@
     "refreshPage": "Refresh the page and try again",
     "microphoneSuggestion": "To fix microphone issues, try the following:",
     "allowMicrophoneAccess": "Allow microphone access when prompted by your browser",
-    "checkMicrophoneConnected": "Make sure your microphone is properly connected"
+    "checkMicrophoneConnected": "Make sure your microphone is properly connected",
+    "typeTextHere": "Type your text here...",
+    "manualTextInput": "Manual text input",
+    "submitText": "Submit text",
+    "submit": "Submit",
+    "manualInputInstructions": "Type what you're saying and press Enter or click Submit to analyze it"
   }
 }

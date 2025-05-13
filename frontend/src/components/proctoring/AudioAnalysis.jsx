@@ -11,6 +11,10 @@ import toast from 'react-hot-toast';
 
 // Enhanced speech recognition service with better error handling and fallbacks
 const enhancedSpeechRecognition = () => {
+  // Force fallback mode for testing and development
+  // Set this to true to always use the fallback mode regardless of browser support
+  const forceFallbackMode = false;
+
   // Check if browser supports speech recognition
   const hasSpeechRecognition = 'SpeechRecognition' in window;
   const hasWebkitSpeechRecognition = 'webkitSpeechRecognition' in window;
@@ -28,8 +32,9 @@ const enhancedSpeechRecognition = () => {
   console.log('Browser detection:', { isChrome, isFirefox, isSafari, isEdge });
   console.log('Speech Recognition support:', { hasSpeechRecognition, hasWebkitSpeechRecognition });
 
-  if (!hasSpeechRecognition && !hasWebkitSpeechRecognition) {
-    console.warn('Speech Recognition API not supported in this browser');
+  // If we're forcing fallback mode or the browser doesn't support speech recognition
+  if (forceFallbackMode || (!hasSpeechRecognition && !hasWebkitSpeechRecognition)) {
+    console.warn('Speech Recognition API not supported in this browser or fallback mode forced');
 
     // Provide more specific error based on browser
     let specificError = 'speechRecognitionNotSupported';
@@ -37,6 +42,8 @@ const enhancedSpeechRecognition = () => {
       specificError = 'firefoxSpeechRecognitionLimited';
     } else if (isSafari) {
       specificError = 'safariSpeechRecognitionLimited';
+    } else if (forceFallbackMode) {
+      specificError = 'fallbackModeEnabled';
     }
 
     return {
@@ -55,6 +62,7 @@ const enhancedSpeechRecognition = () => {
                 ? 'edge'
                 : 'other',
       },
+      fallbackMode: true,
     };
   }
 
@@ -93,6 +101,7 @@ const enhancedSpeechRecognition = () => {
                 : 'other',
       },
       isWebkit: hasWebkitSpeechRecognition && !hasSpeechRecognition,
+      fallbackMode: false,
     };
   } catch (error) {
     console.error('Error initializing speech recognition:', error);
@@ -113,6 +122,7 @@ const enhancedSpeechRecognition = () => {
                 ? 'edge'
                 : 'other',
       },
+      fallbackMode: true,
     };
   }
 };
@@ -244,6 +254,8 @@ const AudioAnalysis = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [analysis, setAnalysis] = useState(null);
   const [error, setError] = useState(null);
+  const [fallbackMode, setFallbackMode] = useState(false);
+  const [manualInput, setManualInput] = useState('');
   const recognitionRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
@@ -258,6 +270,9 @@ const AudioAnalysis = ({
     try {
       const result = enhancedSpeechRecognition();
 
+      // Set fallback mode based on the result
+      setFallbackMode(result.fallbackMode || false);
+
       if (result.error) {
         setError(result.error);
         console.warn(
@@ -266,8 +281,12 @@ const AudioAnalysis = ({
         );
 
         // Show appropriate error message based on browser support
-        if (result.error === 'speechRecognitionNotSupported') {
-          toast.error(t('errors.speechRecognitionNotSupported'), {
+        if (
+          result.error === 'speechRecognitionNotSupported' ||
+          result.error === 'firefoxSpeechRecognitionLimited' ||
+          result.error === 'safariSpeechRecognitionLimited'
+        ) {
+          toast.error(t(`errors.${result.error}`), {
             duration: 5000,
             icon: '🎤',
           });
@@ -503,11 +522,83 @@ const AudioAnalysis = ({
   const clearTranscript = () => {
     setTranscript('');
     setInterimTranscript('');
+    setManualInput('');
     setAnalysis(null);
+  };
+
+  // Handle manual text input for fallback mode
+  const handleManualInputChange = e => {
+    setManualInput(e.target.value);
+  };
+
+  // Submit manual text input for analysis
+  const handleManualInputSubmit = () => {
+    if (!manualInput.trim()) return;
+
+    // Add the manual input to the transcript
+    const newTranscript = transcript + manualInput + ' ';
+    setTranscript(newTranscript);
+
+    // Store for context analysis
+    previousTranscriptsRef.current.push(manualInput);
+
+    // Keep only the last 5 transcripts for context
+    if (previousTranscriptsRef.current.length > 5) {
+      previousTranscriptsRef.current.shift();
+    }
+
+    // Analyze the manual input
+    const result = enhancedAudioAnalysis(manualInput, previousTranscriptsRef.current);
+    setAnalysis(result);
+
+    // Call the callbacks
+    if (onSpeechDetected) {
+      onSpeechDetected(manualInput);
+    }
+
+    if (result.hasSuspiciousKeywords && onSuspiciousSpeech) {
+      onSuspiciousSpeech({
+        transcript: manualInput,
+        keywords: result.detectedKeywords,
+        keywordsBySeverity: result.keywordsBySeverity,
+        confidence: result.confidence,
+        severity: result.severity,
+        timestamp: result.timestamp,
+      });
+
+      // Show toast notification for high severity violations
+      if (result.severity === 'high') {
+        toast.error(t('highSeveritySpeechDetected'), {
+          duration: 5000,
+          icon: '⚠️',
+        });
+      } else if (result.severity === 'medium') {
+        toast(t('mediumSeveritySpeechDetected'), {
+          duration: 4000,
+          icon: '⚠️',
+          style: {
+            backgroundColor: '#FEF3C7',
+            color: '#92400E',
+            border: '1px solid #F59E0B',
+          },
+        });
+      }
+    }
+
+    // Clear the input field
+    setManualInput('');
+  };
+
+  // Handle key press for manual input
+  const handleKeyPress = e => {
+    if (e.key === 'Enter') {
+      handleManualInputSubmit();
+    }
   };
 
   // Determine if we should show the fallback UI
   const showFallbackUI =
+    fallbackMode ||
     error === 'speechRecognitionNotSupported' ||
     error === 'firefoxSpeechRecognitionLimited' ||
     error === 'safariSpeechRecognitionLimited';
@@ -580,6 +671,7 @@ const AudioAnalysis = ({
                 <li>{t('errors.checkMicrophonePermissions')}</li>
                 <li>{t('errors.refreshPage')}</li>
               </ul>
+              <p className="mt-2">{t('errors.fallbackModeEnabled')}</p>
             </div>
           )}
 
@@ -594,6 +686,33 @@ const AudioAnalysis = ({
               </ul>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Manual text input for fallback mode */}
+      {showFallbackUI && (
+        <div className="mb-4">
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              value={manualInput}
+              onChange={handleManualInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder={t('errors.typeTextHere')}
+              className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              aria-label={t('errors.manualTextInput')}
+            />
+            <button
+              onClick={handleManualInputSubmit}
+              className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
+              aria-label={t('errors.submitText')}
+            >
+              {t('errors.submit')}
+            </button>
+          </div>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            {t('errors.manualInputInstructions')}
+          </p>
         </div>
       )}
 
