@@ -11,13 +11,13 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline';
  * @param {string} props.className - Optional additional CSS classes
  * @param {string} props.position - Position of dropdown ('bottom' or 'top', default: 'bottom')
  */
-const CustomDropdown = ({ 
-  value, 
-  onChange, 
-  options, 
-  label, 
+const CustomDropdown = ({
+  value,
+  onChange,
+  options,
+  label,
   className = '',
-  position = 'bottom'
+  position = 'bottom',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -25,7 +25,7 @@ const CustomDropdown = ({
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -38,22 +38,18 @@ const CustomDropdown = ({
   }, []);
 
   // Handle option selection
-  const handleSelect = (optionValue) => {
+  const handleSelect = optionValue => {
     onChange(optionValue);
     setIsOpen(false);
   };
 
   return (
     <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
-      {label && (
-        <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">
-          {label}:
-        </span>
-      )}
-      
+      {label && <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">{label}:</span>}
+
       <button
         type="button"
-        className="inline-flex justify-between items-center w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+        className="inline-flex justify-between items-center w-full rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2.5 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="true"
         aria-expanded={isOpen}
@@ -63,14 +59,14 @@ const CustomDropdown = ({
       </button>
 
       {isOpen && (
-        <div 
+        <div
           className={`origin-top-right absolute ${position === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'} right-0 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10`}
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="options-menu"
         >
           <div className="py-1" role="none">
-            {options.map((option) => (
+            {options.map(option => (
               <button
                 key={option.value}
                 onClick={() => handleSelect(option.value)}

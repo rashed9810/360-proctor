@@ -250,9 +250,9 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
 
       {/* Search and filters */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-        <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
+        <div className="flex items-center justify-between">
           {/* Search */}
-          <div className="relative w-full md:w-96">
+          <div className="relative w-full max-w-xs">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
             </div>
@@ -285,27 +285,31 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
             </button>
 
             {/* Sort dropdown with custom component */}
-            <CustomDropdown
-              label={t('common.sortBy')}
-              value={`${sortBy}-${sortOrder}`}
-              onChange={value => {
-                const [field, order] = value.split('-');
-                setSortBy(field);
-                setSortOrder(order);
-              }}
-              options={[
-                { value: 'date-desc', label: t('common.sortByDateDesc') },
-                { value: 'date-asc', label: t('common.sortByDateAsc') },
-                { value: 'title-asc', label: t('common.sortByTitleAsc') },
-                { value: 'title-desc', label: t('common.sortByTitleDesc') },
-                { value: 'subject-asc', label: t('common.sortBySubjectAsc') },
-                { value: 'subject-desc', label: t('common.sortBySubjectDesc') },
-                { value: 'participants-desc', label: t('common.sortByParticipantsDesc') },
-                { value: 'participants-asc', label: t('common.sortByParticipantsAsc') },
-              ]}
-              position="bottom"
-              className="min-w-[200px]"
-            />
+            <div className="flex items-center">
+              <span className="text-sm text-gray-500 dark:text-gray-400 mr-2 hidden sm:inline">
+                {t('common.sortBy')}:
+              </span>
+              <CustomDropdown
+                value={`${sortBy}-${sortOrder}`}
+                onChange={value => {
+                  const [field, order] = value.split('-');
+                  setSortBy(field);
+                  setSortOrder(order);
+                }}
+                options={[
+                  { value: 'date-desc', label: t('common.sortByDateDesc') },
+                  { value: 'date-asc', label: t('common.sortByDateAsc') },
+                  { value: 'title-asc', label: t('common.sortByTitleAsc') },
+                  { value: 'title-desc', label: t('common.sortByTitleDesc') },
+                  { value: 'subject-asc', label: t('common.sortBySubjectAsc') },
+                  { value: 'subject-desc', label: t('common.sortBySubjectDesc') },
+                  { value: 'participants-desc', label: t('common.sortByParticipantsDesc') },
+                  { value: 'participants-asc', label: t('common.sortByParticipantsAsc') },
+                ]}
+                position="bottom"
+                className="min-w-[200px]"
+              />
+            </div>
           </div>
         </div>
 
