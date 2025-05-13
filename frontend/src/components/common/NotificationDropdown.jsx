@@ -2,22 +2,22 @@ import { forwardRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../../context/NotificationContext';
-import { 
-  CheckIcon, 
-  XMarkIcon, 
-  ExclamationTriangleIcon, 
-  CheckCircleIcon, 
+import {
+  CheckIcon,
+  XMarkIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
   InformationCircleIcon,
-  BellAlertIcon
+  BellAlertIcon,
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 
 const NotificationDropdown = forwardRef(({ onClose, onMarkAllAsRead, size = 'w-80' }, ref) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('notifications');
   const { notifications, markAsRead } = useNotifications();
 
   // Get notification icon based on type
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = type => {
     switch (type) {
       case 'success':
         return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
@@ -34,13 +34,13 @@ const NotificationDropdown = forwardRef(({ onClose, onMarkAllAsRead, size = 'w-8
   };
 
   // Format notification timestamp
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = timestamp => {
     if (!timestamp) return '';
-    
+
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = Math.abs(now - date) / 36e5; // hours
-    
+
     if (diffInHours < 24) {
       return format(date, 'h:mm a');
     } else if (diffInHours < 48) {
@@ -72,10 +72,10 @@ const NotificationDropdown = forwardRef(({ onClose, onMarkAllAsRead, size = 'w-8
             <button
               onClick={onMarkAllAsRead}
               className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 flex items-center"
-              title={t('notifications.markAllAsRead')}
+              title={t('notifications.markAsRead')}
             >
               <CheckIcon className="h-4 w-4 mr-1" />
-              {t('notifications.markAllRead')}
+              {t('notifications.markAsRead')}
             </button>
           </div>
         </div>
@@ -89,7 +89,7 @@ const NotificationDropdown = forwardRef(({ onClose, onMarkAllAsRead, size = 'w-8
             <p>{t('notifications.noNotifications')}</p>
           </div>
         ) : (
-          notifications.map((notification) => (
+          notifications.map(notification => (
             <div
               key={notification.id}
               className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150 ${
@@ -97,9 +97,7 @@ const NotificationDropdown = forwardRef(({ onClose, onMarkAllAsRead, size = 'w-8
               }`}
             >
               <div className="flex items-start">
-                <div className="flex-shrink-0 mt-1">
-                  {getNotificationIcon(notification.type)}
-                </div>
+                <div className="flex-shrink-0 mt-1">{getNotificationIcon(notification.type)}</div>
                 <div className="ml-3 flex-1">
                   <p className="text-sm text-gray-800 dark:text-gray-200">{notification.message}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -129,7 +127,7 @@ const NotificationDropdown = forwardRef(({ onClose, onMarkAllAsRead, size = 'w-8
           onClick={onClose}
           className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
-          {t('notifications.close')}
+          {t('close', { defaultValue: 'Close' })}
         </button>
       </div>
     </motion.div>

@@ -3,6 +3,7 @@
     "title": "বিজ্ঞপ্তি",
     "viewNotifications": "বিজ্ঞপ্তি দেখুন",
     "markAsRead": "পঠিত হিসাবে চিহ্নিত করুন",
+    "markAllRead": "সব পঠিত হিসাবে চিহ্নিত করুন",
     "clearAll": "সব মুছুন",
     "noNotifications": "কোন বিজ্ঞপ্তি নেই",
     "total": "মোট",
@@ -16,6 +17,8 @@
     "emailNotifications": "ইমেইল বিজ্ঞপ্তি",
     "pushNotifications": "পুশ বিজ্ঞপ্তি",
     "inAppNotifications": "অ্যাপ বিজ্ঞপ্তি",
+    "close": "বন্ধ করুন",
+    "yesterday": "গতকাল",
     "types": {
       "system": "সিস্টেম",
       "exam": "পরীক্ষা",

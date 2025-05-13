@@ -3,6 +3,7 @@
     "title": "Notifications",
     "viewNotifications": "View Notifications",
     "markAsRead": "Mark as Read",
+    "markAllRead": "Mark All Read",
     "clearAll": "Clear All",
     "noNotifications": "No notifications",
     "total": "Total",
@@ -16,6 +17,8 @@
     "emailNotifications": "Email Notifications",
     "pushNotifications": "Push Notifications",
     "inAppNotifications": "In-App Notifications",
+    "close": "Close",
+    "yesterday": "Yesterday",
     "types": {
       "system": "System",
       "exam": "Exam",
