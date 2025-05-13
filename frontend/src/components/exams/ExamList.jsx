@@ -250,9 +250,9 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
 
       {/* Search and filters */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           {/* Search */}
-          <div className="relative w-full max-w-xs">
+          <div className="relative w-full sm:max-w-xs">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
             </div>
@@ -266,7 +266,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
           </div>
 
           {/* Filter and sort controls */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`px-3 py-2.5 border rounded-lg shadow-sm text-sm font-medium flex items-center transition-colors duration-200 ${
@@ -307,7 +307,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                   { value: 'participants-asc', label: t('common.sortByParticipantsAsc') },
                 ]}
                 position="bottom"
-                className="min-w-[200px]"
+                className="min-w-[180px] sm:min-w-[200px]"
               />
             </div>
           </div>
@@ -319,13 +319,33 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-200 dark:border-gray-700"
+            transition={{ duration: 0.2 }}
+            className="mt-4 p-4 bg-white dark:bg-gray-700/30 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
           >
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              {t('common.advancedFilters')}
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('common.advancedFilters')}
+              </h3>
+              <button
+                onClick={() => setShowFilters(false)}
+                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Status filter */}
               <div>
                 <label
@@ -385,7 +405,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                 <select
                   id="participantsRange"
                   name="participantsRange"
-                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white opacity-60"
                   disabled
                 >
                   <option value="all">{t('common.all')}</option>
@@ -396,13 +416,13 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
               </div>
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end space-x-2">
               <button
                 onClick={() => {
                   setFilters({ status: 'all', subject: 'all' });
                   setShowFilters(false);
                 }}
-                className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200 mr-2"
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200"
               >
                 {t('common.reset')}
               </button>
@@ -432,30 +452,32 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
               key={exam.id}
               className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md dark:shadow-gray-900/10 transition-all duration-200"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {exam.title}
-                        </h3>
-                        <span
-                          className={`ml-3 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 shadow-sm ${getStatusBadgeClass(
-                            exam.status
-                          )}`}
-                        >
-                          {getStatusIcon(exam.status)}
-                          {t(`common.${exam.status}`)}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2 max-w-2xl">
-                        {exam.description}
-                      </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                      {exam.title}
+                    </h3>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 shadow-sm ${getStatusBadgeClass(
+                        exam.status
+                      )}`}
+                    >
+                      {getStatusIcon(exam.status)}
+                      {t(`common.${exam.status}`)}
+                    </span>
+                    <div className="flex items-center bg-primary-50 dark:bg-primary-900/20 px-2 py-1 rounded-md ml-auto md:ml-0">
+                      <span className="font-medium text-primary-700 dark:text-primary-300 text-xs">
+                        {exam.subject}
+                      </span>
                     </div>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap items-center text-sm text-gray-500 dark:text-gray-400 gap-x-4 gap-y-2">
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 line-clamp-2 max-w-2xl">
+                    {exam.description}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap items-center text-sm text-gray-500 dark:text-gray-400 gap-x-3 gap-y-2">
                     <div className="flex items-center bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded-md">
                       <CalendarIcon className="h-4 w-4 mr-1 text-gray-600 dark:text-gray-300" />
                       {formatDate(exam.startTime)}
@@ -468,62 +490,70 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                       <UserGroupIcon className="h-4 w-4 mr-1 text-gray-600 dark:text-gray-300" />
                       {exam.participants} {t('common.participants')}
                     </div>
-                    <div className="flex items-center bg-primary-50 dark:bg-primary-900/20 px-2 py-1 rounded-md">
-                      <span className="font-medium text-primary-700 dark:text-primary-300">
-                        {exam.subject}
-                      </span>
-                    </div>
                   </div>
                 </div>
 
-                <div className="mt-4 md:mt-0 flex items-center space-x-2">
-                  <div className="relative inline-block text-left group">
-                    <div>
+                <div className="flex items-center space-x-2 mt-3 md:mt-0 ml-auto">
+                  <div className="relative inline-block text-left">
+                    <div className="dropdown-container">
                       <button
                         type="button"
                         className="p-2 rounded-full text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200"
                         id={`exam-menu-${exam.id}`}
                         aria-expanded="true"
                         aria-haspopup="true"
+                        onClick={e => {
+                          e.currentTarget.nextElementSibling.classList.toggle('hidden');
+                        }}
+                        onBlur={e => {
+                          // Hide dropdown when focus is lost, but not if focus is moving to an element inside the dropdown
+                          setTimeout(() => {
+                            if (
+                              !e.currentTarget.nextElementSibling.contains(document.activeElement)
+                            ) {
+                              e.currentTarget.nextElementSibling.classList.add('hidden');
+                            }
+                          }, 100);
+                        }}
                       >
                         <EllipsisHorizontalIcon className="h-5 w-5" />
                       </button>
-                    </div>
-                    <div
-                      className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10 hidden group-hover:block"
-                      role="menu"
-                      aria-orientation="vertical"
-                      aria-labelledby={`exam-menu-${exam.id}`}
-                      tabIndex="-1"
-                    >
-                      <div className="py-1" role="none">
-                        <Link
-                          to={`/exams/${exam.id}/edit`}
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
-                          role="menuitem"
-                          tabIndex="-1"
-                        >
-                          <PencilSquareIcon className="h-4 w-4 mr-2" />
-                          {t('common.edit')}
-                        </Link>
-                        <button
-                          onClick={() => onDuplicate(exam.id)}
-                          className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
-                          role="menuitem"
-                          tabIndex="-1"
-                        >
-                          <DocumentDuplicateIcon className="h-4 w-4 mr-2" />
-                          {t('common.duplicate')}
-                        </button>
-                        <button
-                          onClick={() => onDelete(exam.id)}
-                          className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
-                          role="menuitem"
-                          tabIndex="-1"
-                        >
-                          <TrashIcon className="h-4 w-4 mr-2" />
-                          {t('common.delete')}
-                        </button>
+                      <div
+                        className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10 hidden"
+                        role="menu"
+                        aria-orientation="vertical"
+                        aria-labelledby={`exam-menu-${exam.id}`}
+                        tabIndex="-1"
+                      >
+                        <div className="py-1" role="none">
+                          <Link
+                            to={`/exams/${exam.id}/edit`}
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
+                            role="menuitem"
+                            tabIndex="-1"
+                          >
+                            <PencilSquareIcon className="h-4 w-4 mr-2" />
+                            {t('common.edit')}
+                          </Link>
+                          <button
+                            onClick={() => onDuplicate(exam.id)}
+                            className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
+                            role="menuitem"
+                            tabIndex="-1"
+                          >
+                            <DocumentDuplicateIcon className="h-4 w-4 mr-2" />
+                            {t('common.duplicate')}
+                          </button>
+                          <button
+                            onClick={() => onDelete(exam.id)}
+                            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
+                            role="menuitem"
+                            tabIndex="-1"
+                          >
+                            <TrashIcon className="h-4 w-4 mr-2" />
+                            {t('common.delete')}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -541,16 +571,37 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
           ))
         ) : (
           // Empty state
-          <div className="p-6 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="p-8 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8 text-gray-400 dark:text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
               {searchTerm || filters.status !== 'all' || filters.subject !== 'all'
                 ? t('common.noResultsFound')
                 : t('exams.noExamsYet')}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {searchTerm || filters.status !== 'all' || filters.subject !== 'all'
+                ? t('common.tryAdjustingFilters')
+                : t('exams.createYourFirstExam')}
             </p>
             {!searchTerm && filters.status === 'all' && filters.subject === 'all' && (
               <Link
                 to="/exams/create"
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
               >
                 <PlusIcon className="h-4 w-4 mr-1" />
                 {t('exams.createExam')}
