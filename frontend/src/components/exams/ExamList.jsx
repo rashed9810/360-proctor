@@ -38,6 +38,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
   const [filters, setFilters] = useState({
     status: 'all',
     subject: 'all',
+    participantsRange: 'all',
   });
   const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState('desc');
@@ -65,6 +66,18 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
     // Apply subject filter
     if (filters.subject !== 'all') {
       result = result.filter(exam => exam.subject === filters.subject);
+    }
+
+    // Apply participants range filter
+    if (filters.participantsRange !== 'all') {
+      const [minStr, maxStr] = filters.participantsRange.split('-');
+      const min = parseInt(minStr, 10);
+      const max = maxStr === '+' ? Infinity : parseInt(maxStr, 10);
+
+      result = result.filter(exam => {
+        const participants = exam.participants || 0;
+        return participants >= min && participants <= max;
+      });
     }
 
     // Apply sorting
@@ -253,33 +266,54 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           {/* Search */}
           <div className="relative w-full sm:max-w-xs">
+            <label htmlFor="exam-search" className="sr-only">
+              {t('exams.searchExams')}
+            </label>
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
             </div>
             <input
-              type="text"
+              id="exam-search"
+              type="search"
               value={searchTerm}
               onChange={handleSearchChange}
               className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-700 dark:text-white"
               placeholder={t('common.search')}
+              aria-label={t('exams.searchExams')}
+              autoComplete="off"
             />
           </div>
 
           {/* Filter and sort controls */}
           <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
             <button
+              id="filter-button"
               onClick={() => setShowFilters(!showFilters)}
               className={`px-3 py-2.5 border rounded-lg shadow-sm text-sm font-medium flex items-center transition-colors duration-200 ${
                 showFilters
                   ? 'border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                   : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
               }`}
+              aria-expanded={showFilters}
+              aria-controls="filter-panel"
+              aria-label={showFilters ? t('common.hideFilters') : t('common.showFilters')}
             >
-              <FunnelIcon className="h-4 w-4 mr-1.5" />
+              <FunnelIcon className="h-4 w-4 mr-1.5" aria-hidden="true" />
               {t('common.filters')}
-              {(filters.status !== 'all' || filters.subject !== 'all') && (
-                <span className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-800 dark:bg-primary-900/30 dark:text-primary-400">
-                  {(filters.status !== 'all' ? 1 : 0) + (filters.subject !== 'all' ? 1 : 0)}
+              {(filters.status !== 'all' ||
+                filters.subject !== 'all' ||
+                filters.participantsRange !== 'all') && (
+                <span
+                  className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-100 text-xs font-semibold text-primary-800 dark:bg-primary-900/30 dark:text-primary-400"
+                  aria-label={`${
+                    (filters.status !== 'all' ? 1 : 0) +
+                    (filters.subject !== 'all' ? 1 : 0) +
+                    (filters.participantsRange !== 'all' ? 1 : 0)
+                  } ${t('common.activeFilters')}`}
+                >
+                  {(filters.status !== 'all' ? 1 : 0) +
+                    (filters.subject !== 'all' ? 1 : 0) +
+                    (filters.participantsRange !== 'all' ? 1 : 0)}
                 </span>
               )}
             </button>
@@ -290,6 +324,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                 {t('common.sortBy')}:
               </span>
               <CustomDropdown
+                id="exam-list-sort-dropdown"
                 value={`${sortBy}-${sortOrder}`}
                 onChange={value => {
                   const [field, order] = value.split('-');
@@ -308,6 +343,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                 ]}
                 position="bottom"
                 className="min-w-[180px] sm:min-w-[200px]"
+                ariaLabel={t('common.sortExamsBy')}
               />
             </div>
           </div>
@@ -321,20 +357,28 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
             className="mt-4 p-4 bg-white dark:bg-gray-700/30 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+            id="filter-panel"
+            role="region"
+            aria-labelledby="filter-heading"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <h3
+                id="filter-heading"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {t('common.advancedFilters')}
               </h3>
               <button
                 onClick={() => setShowFilters(false)}
-                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
+                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded"
+                aria-label={t('common.closeFilters')}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
+                  aria-hidden="true"
                 >
                   <path
                     fillRule="evenodd"
@@ -394,7 +438,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                 </select>
               </div>
 
-              {/* Participant count range filter - placeholder for future implementation */}
+              {/* Participant count range filter */}
               <div>
                 <label
                   htmlFor="participantsRange"
@@ -405,13 +449,15 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                 <select
                   id="participantsRange"
                   name="participantsRange"
-                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white opacity-60"
-                  disabled
+                  value={filters.participantsRange}
+                  onChange={handleFilterChange}
+                  className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                 >
                   <option value="all">{t('common.all')}</option>
-                  <option value="1-30">1-30</option>
-                  <option value="31-60">31-60</option>
-                  <option value="60+">60+</option>
+                  <option value="1-30">1-30 {t('common.participants')}</option>
+                  <option value="31-60">31-60 {t('common.participants')}</option>
+                  <option value="61-100">61-100 {t('common.participants')}</option>
+                  <option value="101+">100+ {t('common.participants')}</option>
                 </select>
               </div>
             </div>
@@ -419,16 +465,18 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
             <div className="mt-4 flex justify-end space-x-2">
               <button
                 onClick={() => {
-                  setFilters({ status: 'all', subject: 'all' });
+                  setFilters({ status: 'all', subject: 'all', participantsRange: 'all' });
                   setShowFilters(false);
                 }}
                 className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200"
+                aria-label={t('common.resetAllFilters')}
               >
                 {t('common.reset')}
               </button>
               <button
                 onClick={() => setShowFilters(false)}
                 className="px-3 py-1.5 text-sm font-medium text-white bg-primary-600 border border-transparent rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200"
+                aria-label={t('common.applyFilters')}
               >
                 {t('common.apply')}
               </button>
@@ -501,8 +549,16 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                         className="p-2 rounded-full text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors duration-200"
                         id={`exam-menu-${exam.id}`}
                         aria-expanded="true"
-                        aria-haspopup="true"
+                        aria-haspopup="menu"
+                        aria-label={t('common.examOptions')}
+                        aria-controls={`exam-menu-dropdown-${exam.id}`}
                         onClick={e => {
+                          const isHidden =
+                            e.currentTarget.nextElementSibling.classList.contains('hidden');
+                          e.currentTarget.setAttribute(
+                            'aria-expanded',
+                            isHidden ? 'true' : 'false'
+                          );
                           e.currentTarget.nextElementSibling.classList.toggle('hidden');
                         }}
                         onBlur={e => {
@@ -512,45 +568,106 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                               !e.currentTarget.nextElementSibling.contains(document.activeElement)
                             ) {
                               e.currentTarget.nextElementSibling.classList.add('hidden');
+                              e.currentTarget.setAttribute('aria-expanded', 'false');
                             }
                           }, 100);
                         }}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            e.currentTarget.click();
+
+                            // Focus the first menu item
+                            setTimeout(() => {
+                              const firstMenuItem =
+                                e.currentTarget.nextElementSibling.querySelector(
+                                  '[role="menuitem"]'
+                                );
+                              if (firstMenuItem) firstMenuItem.focus();
+                            }, 10);
+                          }
+                        }}
                       >
-                        <EllipsisHorizontalIcon className="h-5 w-5" />
+                        <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
                       </button>
                       <div
+                        id={`exam-menu-dropdown-${exam.id}`}
                         className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-10 hidden"
                         role="menu"
                         aria-orientation="vertical"
                         aria-labelledby={`exam-menu-${exam.id}`}
-                        tabIndex="-1"
                       >
                         <div className="py-1" role="none">
                           <Link
                             to={`/exams/${exam.id}/edit`}
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-600"
                             role="menuitem"
-                            tabIndex="-1"
+                            tabIndex="0"
+                            aria-label={`${t('common.edit')} ${exam.title}`}
+                            onKeyDown={e => {
+                              if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                e.currentTarget.nextElementSibling?.focus();
+                              } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                e.currentTarget.parentElement.lastElementChild?.focus();
+                              } else if (e.key === 'Escape') {
+                                e.preventDefault();
+                                const button = document.getElementById(`exam-menu-${exam.id}`);
+                                button?.click();
+                                button?.focus();
+                              }
+                            }}
                           >
-                            <PencilSquareIcon className="h-4 w-4 mr-2" />
+                            <PencilSquareIcon className="h-4 w-4 mr-2" aria-hidden="true" />
                             {t('common.edit')}
                           </Link>
                           <button
                             onClick={() => onDuplicate(exam.id)}
-                            className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
+                            className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-600"
                             role="menuitem"
-                            tabIndex="-1"
+                            tabIndex="0"
+                            aria-label={`${t('common.duplicate')} ${exam.title}`}
+                            onKeyDown={e => {
+                              if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                e.currentTarget.nextElementSibling?.focus();
+                              } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                e.currentTarget.previousElementSibling?.focus();
+                              } else if (e.key === 'Escape') {
+                                e.preventDefault();
+                                const button = document.getElementById(`exam-menu-${exam.id}`);
+                                button?.click();
+                                button?.focus();
+                              }
+                            }}
                           >
-                            <DocumentDuplicateIcon className="h-4 w-4 mr-2" />
+                            <DocumentDuplicateIcon className="h-4 w-4 mr-2" aria-hidden="true" />
                             {t('common.duplicate')}
                           </button>
                           <button
                             onClick={() => onDelete(exam.id)}
-                            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150"
+                            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-600"
                             role="menuitem"
-                            tabIndex="-1"
+                            tabIndex="0"
+                            aria-label={`${t('common.delete')} ${exam.title}`}
+                            onKeyDown={e => {
+                              if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                e.currentTarget.parentElement.firstElementChild?.focus();
+                              } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                e.currentTarget.previousElementSibling?.focus();
+                              } else if (e.key === 'Escape') {
+                                e.preventDefault();
+                                const button = document.getElementById(`exam-menu-${exam.id}`);
+                                button?.click();
+                                button?.focus();
+                              }
+                            }}
                           >
-                            <TrashIcon className="h-4 w-4 mr-2" />
+                            <TrashIcon className="h-4 w-4 mr-2" aria-hidden="true" />
                             {t('common.delete')}
                           </button>
                         </div>
@@ -561,8 +678,9 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                   <Link
                     to={`/exams/${exam.id}`}
                     className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                    aria-label={`${t('common.view')} ${exam.title}`}
                   >
-                    <EyeIcon className="h-4 w-4 mr-1" />
+                    <EyeIcon className="h-4 w-4 mr-1" aria-hidden="true" />
                     {t('common.view')}
                   </Link>
                 </div>
@@ -571,7 +689,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
           ))
         ) : (
           // Empty state
-          <div className="p-8 text-center">
+          <div className="p-8 text-center" role="status" aria-live="polite">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -579,6 +697,7 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -589,24 +708,34 @@ const ExamList = ({ exams = [], onDelete, onDuplicate, isLoading = false, onRefr
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
-              {searchTerm || filters.status !== 'all' || filters.subject !== 'all'
+              {searchTerm ||
+              filters.status !== 'all' ||
+              filters.subject !== 'all' ||
+              filters.participantsRange !== 'all'
                 ? t('common.noResultsFound')
                 : t('exams.noExamsYet')}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-              {searchTerm || filters.status !== 'all' || filters.subject !== 'all'
+              {searchTerm ||
+              filters.status !== 'all' ||
+              filters.subject !== 'all' ||
+              filters.participantsRange !== 'all'
                 ? t('common.tryAdjustingFilters')
                 : t('exams.createYourFirstExam')}
             </p>
-            {!searchTerm && filters.status === 'all' && filters.subject === 'all' && (
-              <Link
-                to="/exams/create"
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
-              >
-                <PlusIcon className="h-4 w-4 mr-1" />
-                {t('exams.createExam')}
-              </Link>
-            )}
+            {!searchTerm &&
+              filters.status === 'all' &&
+              filters.subject === 'all' &&
+              filters.participantsRange === 'all' && (
+                <Link
+                  to="/exams/create"
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                  aria-label={t('exams.createNewExam')}
+                >
+                  <PlusIcon className="h-4 w-4 mr-1" aria-hidden="true" />
+                  {t('exams.createExam')}
+                </Link>
+              )}
           </div>
         )}
       </div>

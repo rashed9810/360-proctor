@@ -17,7 +17,15 @@ import { useTheme } from '../../context/ThemeContext';
 const navigation = [
   { name: 'dashboard', href: '/', icon: HomeIcon },
   { name: 'students', href: '/students', icon: UsersIcon },
-  { name: 'exams', href: '/exams', icon: ClipboardDocumentListIcon },
+  {
+    name: 'exams',
+    href: '/exams',
+    icon: ClipboardDocumentListIcon,
+    subItems: [
+      { name: 'examsList', href: '/exams/list' },
+      { name: 'createExam', href: '/exams/create' },
+    ],
+  },
   { name: 'proctor', href: '/proctor', icon: ShieldCheckIcon },
   { name: 'settings', href: '/settings', icon: Cog6ToothIcon },
 ];
@@ -96,32 +104,54 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
               <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                 <nav className="mt-2 px-2 sm:px-3 space-y-1">
                   {navigation.map(item => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setSidebarOpen(false)} // Close sidebar when clicking a link on mobile
-                      className={classNames(
-                        location.pathname === item.href ||
-                          (item.href === '/' && location.pathname === '/') ||
-                          (item.href !== '/' && location.pathname.startsWith(item.href))
-                          ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-4 border-transparent',
-                        'group flex items-center px-2 sm:px-3 py-2 sm:py-3 text-sm font-medium rounded-r-md transition-all duration-200'
-                      )}
-                    >
-                      <item.icon
+                    <div key={item.name}>
+                      <Link
+                        to={item.href}
+                        onClick={() => !item.subItems && setSidebarOpen(false)} // Close sidebar when clicking a link on mobile (except for items with subitems)
                         className={classNames(
                           location.pathname === item.href ||
                             (item.href === '/' && location.pathname === '/') ||
                             (item.href !== '/' && location.pathname.startsWith(item.href))
-                            ? 'text-indigo-600'
-                            : 'text-gray-400 group-hover:text-gray-500',
-                          'mr-2 sm:mr-3 flex-shrink-0 h-5 w-5 sm:h-6 sm:w-6'
+                            ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-4 border-transparent',
+                          'group flex items-center px-2 sm:px-3 py-2 sm:py-3 text-sm font-medium rounded-r-md transition-all duration-200'
                         )}
-                        aria-hidden="true"
-                      />
-                      <span className="truncate">{t(`navigation.${item.name}`)}</span>
-                    </Link>
+                      >
+                        <item.icon
+                          className={classNames(
+                            location.pathname === item.href ||
+                              (item.href === '/' && location.pathname === '/') ||
+                              (item.href !== '/' && location.pathname.startsWith(item.href))
+                              ? 'text-indigo-600'
+                              : 'text-gray-400 group-hover:text-gray-500',
+                            'mr-2 sm:mr-3 flex-shrink-0 h-5 w-5 sm:h-6 sm:w-6'
+                          )}
+                          aria-hidden="true"
+                        />
+                        <span className="truncate">{t(`navigation.${item.name}`)}</span>
+                      </Link>
+
+                      {/* Sub-items */}
+                      {item.subItems && (
+                        <div className="ml-8 mt-1 space-y-1">
+                          {item.subItems.map(subItem => (
+                            <Link
+                              key={subItem.name}
+                              to={subItem.href}
+                              onClick={() => setSidebarOpen(false)}
+                              className={classNames(
+                                location.pathname === subItem.href
+                                  ? 'bg-indigo-50 text-indigo-700'
+                                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                                'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
+                              )}
+                            >
+                              <span className="truncate">{t(`navigation.${subItem.name}`)}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </nav>
               </div>
@@ -182,40 +212,61 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, onExpandChange, i
               )}
             >
               {navigation.map(item => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={classNames(
-                    location.pathname === item.href ||
-                      (item.href === '/' && location.pathname === '/') ||
-                      (item.href !== '/' && location.pathname.startsWith(item.href))
-                      ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-l-4 border-indigo-600'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white border-l-4 border-transparent',
-                    'group flex items-center rounded-r-md transition-all duration-200',
-                    isExpanded
-                      ? 'px-3 py-2.5 text-sm font-medium justify-start'
-                      : 'px-2 py-2.5 justify-center'
-                  )}
-                  title={!isExpanded ? t(`navigation.${item.name}`) : ''}
-                >
-                  <item.icon
+                <div key={item.name}>
+                  <Link
+                    to={item.href}
                     className={classNames(
                       location.pathname === item.href ||
                         (item.href === '/' && location.pathname === '/') ||
                         (item.href !== '/' && location.pathname.startsWith(item.href))
-                        ? 'text-indigo-600'
-                        : 'text-gray-400 group-hover:text-gray-500',
-                      'flex-shrink-0 h-5 w-5 md:h-6 md:w-6',
-                      isExpanded ? 'mr-3' : ''
+                        ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border-l-4 border-indigo-600'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white border-l-4 border-transparent',
+                      'group flex items-center rounded-r-md transition-all duration-200',
+                      isExpanded
+                        ? 'px-3 py-2.5 text-sm font-medium justify-start'
+                        : 'px-2 py-2.5 justify-center'
                     )}
-                    aria-hidden="true"
-                  />
-                  {isExpanded && (
-                    <span className="transition-opacity duration-200 whitespace-nowrap overflow-hidden truncate">
-                      {t(`navigation.${item.name}`)}
-                    </span>
+                    title={!isExpanded ? t(`navigation.${item.name}`) : ''}
+                  >
+                    <item.icon
+                      className={classNames(
+                        location.pathname === item.href ||
+                          (item.href === '/' && location.pathname === '/') ||
+                          (item.href !== '/' && location.pathname.startsWith(item.href))
+                          ? 'text-indigo-600'
+                          : 'text-gray-400 group-hover:text-gray-500',
+                        'flex-shrink-0 h-5 w-5 md:h-6 md:w-6',
+                        isExpanded ? 'mr-3' : ''
+                      )}
+                      aria-hidden="true"
+                    />
+                    {isExpanded && (
+                      <span className="transition-opacity duration-200 whitespace-nowrap overflow-hidden truncate">
+                        {t(`navigation.${item.name}`)}
+                      </span>
+                    )}
+                  </Link>
+
+                  {/* Sub-items */}
+                  {item.subItems && isExpanded && (
+                    <div className="ml-8 mt-1 space-y-1">
+                      {item.subItems.map(subItem => (
+                        <Link
+                          key={subItem.name}
+                          to={subItem.href}
+                          className={classNames(
+                            location.pathname === subItem.href
+                              ? 'bg-indigo-50 dark:bg-indigo-900/10 text-indigo-700 dark:text-indigo-300'
+                              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white',
+                            'group flex items-center px-2 py-1.5 text-sm rounded-md transition-all duration-200'
+                          )}
+                        >
+                          <span className="truncate">{t(`navigation.${subItem.name}`)}</span>
+                        </Link>
+                      ))}
+                    </div>
                   )}
-                </Link>
+                </div>
               ))}
             </nav>
           </div>

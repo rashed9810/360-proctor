@@ -1,21 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
-import mockExamService from '../services/mockExams';
-import ExamList from '../components/exams/ExamList';
+import ExamList from '../../components/exams/ExamList';
+import mockExamService from '../../services/mockExams';
 
-export default function Exams() {
+/**
+ * Exam list page component
+ */
+const ExamListPage = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [exams, setExams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch exams on component mount
   useEffect(() => {
     fetchExams();
   }, []);
 
+  // Fetch exams from API
   const fetchExams = async () => {
     setIsLoading(true);
     try {
@@ -30,11 +32,11 @@ export default function Exams() {
   };
 
   // Handle exam deletion
-  const handleDelete = async id => {
+  const handleDelete = async (id) => {
     if (window.confirm(t('common.confirmDelete'))) {
       try {
         await mockExamService.deleteExam(id);
-        setExams(prevExams => prevExams.filter(exam => exam.id !== id));
+        setExams((prevExams) => prevExams.filter((exam) => exam.id !== id));
         toast.success(t('exams.deleteSuccess'));
       } catch (error) {
         console.error('Error deleting exam:', error);
@@ -44,9 +46,9 @@ export default function Exams() {
   };
 
   // Handle exam duplication
-  const handleDuplicate = async id => {
+  const handleDuplicate = async (id) => {
     try {
-      const examToDuplicate = exams.find(exam => exam.id === id);
+      const examToDuplicate = exams.find((exam) => exam.id === id);
       if (!examToDuplicate) {
         toast.error(t('exams.examNotFound'));
         return;
@@ -55,30 +57,17 @@ export default function Exams() {
       const { id: _, ...examData } = examToDuplicate;
       const duplicatedExam = {
         ...examData,
-        title: `${examData.title || examData.name} (${t('common.copy')})`,
+        title: `${examData.title} (${t('common.copy')})`,
       };
 
       const newExam = await mockExamService.addExam(duplicatedExam);
-      setExams(prevExams => [...prevExams, newExam]);
+      setExams((prevExams) => [...prevExams, newExam]);
       toast.success(t('exams.duplicateSuccess'));
     } catch (error) {
       console.error('Error duplicating exam:', error);
       toast.error(t('exams.duplicateError'));
     }
   };
-
-  if (isLoading && exams.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <ArrowPathIcon className="h-12 w-12 text-gray-400 dark:text-gray-500 animate-spin mx-auto" />
-          <p className="mt-4 text-lg font-medium text-gray-700 dark:text-gray-300">
-            {t('common.loading')}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -91,4 +80,6 @@ export default function Exams() {
       />
     </div>
   );
-}
+};
+
+export default ExamListPage;

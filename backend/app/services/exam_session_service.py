@@ -56,7 +56,7 @@ def end_session(db: Session, *, session_id: int) -> ExamSession:
     if session and not session.is_completed:
         session.is_completed = True
         session.end_time = datetime.utcnow()
-        
+
         # Calculate final trust score based on alerts
         # This is a simplified version, in a real app you would have a more complex algorithm
         alerts = session.alerts if hasattr(session, "alerts") else []
@@ -65,9 +65,32 @@ def end_session(db: Session, *, session_id: int) -> ExamSession:
             session.final_trust_score = max(0, 1.0 - total_impact)
         else:
             session.final_trust_score = 1.0
-        
+
         db.add(session)
         db.commit()
         db.refresh(session)
-    
+
+    return session
+
+
+def update_trust_score(db: Session, *, session_id: int, trust_score: float) -> ExamSession:
+    """
+    Update the trust score for an exam session
+
+    Args:
+        db: Database session
+        session_id: ID of the exam session
+        trust_score: New trust score value (between 0 and 1)
+
+    Returns:
+        Updated ExamSession object
+    """
+    session = get(db, id=session_id)
+    if session:
+        # Ensure trust score is between 0 and 1
+        session.final_trust_score = max(0, min(1, trust_score))
+        db.add(session)
+        db.commit()
+        db.refresh(session)
+
     return session

@@ -109,14 +109,9 @@ export default function Navbar({ onMenuClick, isMobile, isTablet }) {
             <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
           </button>
 
-          {/* Theme toggle with tooltip */}
+          {/* Theme toggle */}
           <div className="relative group">
             <ThemeToggle size={isMobile ? 'sm' : 'md'} />
-            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 hidden group-hover:block pointer-events-none">
-              <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                {t('settings.toggleTheme')}
-              </div>
-            </div>
           </div>
 
           {/* Language switcher with improved styling */}

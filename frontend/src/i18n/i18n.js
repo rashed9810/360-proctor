@@ -11,6 +11,8 @@ import enNotifications from './locales/en/notifications.json';
 import bnNotifications from './locales/bn/notifications.json';
 import enProctoring from './locales/en/proctoring.json';
 import bnProctoring from './locales/bn/proctoring.json';
+import enExams from './locales/en/exams.json';
+import bnExams from './locales/bn/exams.json';
 
 // Define the translations
 const resources = {
@@ -19,12 +21,14 @@ const resources = {
     feedback: enFeedback,
     notifications: enNotifications,
     proctoring: enProctoring,
+    exams: enExams,
   },
   bn: {
     translation: bnTranslation,
     feedback: bnFeedback,
     notifications: bnNotifications,
     proctoring: bnProctoring,
+    exams: bnExams,
   },
 };
 
@@ -52,7 +56,7 @@ i18n.on('languageChanged', lng => {
   document.documentElement.lang = lng;
 
   // Add a class to the body for language-specific styling
-  document.body.className = document.body.className.replace(/lang-\w+/g, '');
+  document.body.className = document.body.className.replace(/lang-\w+/g, '');  
   document.body.classList.add(`lang-${lng}`);
 
   // Set the appropriate font family based on language

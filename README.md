@@ -182,15 +182,34 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Set up environment variables
-cp .env.example .env
-# Edit .env with your database credentials
+# The .env file is already provided with default settings
+# Edit .env with your database credentials if needed
 
-# Run migrations
-alembic upgrade head
+# Initialize the database
+python init_db.py
 
 # Start the development server
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
+
+# Run tests
+python run_tests.py
 ```
+
+#### Backend Features Implemented
+
+- **Authentication System**: JWT-based authentication with user roles (admin, teacher, student)
+- **User Management**: Create, read, update users with different roles
+- **Exam Management**: Create, read, update exams with various settings
+- **Proctoring Infrastructure**: WebSocket-based real-time proctoring
+- **Trust Score Calculation**: Algorithm to calculate trust scores based on violations
+- **Violation Detection**: Detection of tab switching, audio, and other violations
+- **Multilingual Support**: Backend support for English and Bangla
+
+#### Backend Features To Be Implemented
+
+- **Facial Detection**: Will be implemented later with GPU resources
+- **Advanced Analytics**: More comprehensive analytics and reporting
+- **Performance Optimization**: Further optimization for large-scale deployments
 
 ### Frontend Setup
 

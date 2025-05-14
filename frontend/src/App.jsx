@@ -11,6 +11,9 @@ import Register from './pages/auth/Register';
 import Dashboard from './pages/Dashboard';
 import Students from './pages/Students';
 import Exams from './pages/Exams';
+import ExamListPage from './pages/exams/ExamListPage';
+import CreateExam from './pages/exams/CreateExam';
+import ExamDetail from './pages/exams/ExamDetail';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import TestPage from './pages/TestPage';
@@ -71,6 +74,10 @@ function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="students" element={<Students />} />
                 <Route path="exams" element={<Exams />} />
+                <Route path="exams/list" element={<ExamListPage />} />
+                <Route path="exams/create" element={<CreateExam />} />
+                <Route path="exams/:id" element={<ExamDetail />} />
+                <Route path="exams/:id/edit" element={<CreateExam />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="proctor" element={<ProctorDemo />} />
