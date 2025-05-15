@@ -9,6 +9,8 @@ import {
   CheckIcon,
   XMarkIcon,
   UserGroupIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 
 /**
@@ -46,7 +48,7 @@ const StudentAssignment = ({
 
     const lowerCaseSearch = searchTerm.toLowerCase();
     const filtered = students.filter(
-      (student) =>
+      student =>
         student.name.toLowerCase().includes(lowerCaseSearch) ||
         student.email.toLowerCase().includes(lowerCaseSearch) ||
         student.id.toString().includes(lowerCaseSearch) ||
@@ -58,16 +60,14 @@ const StudentAssignment = ({
   }, [searchTerm, students]);
 
   // Handle search input change
-  const handleSearchChange = (e) => {
+  const handleSearchChange = e => {
     setSearchTerm(e.target.value);
   };
 
   // Handle student selection for batch operations
-  const handleStudentSelect = (studentId) => {
-    setSelectedStudents((prev) =>
-      prev.includes(studentId)
-        ? prev.filter((id) => id !== studentId)
-        : [...prev, studentId]
+  const handleStudentSelect = studentId => {
+    setSelectedStudents(prev =>
+      prev.includes(studentId) ? prev.filter(id => id !== studentId) : [...prev, studentId]
     );
   };
 
@@ -79,14 +79,14 @@ const StudentAssignment = ({
 
   // Handle batch unassignment
   const handleBatchUnassign = () => {
-    selectedStudents.forEach((studentId) => onUnassign(studentId));
+    selectedStudents.forEach(studentId => onUnassign(studentId));
     setSelectedStudents([]);
   };
 
   // Handle batch criteria change
-  const handleCriteriaChange = (e) => {
+  const handleCriteriaChange = e => {
     const { name, value } = e.target;
-    setBatchCriteria((prev) => ({
+    setBatchCriteria(prev => ({
       ...prev,
       [name]: value,
     }));
@@ -95,18 +95,16 @@ const StudentAssignment = ({
   // Apply batch criteria
   const applyBatchCriteria = () => {
     const { group, course } = batchCriteria;
-    
+
     if (!group && !course) {
       return;
     }
 
     const matchingStudents = students.filter(
-      (student) =>
-        (group && student.group === group) ||
-        (course && student.course === course)
+      student => (group && student.group === group) || (course && student.course === course)
     );
 
-    setSelectedStudents(matchingStudents.map((student) => student.id));
+    setSelectedStudents(matchingStudents.map(student => student.id));
   };
 
   // Get unique groups and courses for filter dropdowns
@@ -114,8 +112,8 @@ const StudentAssignment = ({
   const uniqueCourses = [...new Set(students.filter(s => s.course).map(s => s.course))];
 
   // Check if a student is assigned
-  const isStudentAssigned = (studentId) => {
-    return assignedStudents.some((student) => student.id === studentId);
+  const isStudentAssigned = studentId => {
+    return assignedStudents.some(student => student.id === studentId);
   };
 
   return (
@@ -187,7 +185,10 @@ const StudentAssignment = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Group filter */}
             <div>
-              <label htmlFor="group" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label
+                htmlFor="group"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
                 {t('exams.group')}
               </label>
               <select
@@ -198,7 +199,7 @@ const StudentAssignment = ({
                 className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white"
               >
                 <option value="">{t('exams.selectGroup')}</option>
-                {uniqueGroups.map((group) => (
+                {uniqueGroups.map(group => (
                   <option key={group} value={group}>
                     {group}
                   </option>
@@ -208,7 +209,10 @@ const StudentAssignment = ({
 
             {/* Course filter */}
             <div>
-              <label htmlFor="course" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label
+                htmlFor="course"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
                 {t('exams.course')}
               </label>
               <select
@@ -219,7 +223,7 @@ const StudentAssignment = ({
                 className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white"
               >
                 <option value="">{t('exams.selectCourse')}</option>
-                {uniqueCourses.map((course) => (
+                {uniqueCourses.map(course => (
                   <option key={course} value={course}>
                     {course}
                   </option>
@@ -245,45 +249,69 @@ const StudentAssignment = ({
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 <div className="flex items-center">
                   <input
                     type="checkbox"
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                    checked={selectedStudents.length > 0 && selectedStudents.length === filteredStudents.length}
+                    checked={
+                      selectedStudents.length > 0 &&
+                      selectedStudents.length === filteredStudents.length
+                    }
                     onChange={() => {
                       if (selectedStudents.length === filteredStudents.length) {
                         setSelectedStudents([]);
                       } else {
-                        setSelectedStudents(filteredStudents.map((student) => student.id));
+                        setSelectedStudents(filteredStudents.map(student => student.id));
                       }
                     }}
                   />
                 </div>
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 {t('exams.studentId')}
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 {t('exams.studentName')}
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 {t('exams.email')}
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 {t('exams.group')}
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 {t('exams.status')}
               </th>
-              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 {t('exams.actions')}
               </th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {filteredStudents.length > 0 ? (
-              filteredStudents.map((student) => {
+              filteredStudents.map(student => {
                 const isAssigned = isStudentAssigned(student.id);
                 const isSelected = selectedStudents.includes(student.id);
 
@@ -351,10 +379,11 @@ const StudentAssignment = ({
               })
             ) : (
               <tr>
-                <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                  {searchTerm
-                    ? t('exams.noStudentsFound')
-                    : t('exams.noStudentsAvailable')}
+                <td
+                  colSpan="7"
+                  className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400"
+                >
+                  {searchTerm ? t('exams.noStudentsFound') : t('exams.noStudentsAvailable')}
                 </td>
               </tr>
             )}
@@ -381,7 +410,10 @@ const StudentAssignment = ({
             </p>
           </div>
           <div>
-            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <nav
+              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+              aria-label="Pagination"
+            >
               <button className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <span className="sr-only">{t('common.previous')}</span>
                 <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />

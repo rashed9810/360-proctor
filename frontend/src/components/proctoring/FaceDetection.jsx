@@ -1,4 +1,4 @@
-keeimport { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import WebcamStream from './WebcamStream';
 import { motion } from 'framer-motion';

@@ -267,13 +267,16 @@ const ExamMonitoring = ({ exam, students = [], violations = [], onRefresh }) => 
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="value"
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, value, percent }) =>
+                          value > 0 ? `${name}: ${value} (${(percent * 100).toFixed(0)}%)` : ''
+                        }
+                        paddingAngle={5}
                       >
                         {statusData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip formatter={(value, name) => [value, name]} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
@@ -295,12 +298,13 @@ const ExamMonitoring = ({ exam, students = [], violations = [], onRefresh }) => 
                         left: 20,
                         bottom: 5,
                       }}
+                      layout="vertical"
                     >
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#3B82F6" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="name" type="category" width={150} />
+                      <Tooltip formatter={value => [value, 'Count']} />
+                      <Bar dataKey="count" fill="#3B82F6" barSize={20} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -430,14 +434,14 @@ const ExamMonitoring = ({ exam, students = [], violations = [], onRefresh }) => 
                         <ShieldCheckIcon className="h-4 w-4 text-gray-400 mr-1" />
                         <span
                           className={`${
-                            (student.trustScore || 0) > 80
+                            (student.trustScore || 0) > 0.8
                               ? 'text-green-500'
-                              : (student.trustScore || 0) > 60
+                              : (student.trustScore || 0) > 0.6
                                 ? 'text-yellow-500'
                                 : 'text-red-500'
                           }`}
                         >
-                          {student.trustScore || 0}%
+                          {Math.round((student.trustScore || 0) * 100)}%
                         </span>
                       </div>
                     </div>
@@ -472,13 +476,16 @@ const ExamMonitoring = ({ exam, students = [], violations = [], onRefresh }) => 
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, value, percent }) =>
+                        value > 0 ? `${name}: ${value} (${(percent * 100).toFixed(0)}%)` : ''
+                      }
+                      paddingAngle={5}
                     >
                       {violationData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip formatter={(value, name) => [value, name]} />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>

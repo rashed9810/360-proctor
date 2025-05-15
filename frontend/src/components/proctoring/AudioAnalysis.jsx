@@ -164,8 +164,7 @@ const enhancedAudioAnalysis = (transcript, previousTranscripts = []) => {
     low: ['what is', 'tell me', 'help', 'not sure', "don't know", 'confused', 'stuck', 'difficult'],
   };
 
-  // Combine all transcripts for context analysis
-  const fullContext = [...previousTranscripts, transcript].join(' ').toLowerCase();
+  // Get current transcript in lowercase for analysis
   const currentTranscript = transcript.toLowerCase();
 
   // Detect keywords by severity
@@ -403,7 +402,8 @@ const AudioAnalysis = ({
   useEffect(() => {
     try {
       // Create audio context
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      // Safari compatibility
+      const AudioContext = window.AudioContext;
       audioContextRef.current = new AudioContext();
 
       // Get microphone access
@@ -589,8 +589,8 @@ const AudioAnalysis = ({
     setManualInput('');
   };
 
-  // Handle key press for manual input
-  const handleKeyPress = e => {
+  // Handle key down for manual input
+  const handleKeyDown = e => {
     if (e.key === 'Enter') {
       handleManualInputSubmit();
     }
@@ -697,7 +697,7 @@ const AudioAnalysis = ({
               type="text"
               value={manualInput}
               onChange={handleManualInputChange}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
               placeholder={t('errors.typeTextHere')}
               className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               aria-label={t('errors.manualTextInput')}
