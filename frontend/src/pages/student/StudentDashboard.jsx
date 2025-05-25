@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { examService } from '../../api';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 import {
   ClipboardDocumentListIcon,
   ClockIcon,
@@ -14,6 +15,13 @@ import {
   ChartBarIcon,
   TrophyIcon,
   BookOpenIcon,
+  StarIcon,
+  ArrowRightIcon,
+  EyeIcon,
+  DocumentTextIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  AcademicCapIcon,
 } from '@heroicons/react/24/outline';
 import PageHeader from '../../components/layout/PageHeader';
 
@@ -215,193 +223,392 @@ const StudentDashboard = () => {
           </div>
         )}
 
-        {/* Statistics Cards */}
+        {/* Enhanced Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ClipboardDocumentListIcon className="h-8 w-8 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {t('student.totalExams', 'Total Exams')}
-                </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {studentStats.totalExams}
-                </p>
+          {/* Total Exams Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="relative group"
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 h-full">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center mb-3">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <ClipboardDocumentListIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <SparklesIcon className="h-4 w-4 text-blue-400 ml-2 animate-pulse" />
+                  </div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                    {t('student.totalExams', 'Total Exams')}
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                    {studentStats.totalExams}
+                  </p>
+                  <div className="flex items-center text-xs text-blue-600 dark:text-blue-400">
+                    <ArrowRightIcon className="h-3 w-3 mr-1" />
+                    {t('student.allTime', 'All time')}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <CheckCircleIcon className="h-8 w-8 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {t('student.completedExams', 'Completed')}
-                </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {studentStats.completedExams}
-                </p>
+          {/* Completed Exams Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="relative group"
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 h-full">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center mb-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                      <CheckCircleIcon className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    </div>
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                    >
+                      <StarIcon className="h-4 w-4 text-green-400 ml-2" />
+                    </motion.div>
+                  </div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                    {t('student.completedExams', 'Completed')}
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                    {studentStats.completedExams}
+                  </p>
+                  <div className="flex items-center text-xs text-green-600 dark:text-green-400">
+                    <CheckCircleIcon className="h-3 w-3 mr-1" />
+                    {t('student.finished', 'Finished')}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <TrophyIcon className="h-8 w-8 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {t('student.averageScore', 'Average Score')}
-                </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {studentStats.averageScore}%
-                </p>
+          {/* Average Score Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="relative group"
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 h-full">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center mb-3">
+                    <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                      <TrophyIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <AcademicCapIcon className="h-4 w-4 text-yellow-400 ml-2" />
+                    </motion.div>
+                  </div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                    {t('student.averageScore', 'Average Score')}
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                    {studentStats.averageScore}%
+                  </p>
+                  <div className="flex items-center text-xs text-yellow-600 dark:text-yellow-400">
+                    <TrophyIcon className="h-3 w-3 mr-1" />
+                    {studentStats.averageScore >= 80
+                      ? t('student.excellent', 'Excellent')
+                      : studentStats.averageScore >= 70
+                        ? t('student.good', 'Good')
+                        : t('student.needsImprovement', 'Needs improvement')}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ChartBarIcon className="h-8 w-8 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {t('student.trustScore', 'Trust Score')}
-                </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {Math.round(studentStats.averageTrustScore * 100)}%
-                </p>
+          {/* Trust Score Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="relative group"
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 h-full">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center mb-3">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                      <ShieldCheckIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <motion.div
+                      animate={{ y: [0, -3, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                      <ChartBarIcon className="h-4 w-4 text-purple-400 ml-2" />
+                    </motion.div>
+                  </div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                    {t('student.trustScore', 'Trust Score')}
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                    {Math.round(studentStats.averageTrustScore * 100)}%
+                  </p>
+                  <div className="flex items-center text-xs text-purple-600 dark:text-purple-400">
+                    <ShieldCheckIcon className="h-3 w-3 mr-1" />
+                    {studentStats.averageTrustScore >= 0.9
+                      ? t('student.highTrust', 'High trust')
+                      : studentStats.averageTrustScore >= 0.7
+                        ? t('student.goodTrust', 'Good trust')
+                        : t('student.lowTrust', 'Needs attention')}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Upcoming Exams */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {t('student.upcomingExams', 'Upcoming Exams')}
-                </h2>
-                <CalendarDaysIcon className="h-5 w-5 text-gray-400" />
+          {/* Enhanced Upcoming Exams */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="relative group"
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-3">
+                      <CalendarDaysIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {t('student.upcomingExams', 'Upcoming Exams')}
+                    </h2>
+                  </div>
+                  <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <SparklesIcon className="h-5 w-5 text-blue-400" />
+                  </motion.div>
+                </div>
+              </div>
+              <div className="p-6">
+                {upcomingExams.length === 0 ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-12"
+                  >
+                    <motion.div
+                      animate={{ y: [0, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <BookOpenIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    </motion.div>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg">
+                      {t('student.noUpcomingExams', 'No upcoming exams scheduled')}
+                    </p>
+                    <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+                      {t('student.checkBackLater', 'Check back later for new exams')}
+                    </p>
+                  </motion.div>
+                ) : (
+                  <div className="space-y-4">
+                    {upcomingExams.map((exam, index) => (
+                      <motion.div
+                        key={exam.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6 + index * 0.1 }}
+                        whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                        className="relative group/exam"
+                      >
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg blur opacity-0 group-hover/exam:opacity-30 transition duration-300"></div>
+                        <div className="relative flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-700 dark:to-gray-600 rounded-lg border border-gray-200 dark:border-gray-600">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <DocumentTextIcon className="h-4 w-4 text-blue-500 mr-2" />
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                                {exam.title}
+                              </h3>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-1">
+                              <ClockIcon className="h-3 w-3 mr-1" />
+                              {exam.startTime.toLocaleDateString()} at{' '}
+                              {exam.startTime.toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </div>
+                            <div className="flex items-center">
+                              <motion.div
+                                animate={{ scale: [1, 1.1, 1] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                              >
+                                <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                              </motion.div>
+                              <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                                {formatTimeUntilExam(exam.startTime)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="ml-4">
+                            {exam.canStart ? (
+                              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Link
+                                  to={`/exams/${exam.id}/take`}
+                                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 text-sm font-medium shadow-lg transition-all duration-200"
+                                >
+                                  <PlayIcon className="w-4 h-4 mr-2" />
+                                  {t('student.startExam', 'Start')}
+                                </Link>
+                              </motion.div>
+                            ) : (
+                              <span className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium">
+                                <ClockIcon className="w-4 h-4 mr-2" />
+                                {t('student.pending', 'Pending')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="p-6">
-              {upcomingExams.length === 0 ? (
-                <div className="text-center py-8">
-                  <BookOpenIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400">
-                    {t('student.noUpcomingExams', 'No upcoming exams scheduled')}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {upcomingExams.map(exam => (
-                    <div
-                      key={exam.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                          {exam.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {exam.startTime.toLocaleDateString()} at{' '}
-                          {exam.startTime.toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </p>
-                        <p className="text-sm text-blue-600 dark:text-blue-400">
-                          {formatTimeUntilExam(exam.startTime)}
-                        </p>
-                      </div>
-                      <div className="ml-4">
-                        {exam.canStart ? (
-                          <Link
-                            to={`/exams/${exam.id}/take`}
-                            className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-                          >
-                            <PlayIcon className="w-4 h-4 mr-2" />
-                            {t('student.startExam', 'Start')}
-                          </Link>
-                        ) : (
-                          <span className="inline-flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm">
-                            <ClockIcon className="w-4 h-4 mr-2" />
-                            {t('student.pending', 'Pending')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          </motion.div>
 
-          {/* Recent Exam Results */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {t('student.recentResults', 'Recent Results')}
-                </h2>
-                <TrophyIcon className="h-5 w-5 text-gray-400" />
+          {/* Enhanced Recent Exam Results */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+            className="relative group"
+          >
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg mr-3">
+                      <TrophyIcon className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {t('student.recentResults', 'Recent Results')}
+                    </h2>
+                  </div>
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  >
+                    <StarIcon className="h-5 w-5 text-yellow-400" />
+                  </motion.div>
+                </div>
+              </div>
+              <div className="p-6">
+                {recentExams.length === 0 ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-12"
+                  >
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <ChartBarIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    </motion.div>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg">
+                      {t('student.noRecentResults', 'No recent exam results')}
+                    </p>
+                    <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+                      {t('student.takeExamToSeeResults', 'Take an exam to see your results here')}
+                    </p>
+                  </motion.div>
+                ) : (
+                  <div className="space-y-4">
+                    {recentExams.map((exam, index) => (
+                      <motion.div
+                        key={exam.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 + index * 0.1 }}
+                        whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                        className="relative group/result"
+                      >
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-lg blur opacity-0 group-hover/result:opacity-30 transition duration-300"></div>
+                        <div className="relative flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-yellow-50 dark:from-gray-700 dark:to-gray-600 rounded-lg border border-gray-200 dark:border-gray-600">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-2">
+                              <TrophyIcon className="h-4 w-4 text-yellow-500 mr-2" />
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                                {exam.title}
+                              </h3>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                              <CheckCircleIcon className="h-3 w-3 mr-1" />
+                              {t('student.completedOn', 'Completed on')}{' '}
+                              {exam.completedAt.toLocaleDateString()}
+                            </div>
+                          </div>
+                          <div className="ml-4 text-right">
+                            <motion.div whileHover={{ scale: 1.1 }} className="mb-2">
+                              <p
+                                className={`text-2xl font-bold ${
+                                  exam.score >= 80
+                                    ? 'text-green-600 dark:text-green-400'
+                                    : exam.score >= 60
+                                      ? 'text-yellow-600 dark:text-yellow-400'
+                                      : 'text-red-600 dark:text-red-400'
+                                }`}
+                              >
+                                {exam.score}%
+                              </p>
+                            </motion.div>
+                            <div className="flex items-center text-sm">
+                              <ShieldCheckIcon className="h-3 w-3 mr-1 text-purple-500" />
+                              <span className="text-gray-500 dark:text-gray-400">
+                                {t('student.trust', 'Trust')}:
+                              </span>
+                              <span className="ml-1 font-medium text-purple-600 dark:text-purple-400">
+                                {Math.round(exam.trustScore * 100)}%
+                              </span>
+                            </div>
+                            <div className="mt-1">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${exam.trustScore * 100}%` }}
+                                transition={{ delay: 0.8 + index * 0.1, duration: 1 }}
+                                className="h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="p-6">
-              {recentExams.length === 0 ? (
-                <div className="text-center py-8">
-                  <ChartBarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400">
-                    {t('student.noRecentResults', 'No recent exam results')}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {recentExams.map(exam => (
-                    <div
-                      key={exam.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                          {exam.title}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('student.completedOn', 'Completed on')}{' '}
-                          {exam.completedAt.toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="ml-4 text-right">
-                        <p
-                          className={`text-lg font-bold ${
-                            exam.score >= 80
-                              ? 'text-green-600'
-                              : exam.score >= 60
-                                ? 'text-yellow-600'
-                                : 'text-red-600'
-                          }`}
-                        >
-                          {exam.score}%
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('student.trust', 'Trust')}: {Math.round(exam.trustScore * 100)}%
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

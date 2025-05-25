@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   UserCircleIcon,
   ShieldCheckIcon,
@@ -14,6 +15,10 @@ import {
   PhotoIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
+  SparklesIcon,
+  StarIcon,
+  CameraIcon,
+  PencilIcon,
 } from '@heroicons/react/24/outline';
 import BackButton from '../../components/common/BackButton';
 import PageHeader from '../../components/layout/PageHeader';
@@ -259,10 +264,18 @@ const AdminProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen bg-gray-50 dark:bg-gray-900"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
+        {/* Enhanced Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
           <BackButton />
           <PageHeader
             title={t('admin.profileManagement', 'Admin Profile Management')}
@@ -271,57 +284,127 @@ const AdminProfile = () => {
               'Manage your administrator profile and system preferences'
             )}
           />
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Navigation */}
-          <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6">
-                {/* Profile Summary */}
-                <div className="text-center mb-6">
-                  <div className="relative inline-block">
-                    <img
-                      src={avatarPreview}
-                      alt="Profile"
-                      className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
-                    />
-                    <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center">
-                      <CheckCircleIcon className="w-3 h-3 text-white" />
+          {/* Enhanced Sidebar Navigation */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="lg:col-span-1"
+          >
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+              <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="p-6">
+                  {/* Enhanced Profile Summary */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-center mb-6"
+                  >
+                    <div className="relative inline-block">
+                      <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 p-0.5">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                          <img
+                            src={avatarPreview}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center"
+                      >
+                        <CheckCircleIcon className="w-3 h-3 text-white" />
+                      </motion.div>
                     </div>
-                  </div>
-                  <h3 className="mt-3 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    {getUserName()}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {user?.role === 'admin'
-                      ? t('admin.systemAdministrator', 'System Administrator')
-                      : user?.role}
-                  </p>
-                </div>
+                    <div className="mt-3 flex items-center justify-center space-x-2">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        {getUserName()}
+                      </h3>
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <SparklesIcon className="h-4 w-4 text-yellow-400" />
+                      </motion.div>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center space-x-1">
+                      <StarIcon className="h-3 w-3 text-blue-400" />
+                      <span>
+                        {user?.role === 'admin'
+                          ? t('admin.systemAdministrator', 'System Administrator')
+                          : user?.role}
+                      </span>
+                    </p>
+                  </motion.div>
 
-                {/* Navigation Tabs */}
+                {/* Enhanced Navigation Tabs */}
                 <nav className="space-y-2">
-                  {tabs.map(tab => {
+                  {tabs.map((tab, index) => {
                     const Icon = tab.icon;
                     return (
-                      <button
+                      <motion.button
                         key={tab.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + index * 0.1 }}
+                        whileHover={{ scale: 1.02, x: 5 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                        className={`relative w-full flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 group ${
                           activeTab === tab.id
-                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                            ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shadow-md'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-sm'
                         }`}
                       >
-                        <Icon className="w-5 h-5 mr-3" />
-                        <div className="text-left">
-                          <div className="font-medium">{tab.name}</div>
+                        {activeTab === tab.id && (
+                          <motion.div
+                            layoutId="activeTabIndicator"
+                            className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full"
+                          />
+                        )}
+                        <div className={`p-1.5 rounded-lg mr-3 ${
+                          activeTab === tab.id
+                            ? 'bg-blue-100 dark:bg-blue-900/30'
+                            : 'bg-gray-100 dark:bg-gray-700 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
+                        }`}>
+                          <Icon className={`w-4 h-4 ${
+                            activeTab === tab.id
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : 'text-gray-500 dark:text-gray-400'
+                          }`} />
+                        </div>
+                        <div className="text-left flex-1">
+                          <div className="font-medium flex items-center">
+                            {tab.name}
+                            {activeTab === tab.id && (
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="ml-2"
+                              >
+                                <SparklesIcon className="h-3 w-3 text-blue-400" />
+                              </motion.div>
+                            )}
+                          </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                             {tab.description}
                           </div>
                         </div>
-                      </button>
+                        {activeTab === tab.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="w-2 h-2 bg-blue-500 rounded-full"
+                          />
+                        )}
+                      </motion.button>
                     );
                   })}
                 </nav>
@@ -329,63 +412,120 @@ const AdminProfile = () => {
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              {/* Overview Tab */}
-              {activeTab === 'overview' && (
-                <div className="p-6">
-                  <div className="mb-6">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                      {t('profile.personalInformation', 'Personal Information')}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {t(
-                        'profile.personalInfoDesc',
-                        'Update your personal details and profile information'
-                      )}
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleProfileUpdate} className="space-y-6">
-                    {/* Avatar Upload */}
-                    <div className="flex items-center space-x-6">
-                      <div className="relative">
-                        <img
-                          src={avatarPreview}
-                          alt="Profile"
-                          className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600"
-                        />
-                        <label
-                          htmlFor="avatar-upload"
-                          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
-                        >
-                          <PhotoIcon className="w-6 h-6 text-white" />
-                        </label>
-                        <input
-                          id="avatar-upload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleAvatarChange}
-                          className="hidden"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {t('profile.profilePhoto', 'Profile Photo')}
-                        </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('profile.photoDesc', 'Upload a professional photo. Max size: 5MB')}
+          {/* Enhanced Main Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="lg:col-span-3"
+          >
+            <div className="relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
+              <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  {/* Overview Tab */}
+                  {activeTab === 'overview' && (
+                    <motion.div
+                      key="overview"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="p-6"
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-6"
+                      >
+                        <div className="flex items-center space-x-3 mb-2">
+                          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                            <UserCircleIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                            {t('profile.personalInformation', 'Personal Information')}
+                          </h2>
+                          <motion.div
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <SparklesIcon className="h-5 w-5 text-yellow-400" />
+                          </motion.div>
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {t(
+                            'profile.personalInfoDesc',
+                            'Update your personal details and profile information'
+                          )}
                         </p>
-                        <button
-                          type="button"
-                          onClick={() => document.getElementById('avatar-upload').click()}
-                          className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      </motion.div>
+
+                      <form onSubmit={handleProfileUpdate} className="space-y-6">
+                        {/* Enhanced Avatar Upload */}
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.1 }}
+                          className="flex items-center space-x-6"
                         >
-                          {t('profile.changePhoto', 'Change Photo')}
-                        </button>
-                      </div>
-                    </div>
+                          <div className="relative group">
+                            <div className="w-28 h-28 rounded-full overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 p-0.5">
+                              <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                                <img
+                                  src={avatarPreview}
+                                  alt="Profile"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </div>
+                            <motion.label
+                              htmlFor="avatar-upload"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
+                            >
+                              <div className="text-center">
+                                <CameraIcon className="w-6 h-6 text-white mx-auto mb-1" />
+                                <span className="text-xs text-white">Change</span>
+                              </div>
+                            </motion.label>
+                            <input
+                              id="avatar-upload"
+                              type="file"
+                              accept="image/*"
+                              onChange={handleAvatarChange}
+                              className="hidden"
+                            />
+                            <motion.div
+                              animate={{ scale: [1, 1.2, 1] }}
+                              transition={{ duration: 2, repeat: Infinity }}
+                              className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center"
+                            >
+                              <CheckCircleIcon className="w-3 h-3 text-white" />
+                            </motion.div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {t('profile.profilePhoto', 'Profile Photo')}
+                              </h3>
+                              <SparklesIcon className="h-4 w-4 text-yellow-400" />
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                              {t('profile.photoDesc', 'Upload a professional photo. Max size: 5MB')}
+                            </p>
+                            <motion.button
+                              type="button"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => document.getElementById('avatar-upload').click()}
+                              className="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors duration-200 space-x-2"
+                            >
+                              <PencilIcon className="h-4 w-4" />
+                              <span>{t('profile.changePhoto', 'Change Photo')}</span>
+                            </motion.button>
+                          </div>
+                        </motion.div>
 
                     {/* Form Fields */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
