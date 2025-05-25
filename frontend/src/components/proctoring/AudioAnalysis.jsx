@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import {
@@ -396,6 +396,39 @@ const AudioAnalysis = ({
     return () => {
       stopRecording();
     };
+  }, [autoStart, i18n.language, language, onSpeechDetected, onSuspiciousSpeech, t]);
+
+  // Monitor microphone volume
+  const monitorVolume = useCallback(() => {
+    if (!analyserRef.current) return;
+
+    const bufferLength = analyserRef.current.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const updateVolume = () => {
+      if (!analyserRef.current) return;
+
+      analyserRef.current.getByteFrequencyData(dataArray);
+
+      // Calculate average volume
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+
+      const avgVolume = sum / bufferLength;
+      const normalizedVolume = avgVolume / 255; // Normalize to 0-1
+
+      setVolume(normalizedVolume);
+
+      // Determine if user is speaking (volume threshold)
+      setIsSpeaking(normalizedVolume > 0.1);
+
+      // Continue monitoring
+      requestAnimationFrame(updateVolume);
+    };
+
+    updateVolume();
   }, []);
 
   // Initialize audio context for volume detection
@@ -448,40 +481,7 @@ const AudioAnalysis = ({
         audioContextRef.current.close();
       }
     };
-  }, []);
-
-  // Monitor microphone volume
-  const monitorVolume = () => {
-    if (!analyserRef.current) return;
-
-    const bufferLength = analyserRef.current.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    const updateVolume = () => {
-      if (!analyserRef.current) return;
-
-      analyserRef.current.getByteFrequencyData(dataArray);
-
-      // Calculate average volume
-      let sum = 0;
-      for (let i = 0; i < bufferLength; i++) {
-        sum += dataArray[i];
-      }
-
-      const avgVolume = sum / bufferLength;
-      const normalizedVolume = avgVolume / 255; // Normalize to 0-1
-
-      setVolume(normalizedVolume);
-
-      // Determine if user is speaking (volume threshold)
-      setIsSpeaking(normalizedVolume > 0.1);
-
-      // Continue monitoring
-      requestAnimationFrame(updateVolume);
-    };
-
-    updateVolume();
-  };
+  }, [monitorVolume, t]);
 
   // Start recording audio
   const startRecording = () => {
