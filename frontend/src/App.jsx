@@ -29,6 +29,7 @@ import LiveProctoring from './pages/proctoring/LiveProctoring';
 
 // Analytics pages
 import AdvancedAnalytics from './pages/analytics/AdvancedAnalytics';
+import EnhancedAnalyticsPage from './pages/analytics/EnhancedAnalyticsPage';
 
 // Student pages
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -81,6 +82,7 @@ const AppRoutes = () => {
 
         {/* Analytics Routes */}
         <Route path="analytics/advanced" element={<AdvancedAnalytics />} />
+        <Route path="analytics/enhanced" element={<EnhancedAnalyticsPage />} />
 
         {/* Student Routes */}
         <Route path="student/dashboard" element={<StudentDashboard />} />

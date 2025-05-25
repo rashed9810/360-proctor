@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import RealTimeNotifications from '../notifications/RealTimeNotifications';
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -77,6 +78,9 @@ export default function Layout() {
           </div>
         </main>
       </div>
+
+      {/* Real-Time Notifications */}
+      <RealTimeNotifications />
     </div>
   );
 }

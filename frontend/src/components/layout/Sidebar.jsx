@@ -8,6 +8,7 @@ import {
   XMarkIcon,
   ChevronRightIcon,
   ShieldCheckIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
@@ -24,6 +25,15 @@ const navigation = [
     subItems: [
       { name: 'examsList', href: '/exams/list' },
       { name: 'createExam', href: '/exams/create' },
+    ],
+  },
+  {
+    name: 'analytics',
+    href: '/analytics',
+    icon: ChartBarIcon,
+    subItems: [
+      { name: 'advancedAnalytics', href: '/analytics/advanced' },
+      { name: 'enhancedAnalytics', href: '/analytics/enhanced' },
     ],
   },
   { name: 'proctor', href: '/proctor', icon: ShieldCheckIcon },
