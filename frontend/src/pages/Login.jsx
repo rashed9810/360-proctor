@@ -1,38 +1,38 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  
+
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  const handleChange = (e) => {
+
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
   };
-  
-  const handleSubmit = async (e) => {
+
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    
+
     try {
       const { email, password } = formData;
       const result = await login(email, password);
-      
+
       if (result.success) {
         navigate('/dashboard');
       } else {
@@ -45,7 +45,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -53,17 +53,11 @@ const Login = () => {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             {t('loginTitle')}
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {t('loginSubtitle')}
-          </p>
+          <p className="mt-2 text-center text-sm text-gray-600">{t('loginSubtitle')}</p>
         </div>
-        
-        {error && (
-          <div className="alert alert-danger">
-            {error}
-          </div>
-        )}
-        
+
+        {error && <div className="alert alert-danger">{error}</div>}
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -99,7 +93,7 @@ const Login = () => {
               />
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="text-sm">
               <Link
@@ -110,7 +104,7 @@ const Login = () => {
               </Link>
             </div>
           </div>
-          
+
           <div>
             <button
               type="submit"
@@ -160,14 +154,11 @@ const Login = () => {
               {isLoading ? t('loading') : t('signIn')}
             </button>
           </div>
-          
+
           <div className="text-center">
             <p className="text-sm text-gray-600">
               {t('dontHaveAccount')}{' '}
-              <Link
-                to="/register"
-                className="font-medium text-primary-600 hover:text-primary-500"
-              >
+              <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
                 {t('signUp')}
               </Link>
             </p>

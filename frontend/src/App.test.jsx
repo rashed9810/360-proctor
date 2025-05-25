@@ -6,7 +6,7 @@ import App from './App';
 // Mock the i18n module
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key) => key,
+    t: key => key,
     i18n: {
       changeLanguage: vi.fn(),
       language: 'en',
@@ -15,7 +15,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 // Mock the AuthContext
-vi.mock('./context/AuthContext', () => ({
+vi.mock('./hooks/useAuth', () => ({
   AuthProvider: ({ children }) => children,
   useAuth: () => ({
     user: null,
@@ -31,7 +31,7 @@ describe('App', () => {
         <App />
       </BrowserRouter>
     );
-    
+
     // Check if the language switcher is rendered
     expect(screen.getByText(/Language/i)).toBeInTheDocument();
   });

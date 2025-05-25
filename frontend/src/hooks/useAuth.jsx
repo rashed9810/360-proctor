@@ -85,6 +85,21 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     changePassword,
+
+    // Utility methods
+    isAuthenticated: !!user,
+    token: user ? 'mock-token' : null, // Mock token for WebSocket
+    getUserRole: () => user?.role || null,
+    getUserName: () => user?.full_name || user?.name || 'User',
+    getUserEmail: () => user?.email || '',
+
+    // Permission methods
+    hasRole: role => user?.role === role,
+    isAdmin: () => user?.role === 'admin',
+    isTeacher: () => user?.role === 'teacher',
+    isStudent: () => user?.role === 'student',
+    canManageExams: () => user?.role === 'admin' || user?.role === 'teacher',
+    canManageUsers: () => user?.role === 'admin',
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

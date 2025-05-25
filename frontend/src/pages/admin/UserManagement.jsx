@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { userService } from '../../api';
 import toast from 'react-hot-toast';
 import {
@@ -113,9 +113,10 @@ const UserManagement = () => {
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(user =>
-        user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        user =>
+          user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -137,7 +138,7 @@ const UserManagement = () => {
   /**
    * Handle user deletion
    */
-  const handleDeleteUser = async (userId) => {
+  const handleDeleteUser = async userId => {
     try {
       const response = await userService.deleteUser(userId);
 
@@ -165,9 +166,9 @@ const UserManagement = () => {
       const response = await userService.setUserActiveStatus(userId, newStatus);
 
       if (response.success) {
-        setUsers(prev => prev.map(user =>
-          user.id === userId ? { ...user, is_active: newStatus } : user
-        ));
+        setUsers(prev =>
+          prev.map(user => (user.id === userId ? { ...user, is_active: newStatus } : user))
+        );
         toast.success(response.message);
         fetchUserStats(); // Refresh stats
       } else {
@@ -187,9 +188,9 @@ const UserManagement = () => {
       const response = await userService.changeUserRole(userId, newRole);
 
       if (response.success) {
-        setUsers(prev => prev.map(user =>
-          user.id === userId ? { ...user, role: newRole } : user
-        ));
+        setUsers(prev =>
+          prev.map(user => (user.id === userId ? { ...user, role: newRole } : user))
+        );
         toast.success(response.message);
         fetchUserStats(); // Refresh stats
       } else {
@@ -216,9 +217,7 @@ const UserManagement = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             {t('common.accessDenied')}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            {t('common.insufficientPermissions')}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">{t('common.insufficientPermissions')}</p>
         </div>
       </div>
     );
@@ -292,7 +291,9 @@ const UserManagement = () => {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <div className="h-8 w-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                  <span className="text-green-600 dark:text-green-400 font-semibold text-sm">T</span>
+                  <span className="text-green-600 dark:text-green-400 font-semibold text-sm">
+                    T
+                  </span>
                 </div>
               </div>
               <div className="ml-4">
@@ -336,7 +337,7 @@ const UserManagement = () => {
                     type="text"
                     placeholder={t('common.searchUsers', 'Search users...')}
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                     className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 w-full sm:w-64"
                   />
                 </div>
@@ -344,7 +345,7 @@ const UserManagement = () => {
                 {/* Role Filter */}
                 <select
                   value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
+                  onChange={e => setSelectedRole(e.target.value)}
                   className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
                 >
                   <option value="all">{t('common.allRoles', 'All Roles')}</option>
@@ -356,7 +357,7 @@ const UserManagement = () => {
                 {/* Status Filter */}
                 <select
                   value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  onChange={e => setSelectedStatus(e.target.value)}
                   className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
                 >
                   <option value="all">{t('common.allStatuses', 'All Statuses')}</option>
@@ -381,7 +382,9 @@ const UserManagement = () => {
             {isLoading ? (
               <div className="p-12 text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-500 dark:text-gray-400">{t('common.loading', 'Loading...')}</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {t('common.loading', 'Loading...')}
+                </p>
               </div>
             ) : error ? (
               <div className="p-12 text-center">
@@ -431,7 +434,7 @@ const UserManagement = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {currentUsers.map((user) => (
+                  {currentUsers.map(user => (
                     <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -455,7 +458,7 @@ const UserManagement = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <select
                           value={user.role}
-                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                          onChange={e => handleRoleChange(user.id, e.target.value)}
                           className="text-sm border-0 bg-transparent focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
                         >
                           <option value="student">{t('users.student', 'Student')}</option>
@@ -545,7 +548,6 @@ const UserManagement = () => {
               </div>
             </div>
           )}
-
         </div>
 
         {/* Delete Confirmation Modal */}
@@ -559,7 +561,10 @@ const UserManagement = () => {
                 </h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {t('users.deleteWarning', 'Are you sure you want to delete this user? This action cannot be undone.')}
+                {t(
+                  'users.deleteWarning',
+                  'Are you sure you want to delete this user? This action cannot be undone.'
+                )}
               </p>
               <div className="flex justify-end space-x-3">
                 <button
@@ -581,7 +586,6 @@ const UserManagement = () => {
             </div>
           </div>
         )}
-        </div>
       </div>
     </div>
   );

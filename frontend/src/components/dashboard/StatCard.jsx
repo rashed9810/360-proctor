@@ -8,8 +8,8 @@ import {
   ArrowPathIcon,
   ChartBarIcon,
   SparklesIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
 } from '@heroicons/react/24/outline';
 import { Card } from '../ui/Card';
 import { LoadingSpinner } from '../ui/Loading';
@@ -246,78 +246,81 @@ const StatCard = ({
       </div>
 
       {/* Main content */}
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className={cn('text-sm font-medium mb-2', colorClasses.text)}>{title}</p>
-          <motion.div
-            initial={animate ? { scale: 0.8, opacity: 0 } : {}}
-            animate={animate ? { scale: 1, opacity: 1 } : {}}
-            transition={{ delay: 0.1 }}
-            className="flex items-baseline space-x-2"
-          >
-            {isLoading ? (
-              <LoadingSpinner size="md" color={color} />
-            ) : (
-              <span className={cn('text-3xl font-bold', colorClasses.value)}>{value}</span>
-            )}
-          </motion.div>
-
-          {/* Trend indicator */}
-          {trend && !isLoading && (
+      <div className="relative z-10 p-6">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <p className={cn('text-sm font-medium mb-2', colorClasses.text)}>{title}</p>
             <motion.div
-              initial={animate ? { opacity: 0, x: -10 } : {}}
-              animate={animate ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.3 }}
-              className="flex items-center mt-3 space-x-1"
+              initial={animate ? { scale: 0.8, opacity: 0 } : {}}
+              animate={animate ? { scale: 1, opacity: 1 } : {}}
+              transition={{ delay: 0.1 }}
+              className="flex items-baseline space-x-2"
             >
-              <div
-                className={cn(
-                  'flex items-center px-2 py-1 rounded-full text-xs font-medium',
-                  trend > 0
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                )}
-              >
-                {trend > 0 ? (
-                  <TrendingUpIcon className="h-3 w-3 mr-1" />
-                ) : (
-                  <TrendingDownIcon className="h-3 w-3 mr-1" />
-                )}
-                {Math.abs(trend)}%
-              </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400">{t('fromLastMonth')}</span>
+              {isLoading ? (
+                <LoadingSpinner size="md" color={color} />
+              ) : (
+                <span className={cn('text-3xl font-bold', colorClasses.value)}>{value}</span>
+              )}
             </motion.div>
-          )}
 
-          {/* Last updated */}
-          {lastUpdated && fetchData && !isLoading && (
-            <p className="text-xs text-gray-400 mt-2">
-              {t('lastUpdated')}: {lastUpdated.toLocaleTimeString()}
-            </p>
-          )}
-        </div>
-
-        {/* Icon */}
-        <motion.div
-          initial={animate ? { scale: 0, rotate: -180 } : {}}
-          animate={animate ? { scale: 1, rotate: 0 } : {}}
-          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-          className={cn(
-            'flex-shrink-0 p-3 rounded-2xl transition-all duration-300',
-            gradient
-              ? 'bg-white/20 dark:bg-black/20'
-              : `bg-gradient-to-br ${colorClasses.gradient}`,
-            'group-hover:scale-110 group-hover:rotate-3'
-          )}
-        >
-          <Icon
-            className={cn(
-              'h-6 w-6 transition-colors duration-300',
-              gradient ? 'text-white' : 'text-white'
+            {/* Trend indicator */}
+            {trend && !isLoading && (
+              <motion.div
+                initial={animate ? { opacity: 0, x: -10 } : {}}
+                animate={animate ? { opacity: 1, x: 0 } : {}}
+                transition={{ delay: 0.3 }}
+                className="flex items-center mt-3 space-x-1"
+              >
+                <div
+                  className={cn(
+                    'flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                    trend > 0
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                  )}
+                >
+                  {trend > 0 ? (
+                    <ArrowTrendingUpIcon className="h-3 w-3 mr-1" />
+                  ) : (
+                    <ArrowTrendingDownIcon className="h-3 w-3 mr-1" />
+                  )}
+                  {Math.abs(trend)}%
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {t('fromLastMonth')}
+                </span>
+              </motion.div>
             )}
-          />
-        </motion.div>
-      </div>
+
+            {/* Last updated */}
+            {lastUpdated && fetchData && !isLoading && (
+              <p className="text-xs text-gray-400 mt-2">
+                {t('lastUpdated')}: {lastUpdated.toLocaleTimeString()}
+              </p>
+            )}
+          </div>
+
+          {/* Icon */}
+          <motion.div
+            initial={animate ? { scale: 0, rotate: -180 } : {}}
+            animate={animate ? { scale: 1, rotate: 0 } : {}}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+            className={cn(
+              'flex-shrink-0 p-3 rounded-2xl transition-all duration-300',
+              gradient
+                ? 'bg-white/20 dark:bg-black/20'
+                : `bg-gradient-to-br ${colorClasses.gradient}`,
+              'group-hover:scale-110 group-hover:rotate-3'
+            )}
+          >
+            <Icon
+              className={cn(
+                'h-6 w-6 transition-colors duration-300',
+                gradient ? 'text-white' : 'text-white'
+              )}
+            />
+          </motion.div>
+        </div>
 
         {/* Link button */}
         {linkTo && (
@@ -357,7 +360,7 @@ const StatCard = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -369,7 +372,12 @@ const StatCard = ({
               >
                 <span className="sr-only">{t('close')}</span>
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>

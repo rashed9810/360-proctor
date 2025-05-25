@@ -38,7 +38,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    debug: process.env.NODE_ENV === 'development',
+    debug: import.meta.env.MODE === 'development',
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
@@ -56,7 +56,7 @@ i18n.on('languageChanged', lng => {
   document.documentElement.lang = lng;
 
   // Add a class to the body for language-specific styling
-  document.body.className = document.body.className.replace(/lang-\w+/g, '');  
+  document.body.className = document.body.className.replace(/lang-\w+/g, '');
   document.body.classList.add(`lang-${lng}`);
 
   // Set the appropriate font family based on language

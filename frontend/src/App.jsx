@@ -33,6 +33,7 @@ import AdvancedAnalytics from './pages/analytics/AdvancedAnalytics';
 // Student pages
 import StudentDashboard from './pages/student/StudentDashboard';
 
+// Private Route Component - moved inside the providers
 const PrivateRoute = () => {
   const { user, loading } = useAuth();
 
@@ -49,6 +50,43 @@ const PrivateRoute = () => {
   }
 
   return <Layout />;
+};
+
+// App Routes Component - contains all routes and uses auth context
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/test" element={<TestPage />} />
+      <Route path="/" element={<PrivateRoute />}>
+        <Route index element={<Dashboard />} />
+        <Route path="students" element={<Students />} />
+        <Route path="exams" element={<Exams />} />
+        <Route path="exams/list" element={<ExamListPage />} />
+        <Route path="exams/create" element={<CreateExam />} />
+        <Route path="exams/:id" element={<ExamDetail />} />
+        <Route path="exams/:id/edit" element={<CreateExam />} />
+        <Route path="exams/:examId/students" element={<EnhancedStudentAssignmentPage />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="proctor" element={<ProctorDemo />} />
+
+        {/* Admin Routes */}
+        <Route path="admin/profile" element={<AdminProfile />} />
+        <Route path="admin/users" element={<UserManagement />} />
+
+        {/* Proctoring Routes */}
+        <Route path="proctoring/live/:examId" element={<LiveProctoring />} />
+
+        {/* Analytics Routes */}
+        <Route path="analytics/advanced" element={<AdvancedAnalytics />} />
+
+        {/* Student Routes */}
+        <Route path="student/dashboard" element={<StudentDashboard />} />
+      </Route>
+    </Routes>
+  );
 };
 
 function App() {
@@ -80,37 +118,7 @@ function App() {
                 },
               }}
             />
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/test" element={<TestPage />} />
-              <Route path="/" element={<PrivateRoute />}>
-                <Route index element={<Dashboard />} />
-                <Route path="students" element={<Students />} />
-                <Route path="exams" element={<Exams />} />
-                <Route path="exams/list" element={<ExamListPage />} />
-                <Route path="exams/create" element={<CreateExam />} />
-                <Route path="exams/:id" element={<ExamDetail />} />
-                <Route path="exams/:id/edit" element={<CreateExam />} />
-                <Route path="exams/:examId/students" element={<EnhancedStudentAssignmentPage />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="proctor" element={<ProctorDemo />} />
-
-                {/* Admin Routes */}
-                <Route path="admin/profile" element={<AdminProfile />} />
-                <Route path="admin/users" element={<UserManagement />} />
-
-                {/* Proctoring Routes */}
-                <Route path="proctoring/live/:examId" element={<LiveProctoring />} />
-
-                {/* Analytics Routes */}
-                <Route path="analytics/advanced" element={<AdvancedAnalytics />} />
-
-                {/* Student Routes */}
-                <Route path="student/dashboard" element={<StudentDashboard />} />
-              </Route>
-            </Routes>
+            <AppRoutes />
           </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
 import ExamList from '../../components/exams/ExamList';
 import { examService } from '../../api';

@@ -22,7 +22,7 @@ export const useWebSocket = (endpoint, options = {}) => {
   const listenerRemoverRef = useRef(null);
 
   // Check if we're in development mode and should use mock data
-  const isMockWebSocket = mockData && process.env.NODE_ENV === 'development';
+  const isMockWebSocket = mockData && import.meta.env.MODE === 'development';
 
   // Connect to WebSocket
   const connect = useCallback(() => {

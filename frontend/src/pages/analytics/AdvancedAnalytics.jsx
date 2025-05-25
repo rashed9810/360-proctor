@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { analyticsService } from '../../api';
 import toast from 'react-hot-toast';
 
@@ -32,8 +32,8 @@ import {
 // Icons
 import {
   ChartBarIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
   EyeIcon,
   ShieldExclamationIcon,
   UserGroupIcon,
@@ -373,9 +373,9 @@ const AdvancedAnalytics = () => {
                   </p>
                   <div className="flex items-center mt-1">
                     {analyticsData.overview.trends.exams > 0 ? (
-                      <TrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
+                      <ArrowTrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
                     ) : (
-                      <TrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
+                      <ArrowTrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
                     )}
                     <span
                       className={`text-sm ${
@@ -405,9 +405,9 @@ const AdvancedAnalytics = () => {
                   </p>
                   <div className="flex items-center mt-1">
                     {analyticsData.overview.trends.students > 0 ? (
-                      <TrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
+                      <ArrowTrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
                     ) : (
-                      <TrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
+                      <ArrowTrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
                     )}
                     <span
                       className={`text-sm ${
@@ -439,9 +439,9 @@ const AdvancedAnalytics = () => {
                   </p>
                   <div className="flex items-center mt-1">
                     {analyticsData.overview.trends.violations > 0 ? (
-                      <TrendingUpIcon className="h-4 w-4 text-red-500 mr-1" />
+                      <ArrowTrendingUpIcon className="h-4 w-4 text-red-500 mr-1" />
                     ) : (
-                      <TrendingDownIcon className="h-4 w-4 text-green-500 mr-1" />
+                      <ArrowTrendingDownIcon className="h-4 w-4 text-green-500 mr-1" />
                     )}
                     <span
                       className={`text-sm ${
@@ -473,9 +473,9 @@ const AdvancedAnalytics = () => {
                   </p>
                   <div className="flex items-center mt-1">
                     {analyticsData.overview.trends.trustScore > 0 ? (
-                      <TrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
+                      <ArrowTrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
                     ) : (
-                      <TrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
+                      <ArrowTrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
                     )}
                     <span
                       className={`text-sm ${

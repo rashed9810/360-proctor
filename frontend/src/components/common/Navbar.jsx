@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 
 const Navbar = () => {
   const { t } = useTranslation();
@@ -20,11 +20,9 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-primary-600">
-                {t('appName')}
-              </span>
+              <span className="text-xl font-bold text-primary-600">{t('appName')}</span>
             </Link>
-            
+
             {isAuthenticated && (
               <div className="hidden md:ml-6 md:flex md:space-x-4">
                 <Link
@@ -50,17 +48,12 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          
+
           <div className="hidden md:flex md:items-center">
             {isAuthenticated ? (
               <div className="flex items-center">
-                <span className="text-sm font-medium text-gray-700 mr-4">
-                  {user?.full_name}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="btn btn-outline text-sm"
-                >
+                <span className="text-sm font-medium text-gray-700 mr-4">{user?.full_name}</span>
+                <button onClick={handleLogout} className="btn btn-outline text-sm">
                   {t('logout')}
                 </button>
               </div>
@@ -75,7 +68,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -108,7 +101,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden">
@@ -140,7 +133,7 @@ const Navbar = () => {
                 )}
               </>
             )}
-            
+
             {isAuthenticated ? (
               <button
                 onClick={() => {

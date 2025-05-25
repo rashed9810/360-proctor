@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { examService } from '../../api';
 import toast from 'react-hot-toast';
 import {
@@ -24,7 +24,7 @@ import PageHeader from '../../components/layout/PageHeader';
 const StudentDashboard = () => {
   const { t } = useTranslation(['student', 'common', 'exams']);
   const { user, getUserName } = useAuth();
-  
+
   // State management
   const [upcomingExams, setUpcomingExams] = useState([]);
   const [recentExams, setRecentExams] = useState([]);
@@ -52,18 +52,18 @@ const StudentDashboard = () => {
 
       // Fetch available exams for student
       const examsResponse = await examService.getAllExams({ limit: 100 });
-      
+
       if (examsResponse.success) {
         const exams = examsResponse.data;
-        
+
         // Process upcoming exams
         const upcoming = getUpcomingExams(exams);
         setUpcomingExams(upcoming);
-        
+
         // Process recent exams (completed)
         const recent = getRecentExams(exams);
         setRecentExams(recent);
-        
+
         // Calculate student statistics
         const stats = calculateStudentStats(exams);
         setStudentStats(stats);
@@ -83,9 +83,9 @@ const StudentDashboard = () => {
   /**
    * Get upcoming exams for student
    */
-  const getUpcomingExams = (exams) => {
+  const getUpcomingExams = exams => {
     const now = new Date();
-    
+
     return exams
       .filter(exam => {
         const startTime = new Date(exam.start_time);
@@ -97,7 +97,7 @@ const StudentDashboard = () => {
         const startTime = new Date(exam.start_time);
         const timeUntilExam = startTime - now;
         const daysUntil = Math.ceil(timeUntilExam / (1000 * 60 * 60 * 24));
-        
+
         return {
           id: exam.id,
           title: exam.title,
@@ -112,9 +112,9 @@ const StudentDashboard = () => {
   /**
    * Get recent completed exams
    */
-  const getRecentExams = (exams) => {
+  const getRecentExams = exams => {
     const now = new Date();
-    
+
     return exams
       .filter(exam => {
         const endTime = new Date(exam.end_time);
@@ -135,14 +135,15 @@ const StudentDashboard = () => {
   /**
    * Calculate student statistics
    */
-  const calculateStudentStats = (exams) => {
+  const calculateStudentStats = exams => {
     const now = new Date();
     const totalExams = exams.length;
-    const completedExams = exams.filter(exam => 
-      new Date(exam.end_time) < now && exam.status === 'completed'
+    const completedExams = exams.filter(
+      exam => new Date(exam.end_time) < now && exam.status === 'completed'
     ).length;
-    const upcomingExams = exams.filter(exam => 
-      new Date(exam.start_time) > now && (exam.status === 'published' || exam.status === 'active')
+    const upcomingExams = exams.filter(
+      exam =>
+        new Date(exam.start_time) > now && (exam.status === 'published' || exam.status === 'active')
     ).length;
 
     // TODO: Calculate from actual student results
@@ -161,16 +162,16 @@ const StudentDashboard = () => {
   /**
    * Format time until exam
    */
-  const formatTimeUntilExam = (startTime) => {
+  const formatTimeUntilExam = startTime => {
     const now = new Date();
     const timeUntil = startTime - now;
-    
+
     if (timeUntil <= 0) return t('student.examStarted', 'Exam Started');
-    
+
     const days = Math.floor(timeUntil / (1000 * 60 * 60 * 24));
     const hours = Math.floor((timeUntil % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((timeUntil % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (days > 0) return t('student.daysUntil', '{{days}} days', { days });
     if (hours > 0) return t('student.hoursUntil', '{{hours}}h {{minutes}}m', { hours, minutes });
     return t('student.minutesUntil', '{{minutes}} minutes', { minutes });
@@ -302,14 +303,21 @@ const StudentDashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {upcomingExams.map((exam) => (
-                    <div key={exam.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  {upcomingExams.map(exam => (
+                    <div
+                      key={exam.id}
+                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                    >
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-900 dark:text-gray-100">
                           {exam.title}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {exam.startTime.toLocaleDateString()} at {exam.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {exam.startTime.toLocaleDateString()} at{' '}
+                          {exam.startTime.toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
                         </p>
                         <p className="text-sm text-blue-600 dark:text-blue-400">
                           {formatTimeUntilExam(exam.startTime)}
@@ -358,21 +366,30 @@ const StudentDashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {recentExams.map((exam) => (
-                    <div key={exam.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  {recentExams.map(exam => (
+                    <div
+                      key={exam.id}
+                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                    >
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-900 dark:text-gray-100">
                           {exam.title}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t('student.completedOn', 'Completed on')} {exam.completedAt.toLocaleDateString()}
+                          {t('student.completedOn', 'Completed on')}{' '}
+                          {exam.completedAt.toLocaleDateString()}
                         </p>
                       </div>
                       <div className="ml-4 text-right">
-                        <p className={`text-lg font-bold ${
-                          exam.score >= 80 ? 'text-green-600' : 
-                          exam.score >= 60 ? 'text-yellow-600' : 'text-red-600'
-                        }`}>
+                        <p
+                          className={`text-lg font-bold ${
+                            exam.score >= 80
+                              ? 'text-green-600'
+                              : exam.score >= 60
+                                ? 'text-yellow-600'
+                                : 'text-red-600'
+                          }`}
+                        >
                           {exam.score}%
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import websocketService from '../services/websocket';
 import toast from 'react-hot-toast';
 
@@ -55,7 +55,10 @@ export const WebSocketProvider = ({ children }) => {
     const unsubscribeNotification = websocketService.on('notification', handleNotification);
     const unsubscribeViolation = websocketService.on('violation', handleViolation);
     const unsubscribeExamUpdate = websocketService.on('exam_update', handleExamUpdate);
-    const unsubscribeMaxReconnect = websocketService.on('max_reconnect_attempts', handleMaxReconnect);
+    const unsubscribeMaxReconnect = websocketService.on(
+      'max_reconnect_attempts',
+      handleMaxReconnect
+    );
 
     // Cleanup function
     return () => {
@@ -81,7 +84,7 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Handle WebSocket connection
    */
-  const handleConnected = useCallback((data) => {
+  const handleConnected = useCallback(data => {
     setIsConnected(true);
     setConnectionStatus('connected');
     toast.success('Connected to real-time updates', {
@@ -93,10 +96,10 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Handle WebSocket disconnection
    */
-  const handleDisconnected = useCallback((data) => {
+  const handleDisconnected = useCallback(data => {
     setIsConnected(false);
     setConnectionStatus('disconnected');
-    
+
     if (data.code !== 1000) {
       toast.error('Connection lost. Attempting to reconnect...', {
         duration: 3000,
@@ -108,7 +111,7 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Handle WebSocket errors
    */
-  const handleError = useCallback((data) => {
+  const handleError = useCallback(data => {
     console.error('WebSocket error:', data.error);
     setConnectionStatus('error');
     toast.error('Connection error occurred', {
@@ -120,9 +123,9 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Handle incoming notifications
    */
-  const handleNotification = useCallback((notification) => {
+  const handleNotification = useCallback(notification => {
     setNotifications(prev => [notification, ...prev.slice(0, 49)]); // Keep last 50
-    
+
     // Show toast notification
     toast(notification.message, {
       icon: getNotificationIcon(notification.type),
@@ -134,9 +137,9 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Handle violation alerts
    */
-  const handleViolation = useCallback((violation) => {
+  const handleViolation = useCallback(violation => {
     setViolations(prev => [violation, ...prev.slice(0, 99)]); // Keep last 100
-    
+
     // Show urgent toast for violations
     toast.error(`Violation detected: ${violation.description}`, {
       duration: 6000,
@@ -147,9 +150,9 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Handle exam updates
    */
-  const handleExamUpdate = useCallback((update) => {
+  const handleExamUpdate = useCallback(update => {
     setExamUpdates(prev => [update, ...prev.slice(0, 49)]); // Keep last 50
-    
+
     // Show toast for important exam updates
     if (update.type === 'status_change') {
       toast(update.message, {
@@ -163,7 +166,7 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Handle max reconnection attempts reached
    */
-  const handleMaxReconnect = useCallback((data) => {
+  const handleMaxReconnect = useCallback(data => {
     setConnectionStatus('failed');
     toast.error('Unable to establish connection. Please refresh the page.', {
       duration: 0, // Don't auto-dismiss
@@ -174,15 +177,22 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Get notification icon based on type
    */
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = type => {
     switch (type) {
-      case 'success': return '✅';
-      case 'warning': return '⚠️';
-      case 'error': return '❌';
-      case 'info': return 'ℹ️';
-      case 'exam': return '📋';
-      case 'violation': return '🚨';
-      default: return '🔔';
+      case 'success':
+        return '✅';
+      case 'warning':
+        return '⚠️';
+      case 'error':
+        return '❌';
+      case 'info':
+        return 'ℹ️';
+      case 'exam':
+        return '📋';
+      case 'violation':
+        return '🚨';
+      default:
+        return '🔔';
     }
   };
 
@@ -203,28 +213,28 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Join a room for targeted messages
    */
-  const joinRoom = useCallback((roomId) => {
+  const joinRoom = useCallback(roomId => {
     websocketService.joinRoom(roomId);
   }, []);
 
   /**
    * Leave a room
    */
-  const leaveRoom = useCallback((roomId) => {
+  const leaveRoom = useCallback(roomId => {
     websocketService.leaveRoom(roomId);
   }, []);
 
   /**
    * Subscribe to exam updates
    */
-  const subscribeToExam = useCallback((examId) => {
+  const subscribeToExam = useCallback(examId => {
     websocketService.subscribeToExam(examId);
   }, []);
 
   /**
    * Unsubscribe from exam updates
    */
-  const unsubscribeFromExam = useCallback((examId) => {
+  const unsubscribeFromExam = useCallback(examId => {
     websocketService.unsubscribeFromExam(examId);
   }, []);
 
@@ -259,12 +269,10 @@ export const WebSocketProvider = ({ children }) => {
   /**
    * Mark notification as read
    */
-  const markNotificationAsRead = useCallback((notificationId) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === notificationId 
-          ? { ...notification, read: true }
-          : notification
+  const markNotificationAsRead = useCallback(notificationId => {
+    setNotifications(prev =>
+      prev.map(notification =>
+        notification.id === notificationId ? { ...notification, read: true } : notification
       )
     );
   }, []);
@@ -288,12 +296,12 @@ export const WebSocketProvider = ({ children }) => {
     // Connection state
     isConnected,
     connectionStatus,
-    
+
     // Data
     notifications,
     violations,
     examUpdates,
-    
+
     // Actions
     sendMessage,
     subscribe,
@@ -302,7 +310,7 @@ export const WebSocketProvider = ({ children }) => {
     subscribeToExam,
     unsubscribeFromExam,
     sendProctoringData,
-    
+
     // Utility functions
     clearNotifications,
     clearViolations,
@@ -310,17 +318,13 @@ export const WebSocketProvider = ({ children }) => {
     markNotificationAsRead,
     getUnreadCount,
     getConnectionStats,
-    
+
     // Connection management
     connectWebSocket,
     disconnectWebSocket,
   };
 
-  return (
-    <WebSocketContext.Provider value={value}>
-      {children}
-    </WebSocketContext.Provider>
-  );
+  return <WebSocketContext.Provider value={value}>{children}</WebSocketContext.Provider>;
 };
 
 export default WebSocketContext;

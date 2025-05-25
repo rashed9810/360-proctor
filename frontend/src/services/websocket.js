@@ -20,16 +20,15 @@ class WebSocketService {
    */
   connect(token) {
     try {
-      const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:8000/ws';
+      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws';
       const url = `${wsUrl}?token=${token}`;
-      
+
       this.socket = new WebSocket(url);
-      
+
       this.socket.onopen = this.handleOpen.bind(this);
       this.socket.onmessage = this.handleMessage.bind(this);
       this.socket.onclose = this.handleClose.bind(this);
       this.socket.onerror = this.handleError.bind(this);
-      
     } catch (error) {
       console.error('WebSocket connection error:', error);
       this.scheduleReconnect();
@@ -43,10 +42,10 @@ class WebSocketService {
     console.log('WebSocket connected');
     this.isConnected = true;
     this.reconnectAttempts = 0;
-    
+
     // Start heartbeat
     this.startHeartbeat();
-    
+
     // Emit connection event
     this.emit('connected', { timestamp: new Date() });
   }
@@ -57,16 +56,16 @@ class WebSocketService {
   handleMessage(event) {
     try {
       const data = JSON.parse(event.data);
-      
+
       // Handle heartbeat response
       if (data.type === 'pong') {
         this.handlePong();
         return;
       }
-      
+
       // Emit message to listeners
       this.emit(data.type, data.payload);
-      
+
       // Handle specific message types
       switch (data.type) {
         case 'notification':
@@ -87,7 +86,6 @@ class WebSocketService {
         default:
           console.log('Unknown message type:', data.type);
       }
-      
     } catch (error) {
       console.error('Error parsing WebSocket message:', error);
     }
@@ -100,14 +98,14 @@ class WebSocketService {
     console.log('WebSocket disconnected:', event.code, event.reason);
     this.isConnected = false;
     this.stopHeartbeat();
-    
+
     // Emit disconnection event
-    this.emit('disconnected', { 
-      code: event.code, 
+    this.emit('disconnected', {
+      code: event.code,
       reason: event.reason,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
-    
+
     // Schedule reconnection if not intentional
     if (event.code !== 1000) {
       this.scheduleReconnect();
@@ -128,8 +126,10 @@ class WebSocketService {
   scheduleReconnect() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`Scheduling reconnection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
-      
+      console.log(
+        `Scheduling reconnection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`
+      );
+
       setTimeout(() => {
         if (!this.isConnected) {
           this.connect();
@@ -148,7 +148,7 @@ class WebSocketService {
     this.heartbeatInterval = setInterval(() => {
       if (this.isConnected) {
         this.send('ping', { timestamp: Date.now() });
-        
+
         // Set timeout for pong response
         this.heartbeatTimeout = setTimeout(() => {
           console.warn('Heartbeat timeout - connection may be lost');
@@ -166,7 +166,7 @@ class WebSocketService {
       clearInterval(this.heartbeatInterval);
       this.heartbeatInterval = null;
     }
-    
+
     if (this.heartbeatTimeout) {
       clearTimeout(this.heartbeatTimeout);
       this.heartbeatTimeout = null;
@@ -203,7 +203,7 @@ class WebSocketService {
       this.listeners.set(event, []);
     }
     this.listeners.get(event).push(callback);
-    
+
     // Return unsubscribe function
     return () => {
       const callbacks = this.listeners.get(event);
@@ -312,7 +312,7 @@ class WebSocketService {
   sendProctoringData(examId, data) {
     this.send('proctoring_data', {
       exam_id: examId,
-      ...data
+      ...data,
     });
   }
 
@@ -322,7 +322,7 @@ class WebSocketService {
   disconnect() {
     this.isConnected = false;
     this.stopHeartbeat();
-    
+
     if (this.socket) {
       this.socket.close(1000, 'Client disconnect');
       this.socket = null;

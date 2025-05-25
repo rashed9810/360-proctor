@@ -2,10 +2,10 @@ import axios from 'axios';
 
 // Get base URL from environment or default to localhost
 const getBaseURL = () => {
-  if (process.env.NODE_ENV === 'production') {
-    return process.env.REACT_APP_API_URL || 'https://api.360proctor.com';
+  if (import.meta.env.MODE === 'production') {
+    return import.meta.env.VITE_API_URL || 'https://api.360proctor.com';
   }
-  return process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  return import.meta.env.VITE_API_URL || 'http://localhost:8000';
 };
 
 // Create axios instance with enhanced configuration
@@ -43,7 +43,7 @@ api.interceptors.response.use(
     const endTime = new Date();
     const duration = endTime - response.config.metadata.startTime;
 
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.MODE === 'development') {
       console.log(
         `API Request: ${response.config.method?.toUpperCase()} ${response.config.url} - ${duration}ms`
       );

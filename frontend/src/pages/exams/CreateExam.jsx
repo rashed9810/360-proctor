@@ -7,7 +7,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import ExamForm from '../../components/exams/ExamForm';
 import ExamFormAdvanced from '../../components/exams/ExamFormAdvanced';
 import { examService } from '../../api';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 
 /**
  * Create Exam page component

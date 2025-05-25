@@ -6,16 +6,26 @@
 
 // Core API instance
 export { default as api } from './api';
+import api from './api';
 
 // Service classes
 export { default as authService } from './authService';
 export { default as examService } from './examService';
 export { default as userService } from './userService';
+export { default as proctorService } from './proctorService';
+export { default as analyticsService } from './analyticsService';
+import authService from './authService';
+import examService from './examService';
+import userService from './userService';
+import proctorService from './proctorService';
+import analyticsService from './analyticsService';
 
 // Service instances for backward compatibility
 export { default as AuthService } from './authService';
 export { default as ExamService } from './examService';
 export { default as UserService } from './userService';
+export { default as ProctorService } from './proctorService';
+export { default as AnalyticsService } from './analyticsService';
 
 /**
  * API Error Handler
@@ -41,7 +51,7 @@ export class ApiError extends Error {
       const { status, data } = axiosError.response;
       const message = data?.detail || data?.message || `HTTP ${status} Error`;
       const code = data?.code || `HTTP_${status}`;
-      
+
       return new ApiError(message, status, code, data);
     } else if (axiosError.request) {
       // Network error
@@ -53,12 +63,7 @@ export class ApiError extends Error {
       );
     } else {
       // Request setup error
-      return new ApiError(
-        'Request configuration error',
-        0,
-        'REQUEST_ERROR',
-        axiosError.message
-      );
+      return new ApiError('Request configuration error', 0, 'REQUEST_ERROR', axiosError.message);
     }
   }
 
@@ -164,24 +169,24 @@ export class ApiResponse {
  */
 export const apiConfig = {
   // Base URLs
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
-  wsURL: process.env.REACT_APP_WS_URL || 'ws://localhost:8000',
-  
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  wsURL: import.meta.env.VITE_WS_URL || 'ws://localhost:8000',
+
   // Timeouts
   timeout: 30000,
-  
+
   // Retry configuration
   retryAttempts: 3,
   retryDelay: 1000,
-  
+
   // Cache configuration
   cacheTimeout: 5 * 60 * 1000, // 5 minutes
-  
+
   // Feature flags
   features: {
     enableRetry: true,
     enableCache: true,
-    enableLogging: process.env.NODE_ENV === 'development',
+    enableLogging: import.meta.env.MODE === 'development',
   },
 };
 
@@ -197,13 +202,13 @@ export const apiUtils = {
    */
   formatQueryParams(params) {
     const searchParams = new URLSearchParams();
-    
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== null && value !== undefined && value !== '') {
         searchParams.append(key, value.toString());
       }
     });
-    
+
     return searchParams.toString();
   },
 
@@ -214,11 +219,11 @@ export const apiUtils = {
    */
   formatDate(date) {
     if (!date) return '';
-    
+
     if (typeof date === 'string') {
       return new Date(date).toISOString();
     }
-    
+
     return date.toISOString();
   },
 
@@ -256,6 +261,8 @@ export default {
   authService,
   examService,
   userService,
+  proctorService,
+  analyticsService,
   ApiError,
   ApiResponse,
   apiConfig,
