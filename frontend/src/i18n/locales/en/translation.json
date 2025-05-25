@@ -18,7 +18,14 @@
     "submit": "Submit",
     "reset": "Reset",
     "confirm": "Confirm",
-    "language": "Language"
+    "language": "Language",
+    "retry": "Try Again",
+    "goBack": "Go Back",
+    "backToDashboard": "Back to Dashboard",
+    "backToExams": "Back to Exams",
+    "errorOccurred": "An Error Occurred",
+    "errorFetchingData": "Failed to fetch data. Please try again later.",
+    "errorRefreshingData": "Failed to refresh data. Please try again later."
   },
   "auth": {
     "login": "Login",

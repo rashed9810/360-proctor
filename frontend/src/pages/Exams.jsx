@@ -5,12 +5,14 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 import mockExamService from '../services/mockExams';
 import ExamList from '../components/exams/ExamList';
+import ErrorDisplay from '../components/common/ErrorDisplay';
 
 export default function Exams() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [exams, setExams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchExams();
@@ -18,11 +20,13 @@ export default function Exams() {
 
   const fetchExams = async () => {
     setIsLoading(true);
+    setError('');
     try {
       const data = await mockExamService.getAllExams();
       setExams(data);
     } catch (error) {
       console.error('Error fetching exams:', error);
+      setError(t('exams.fetchError'));
       toast.error(t('common.errorFetchingData'));
     } finally {
       setIsLoading(false);
@@ -76,6 +80,22 @@ export default function Exams() {
             {t('common.loading')}
           </p>
         </div>
+      </div>
+    );
+  }
+
+  if (error && exams.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <ErrorDisplay
+          title={t('exams.fetchErrorTitle')}
+          message={error}
+          backLink="/"
+          backText={t('common.backToDashboard')}
+          onRetry={fetchExams}
+          showRetry={true}
+          variant="error"
+        />
       </div>
     );
   }

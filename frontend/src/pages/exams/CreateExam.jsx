@@ -6,15 +6,18 @@ import toast from 'react-hot-toast';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import ExamForm from '../../components/exams/ExamForm';
 import ExamFormAdvanced from '../../components/exams/ExamFormAdvanced';
-import mockExamService from '../../services/mockExams';
+import { examService } from '../../api';
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * Create Exam page component
  */
 const CreateExam = () => {
   const { t } = useTranslation(['exams', 'common']);
+  const { canManageExams } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     subject: '',
@@ -49,17 +52,33 @@ const CreateExam = () => {
     }));
   };
 
-  // Handle form submission
+  /**
+   * Handle form submission
+   * @param {Object} formattedData - Formatted exam data
+   */
   const handleSubmit = async formattedData => {
+    // Check permissions
+    if (!canManageExams()) {
+      toast.error(t('common.insufficientPermissions'));
+      return;
+    }
+
     setIsLoading(true);
+    setError(null);
 
     try {
-      // In a real app, this would be an API call
-      await mockExamService.addExam(formattedData);
-      toast.success(t('exams.createSuccess'));
-      navigate('/exams');
+      const response = await examService.createExam(formattedData);
+
+      if (response.success) {
+        toast.success(response.message || t('exams.createSuccess'));
+        navigate('/exams');
+      } else {
+        setError(response.message);
+        toast.error(response.message || t('exams.createError'));
+      }
     } catch (error) {
       console.error('Error creating exam:', error);
+      setError('Failed to create exam');
       toast.error(t('exams.createError'));
     } finally {
       setIsLoading(false);

@@ -280,6 +280,13 @@ const ExamDetail = () => {
               <PencilSquareIcon className="h-4 w-4 mr-1" />
               {t('common.edit', { ns: 'translation' })}
             </Link>
+            <Link
+              to={`/exams/${id}/students`}
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center"
+            >
+              <UserGroupIcon className="h-4 w-4 mr-1" />
+              {t('exams.manageStudents')}
+            </Link>
             <button
               onClick={handleDelete}
               className="px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 flex items-center"

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../hooks/useAuth.jsx';
+import { useAuth } from '../context/AuthContext';
 import {
   UsersIcon,
   ClipboardDocumentListIcon,
@@ -10,12 +10,13 @@ import {
   ClipboardDocumentCheckIcon,
   UserGroupIcon,
   ArrowRightIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
-import mockExamService from '../services/mockExams';
-import mockStudentService from '../services/mockStudents';
+import { examService, userService } from '../api';
 import StatCard from '../components/dashboard/StatCard';
 import QuickActionPanel from '../components/dashboard/QuickActionPanel';
 import FeedbackForm from '../components/common/FeedbackForm';
+import toast from 'react-hot-toast';
 
 const stats = [
   {
@@ -46,52 +47,107 @@ const stats = [
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, getUserName } = useAuth();
   const [upcomingExams, setUpcomingExams] = useState([]);
   const [recentExams, setRecentExams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Get all exams
-        const exams = await mockExamService.getAllExams();
-
-        // Filter upcoming exams
-        const upcoming = exams
-          .filter(exam => exam.status === 'scheduled')
-          .map(exam => ({
-            id: exam.id,
-            title: exam.name,
-            date: exam.date,
-            time: exam.startTime.split(' ')[1],
-            duration: parseInt(exam.duration.split(' ')[0]),
-          }));
-
-        // Filter recent exams
-        const recent = exams
-          .filter(exam => exam.status === 'completed')
-          .map(exam => ({
-            id: exam.id,
-            title: exam.name,
-            date: exam.date,
-            time: exam.startTime.split(' ')[1],
-            duration: parseInt(exam.duration.split(' ')[0]),
-            score: Math.floor(Math.random() * 30) + 70, // Random score between 70-100
-            trustScore: (Math.floor(Math.random() * 30) + 70) / 100, // Random trust score between 0.7-1.0
-          }));
-
-        setUpcomingExams(upcoming);
-        setRecentExams(recent);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
+    fetchDashboardData();
   }, []);
+
+  /**
+   * Fetch dashboard data from API
+   */
+  const fetchDashboardData = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Fetch exams from API
+      const examsResponse = await examService.getAllExams({ limit: 100 });
+
+      if (examsResponse.success) {
+        const exams = examsResponse.data;
+
+        // Process upcoming exams
+        const upcoming = getUpcomingExams(exams);
+        setUpcomingExams(upcoming);
+
+        // Process recent exams
+        const recent = getRecentExams(exams);
+        setRecentExams(recent);
+      } else {
+        setError(examsResponse.message);
+        toast.error(examsResponse.message || t('common.errorFetchingData'));
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      setError('Failed to load dashboard data');
+      toast.error(t('common.errorFetchingData'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Extract upcoming exams from exam list
+   * @param {Array} exams - List of exams
+   * @returns {Array} Upcoming exams
+   */
+  const getUpcomingExams = exams => {
+    const now = new Date();
+
+    return exams
+      .filter(exam => {
+        const startTime = new Date(exam.start_time);
+        return startTime > now && (exam.status === 'published' || exam.status === 'active');
+      })
+      .sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
+      .slice(0, 5) // Get next 5 upcoming exams
+      .map(exam => {
+        const startTime = new Date(exam.start_time);
+        return {
+          id: exam.id,
+          title: exam.title,
+          date: startTime.toLocaleDateString(),
+          time: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          duration: exam.duration_minutes,
+          status: exam.status,
+        };
+      });
+  };
+
+  /**
+   * Extract recent exams from exam list
+   * @param {Array} exams - List of exams
+   * @returns {Array} Recent exams
+   */
+  const getRecentExams = exams => {
+    const now = new Date();
+
+    return exams
+      .filter(exam => {
+        const endTime = new Date(exam.end_time);
+        return endTime < now && exam.status === 'completed';
+      })
+      .sort((a, b) => new Date(b.end_time) - new Date(a.end_time))
+      .slice(0, 5) // Get last 5 completed exams
+      .map(exam => {
+        const endTime = new Date(exam.end_time);
+        return {
+          id: exam.id,
+          title: exam.title,
+          date: endTime.toLocaleDateString(),
+          time: endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          duration: exam.duration_minutes,
+          // TODO: Replace with actual scores from exam results
+          score: Math.floor(Math.random() * 30) + 70, // Temporary random score
+          trustScore: (Math.floor(Math.random() * 30) + 70) / 100, // Temporary random trust score
+        };
+      });
+  };
 
   if (isLoading) {
     return (
@@ -105,8 +161,14 @@ const Dashboard = () => {
     <div className="space-y-8 px-1">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          {t('welcomeBack')}, {user?.name}
+          {t('welcomeBack')}, {getUserName()}
         </h1>
+        {error && (
+          <div className="flex items-center text-red-600 dark:text-red-400">
+            <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
+            <span className="text-sm">{error}</span>
+          </div>
+        )}
       </div>
 
       {/* Quick Action Panel */}

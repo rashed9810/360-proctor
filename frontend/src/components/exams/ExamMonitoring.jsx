@@ -23,6 +23,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import StudentMonitoringGrid from '../proctoring/StudentMonitoringGrid';
 
 /**
  * Exam monitoring dashboard component
@@ -64,28 +65,34 @@ const ExamMonitoring = ({ exam, students = [], violations = [], onRefresh }) => 
 
   const violationTypeData = [
     {
-      name: t('violationTypes.face_not_detected', { ns: 'exams' }),
+      name: 'Face Not Detected',
       count: violations.filter(v => v.type === 'face_not_detected').length,
+      key: 'face_not_detected',
     },
     {
-      name: t('violationTypes.multiple_faces', { ns: 'exams' }),
+      name: 'Multiple Faces',
       count: violations.filter(v => v.type === 'multiple_faces').length,
+      key: 'multiple_faces',
     },
     {
-      name: t('violationTypes.looking_away', { ns: 'exams' }),
+      name: 'Looking Away',
       count: violations.filter(v => v.type === 'looking_away').length,
+      key: 'looking_away',
     },
     {
-      name: t('violationTypes.audio_detected', { ns: 'exams' }),
+      name: 'Suspicious Audio',
       count: violations.filter(v => v.type === 'audio_detected').length,
+      key: 'audio_detected',
     },
     {
-      name: t('violationTypes.tab_switch', { ns: 'exams' }),
+      name: 'Tab Switch',
       count: violations.filter(v => v.type === 'tab_switch').length,
+      key: 'tab_switch',
     },
     {
-      name: t('violationTypes.phone_detected', { ns: 'exams' }),
+      name: 'Phone Detected',
       count: violations.filter(v => v.type === 'phone_detected').length,
+      key: 'phone_detected',
     },
   ];
 
@@ -321,134 +328,16 @@ const ExamMonitoring = ({ exam, students = [], violations = [], onRefresh }) => 
             exit={{ opacity: 0 }}
             className="space-y-4"
           >
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <button
-                onClick={() => setFilterStatus('all')}
-                className={`px-3 py-1 rounded-full text-sm ${
-                  filterStatus === 'all'
-                    ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400'
-                    : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                }`}
-              >
-                {t('allStudents', { ns: 'exams' })}
-              </button>
-              <button
-                onClick={() => setFilterStatus('active')}
-                className={`px-3 py-1 rounded-full text-sm ${
-                  filterStatus === 'active'
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                    : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                }`}
-              >
-                {t('active', { ns: 'exams' })}
-              </button>
-              <button
-                onClick={() => setFilterStatus('completed')}
-                className={`px-3 py-1 rounded-full text-sm ${
-                  filterStatus === 'completed'
-                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                    : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                }`}
-              >
-                {t('completed', { ns: 'exams' })}
-              </button>
-              <button
-                onClick={() => setFilterStatus('not_started')}
-                className={`px-3 py-1 rounded-full text-sm ${
-                  filterStatus === 'not_started'
-                    ? 'bg-gray-300 text-gray-800 dark:bg-gray-600 dark:text-gray-200'
-                    : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                }`}
-              >
-                {t('notStarted', { ns: 'exams' })}
-              </button>
-            </div>
-
-            {/* Students list */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredStudents.map(student => (
-                <div
-                  key={student.id}
-                  onClick={() => handleStudentSelect(student)}
-                  className={`border rounded-lg overflow-hidden cursor-pointer transition-all ${
-                    selectedStudent?.id === student.id
-                      ? 'border-primary-500 dark:border-primary-400 ring-2 ring-primary-500/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700'
-                  }`}
-                >
-                  <div className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                          <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
-                        </div>
-                        <div className="ml-3">
-                          <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                            {student.name}
-                          </h3>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {student.email}
-                          </p>
-                        </div>
-                      </div>
-                      <div>
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            student.status === 'active'
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                              : student.status === 'completed'
-                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                          }`}
-                        >
-                          {student.status === 'active'
-                            ? t('active', { ns: 'exams' })
-                            : student.status === 'completed'
-                              ? t('completed', { ns: 'exams' })
-                              : t('notStarted', { ns: 'exams' })}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex items-center">
-                        <ClockIcon className="h-4 w-4 text-gray-400 mr-1" />
-                        <span className="text-gray-500 dark:text-gray-400">
-                          {student.timeSpent || '0m'}
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <ExclamationTriangleIcon className="h-4 w-4 text-gray-400 mr-1" />
-                        <span className="text-gray-500 dark:text-gray-400">
-                          {student.violations || 0} {t('violations', { ns: 'exams' })}
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <EyeIcon className="h-4 w-4 text-gray-400 mr-1" />
-                        <span className="text-gray-500 dark:text-gray-400">
-                          {student.progress || '0%'} {t('completed', { ns: 'exams' })}
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <ShieldCheckIcon className="h-4 w-4 text-gray-400 mr-1" />
-                        <span
-                          className={`${
-                            (student.trustScore || 0) > 0.8
-                              ? 'text-green-500'
-                              : (student.trustScore || 0) > 0.6
-                                ? 'text-yellow-500'
-                                : 'text-red-500'
-                          }`}
-                        >
-                          {Math.round((student.trustScore || 0) * 100)}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Real-time student monitoring grid */}
+            <StudentMonitoringGrid
+              examId={exam.id}
+              initialStudents={students}
+              onViolationDetected={(student, violation) => {
+                console.log('Violation detected:', student, violation);
+                // You could trigger additional actions here
+              }}
+              onStudentSelect={handleStudentSelect}
+            />
           </motion.div>
         )}
 

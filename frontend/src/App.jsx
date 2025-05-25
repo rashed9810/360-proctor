@@ -18,6 +18,7 @@ import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import TestPage from './pages/TestPage';
 import ProctorDemo from './pages/ProctorDemo';
+import EnhancedStudentAssignmentPage from './pages/EnhancedStudentAssignmentPage';
 
 const PrivateRoute = () => {
   const { user, loading } = useAuth();
@@ -78,6 +79,7 @@ function App() {
                 <Route path="exams/create" element={<CreateExam />} />
                 <Route path="exams/:id" element={<ExamDetail />} />
                 <Route path="exams/:id/edit" element={<CreateExam />} />
+                <Route path="exams/:examId/students" element={<EnhancedStudentAssignmentPage />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="proctor" element={<ProctorDemo />} />
