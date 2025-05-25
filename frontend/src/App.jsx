@@ -20,6 +20,19 @@ import TestPage from './pages/TestPage';
 import ProctorDemo from './pages/ProctorDemo';
 import EnhancedStudentAssignmentPage from './pages/EnhancedStudentAssignmentPage';
 
+// Admin pages
+import AdminProfile from './pages/admin/AdminProfile';
+import UserManagement from './pages/admin/UserManagement';
+
+// Proctoring pages
+import LiveProctoring from './pages/proctoring/LiveProctoring';
+
+// Analytics pages
+import AdvancedAnalytics from './pages/analytics/AdvancedAnalytics';
+
+// Student pages
+import StudentDashboard from './pages/student/StudentDashboard';
+
 const PrivateRoute = () => {
   const { user, loading } = useAuth();
 
@@ -83,6 +96,19 @@ function App() {
                 <Route path="settings" element={<Settings />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="proctor" element={<ProctorDemo />} />
+
+                {/* Admin Routes */}
+                <Route path="admin/profile" element={<AdminProfile />} />
+                <Route path="admin/users" element={<UserManagement />} />
+
+                {/* Proctoring Routes */}
+                <Route path="proctoring/live/:examId" element={<LiveProctoring />} />
+
+                {/* Analytics Routes */}
+                <Route path="analytics/advanced" element={<AdvancedAnalytics />} />
+
+                {/* Student Routes */}
+                <Route path="student/dashboard" element={<StudentDashboard />} />
               </Route>
             </Routes>
           </NotificationProvider>

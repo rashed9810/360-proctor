@@ -18,6 +18,12 @@ import QuickActionPanel from '../components/dashboard/QuickActionPanel';
 import FeedbackForm from '../components/common/FeedbackForm';
 import toast from 'react-hot-toast';
 
+// New UI Components
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
+import { LoadingPage, LoadingCardSkeleton } from '../components/ui/Loading';
+import Button from '../components/ui/Button';
+import { motion } from 'framer-motion';
+
 const stats = [
   {
     name: 'totalStudents',
@@ -150,69 +156,146 @@ const Dashboard = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return <LoadingPage message={t('loadingDashboard') || 'Loading your dashboard...'} />;
   }
 
   return (
-    <div className="space-y-8 px-1">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          {t('welcomeBack')}, {getUserName()}
-        </h1>
-        {error && (
-          <div className="flex items-center text-red-600 dark:text-red-400">
-            <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
-            <span className="text-sm">{error}</span>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-8"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-blue-600 dark:from-gray-100 dark:to-blue-400 bg-clip-text text-transparent"
+              >
+                {t('welcomeBack') || 'Welcome back'}, {getUserName()}! 👋
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="mt-2 text-gray-600 dark:text-gray-400"
+              >
+                {t('dashboardSubtitle') || 'Here\'s what\'s happening with your exams today.'}
+              </motion.p>
+            </div>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mt-4 sm:mt-0 flex items-center px-4 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl"
+              >
+                <ExclamationTriangleIcon className="h-5 w-5 text-red-500 mr-2" />
+                <span className="text-sm text-red-700 dark:text-red-400">{error}</span>
+              </motion.div>
+            )}
           </div>
-        )}
-      </div>
+        </motion.div>
 
-      {/* Quick Action Panel */}
-      <QuickActionPanel />
+        {/* Quick Action Panel */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
+          <QuickActionPanel />
+        </motion.div>
 
-      {/* Feedback Form */}
-      <FeedbackForm />
+        {/* Feedback Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+        >
+          <FeedbackForm />
+        </motion.div>
 
-      {/* Stats Section */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map(stat => (
-          <StatCard
-            key={stat.name}
-            title={t(stat.name)}
-            value={stat.value}
-            icon={stat.icon}
-            trend={stat.trend}
-            color={stat.color}
-            linkTo={stat.linkTo}
-            linkText={t('viewAll')}
-          />
-        ))}
-      </div>
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 + (index * 0.1), duration: 0.5 }}
+            >
+              <StatCard
+                title={t(stat.name)}
+                value={stat.value}
+                icon={stat.icon}
+                trend={stat.trend}
+                color={stat.color}
+                linkTo={stat.linkTo}
+                linkText={t('viewAll')}
+                animate={true}
+                showSparkles={index === 0}
+                gradient={index % 2 === 0}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
 
-      {/* Upcoming Exams */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {t('upcomingExams')}
-          </h2>
-          <Link
-            to="/exams"
-            className="inline-flex items-center px-3 py-1.5 rounded-md bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-800/50 text-sm font-medium transition-colors duration-150"
-          >
-            {t('viewAll')}
-            <ArrowRightIcon className="ml-1 h-4 w-4" />
-          </Link>
-        </div>
+        {/* Upcoming Exams */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0, duration: 0.6 }}
+        >
+          <Card variant="glass" shadow="medium" hover="lift" className="overflow-hidden">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  📅 {t('upcomingExams') || 'Upcoming Exams'}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon={ArrowRightIcon}
+                  iconPosition="right"
+                  className="text-blue-600 hover:text-blue-700"
+                  onClick={() => window.location.href = '/exams'}
+                >
+                  {t('viewAll') || 'View All'}
+                </Button>
+              </div>
+            </CardHeader>
 
-        {upcomingExams.length === 0 ? (
-          <div className="p-6 text-center">
-            <p className="text-gray-500 dark:text-gray-400">{t('noExamsFound')}</p>
-          </div>
-        ) : (
+            <CardContent>
+              {upcomingExams.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-2xl flex items-center justify-center">
+                    <ClipboardDocumentListIcon className="w-8 h-8 text-blue-500 dark:text-blue-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    {t('noUpcomingExams') || 'No upcoming exams'}
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-6">
+                    {t('noUpcomingExamsDesc') || 'You\'re all caught up! No exams scheduled for now.'}
+                  </p>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => window.location.href = '/exams/create'}
+                  >
+                    {t('createExam') || 'Create New Exam'}
+                  </Button>
+                </div>
+              ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700/50">
@@ -467,9 +550,62 @@ const Dashboard = () => {
                   );
                 })}
               </tbody>
-            </table>
-          </div>
-        )}
+                </table>
+              </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Recent Exams - Enhanced with Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1, duration: 0.6 }}
+        >
+          <Card variant="glass" shadow="medium" hover="lift" className="overflow-hidden">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  🏆 {t('recentExams') || 'Recent Exam Results'}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  icon={ArrowRightIcon}
+                  iconPosition="right"
+                  className="text-blue-600 hover:text-blue-700"
+                  onClick={() => window.location.href = '/exams'}
+                >
+                  {t('viewAll') || 'View All'}
+                </Button>
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              {recentExams.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 rounded-2xl flex items-center justify-center">
+                    <CheckCircleIcon className="w-8 h-8 text-green-500 dark:text-green-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    {t('noRecentExams') || 'No recent exam results'}
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {t('noRecentExamsDesc') || 'Complete some exams to see your results here.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  {/* Recent exams table content would go here */}
+                  <p className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    Recent exams table implementation...
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

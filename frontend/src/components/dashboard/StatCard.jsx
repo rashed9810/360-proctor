@@ -3,7 +3,17 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { Link } from 'react-router-dom';
-import { ArrowRightIcon, ArrowPathIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowRightIcon,
+  ArrowPathIcon,
+  ChartBarIcon,
+  SparklesIcon,
+  TrendingUpIcon,
+  TrendingDownIcon,
+} from '@heroicons/react/24/outline';
+import { Card } from '../ui/Card';
+import { LoadingSpinner } from '../ui/Loading';
+import { cn } from '../../utils/cn';
 
 /**
  * Enhanced StatCard component with consistent styling and animations
@@ -32,6 +42,10 @@ const StatCard = ({
   detailsPath,
   isLoading: externalLoading,
   dataKey,
+  animate = true,
+  showSparkles = false,
+  gradient = false,
+  className,
 }) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -39,6 +53,7 @@ const StatCard = ({
   const [isLoading, setIsLoading] = useState(externalLoading || false);
   const [showDetails, setShowDetails] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [isHovered, setIsHovered] = useState(false);
 
   // Function to refresh data
   const handleRefresh = async () => {
@@ -69,93 +84,148 @@ const StatCard = ({
     return () => clearInterval(intervalId);
   }, [fetchData]);
 
-  const colorClasses = {
-    primary: {
-      bg: isDark ? 'bg-primary-900/20' : 'bg-primary-50',
-      text: isDark ? 'text-primary-300' : 'text-primary-600',
-      border: isDark ? 'border-primary-800' : 'border-primary-100',
-      icon: isDark ? 'text-primary-400' : 'text-primary-500',
-      value: isDark ? 'text-primary-200' : 'text-primary-900',
-      button: isDark
-        ? 'bg-primary-800 text-primary-200 hover:bg-primary-700'
-        : 'bg-primary-50 text-primary-700 hover:bg-primary-100',
-    },
-    blue: {
-      bg: isDark ? 'bg-blue-900/20' : 'bg-blue-50',
-      text: isDark ? 'text-blue-300' : 'text-blue-600',
-      border: isDark ? 'border-blue-800' : 'border-blue-100',
-      icon: isDark ? 'text-blue-400' : 'text-blue-500',
-      value: isDark ? 'text-blue-200' : 'text-blue-900',
-      button: isDark
-        ? 'bg-blue-800 text-blue-200 hover:bg-blue-700'
-        : 'bg-blue-50 text-blue-700 hover:bg-blue-100',
-    },
-    green: {
-      bg: isDark ? 'bg-green-900/20' : 'bg-green-50',
-      text: isDark ? 'text-green-300' : 'text-green-600',
-      border: isDark ? 'border-green-800' : 'border-green-100',
-      icon: isDark ? 'text-green-400' : 'text-green-500',
-      value: isDark ? 'text-green-200' : 'text-green-900',
-      button: isDark
-        ? 'bg-green-800 text-green-200 hover:bg-green-700'
-        : 'bg-green-50 text-green-700 hover:bg-green-100',
-    },
-    purple: {
-      bg: isDark ? 'bg-purple-900/20' : 'bg-purple-50',
-      text: isDark ? 'text-purple-300' : 'text-purple-600',
-      border: isDark ? 'border-purple-800' : 'border-purple-100',
-      icon: isDark ? 'text-purple-400' : 'text-purple-500',
-      value: isDark ? 'text-purple-200' : 'text-purple-900',
-      button: isDark
-        ? 'bg-purple-800 text-purple-200 hover:bg-purple-700'
-        : 'bg-purple-50 text-purple-700 hover:bg-purple-100',
-    },
-    red: {
-      bg: isDark ? 'bg-red-900/20' : 'bg-red-50',
-      text: isDark ? 'text-red-300' : 'text-red-600',
-      border: isDark ? 'border-red-800' : 'border-red-100',
-      icon: isDark ? 'text-red-400' : 'text-red-500',
-      value: isDark ? 'text-red-200' : 'text-red-900',
-      button: isDark
-        ? 'bg-red-800 text-red-200 hover:bg-red-700'
-        : 'bg-red-50 text-red-700 hover:bg-red-100',
-    },
-    yellow: {
-      bg: isDark ? 'bg-yellow-900/20' : 'bg-yellow-50',
-      text: isDark ? 'text-yellow-300' : 'text-yellow-600',
-      border: isDark ? 'border-yellow-800' : 'border-yellow-100',
-      icon: isDark ? 'text-yellow-400' : 'text-yellow-500',
-      value: isDark ? 'text-yellow-200' : 'text-yellow-900',
-      button: isDark
-        ? 'bg-yellow-800 text-yellow-200 hover:bg-yellow-700'
-        : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100',
-    },
+  // Modern color system with gradients
+  const getColorClasses = colorName => {
+    const colors = {
+      primary: {
+        gradient: 'from-blue-500 to-purple-600',
+        bg: 'bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20',
+        text: 'text-blue-600 dark:text-blue-400',
+        icon: 'text-blue-500 dark:text-blue-400',
+        value: 'text-gray-900 dark:text-gray-100',
+        accent: 'bg-blue-500',
+        border: 'border-blue-200 dark:border-blue-800',
+      },
+      blue: {
+        gradient: 'from-blue-500 to-cyan-500',
+        bg: 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20',
+        text: 'text-blue-600 dark:text-blue-400',
+        icon: 'text-blue-500 dark:text-blue-400',
+        value: 'text-gray-900 dark:text-gray-100',
+        accent: 'bg-blue-500',
+        border: 'border-blue-200 dark:border-blue-800',
+      },
+      green: {
+        gradient: 'from-green-500 to-emerald-500',
+        bg: 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20',
+        text: 'text-green-600 dark:text-green-400',
+        icon: 'text-green-500 dark:text-green-400',
+        value: 'text-gray-900 dark:text-gray-100',
+        accent: 'bg-green-500',
+        border: 'border-green-200 dark:border-green-800',
+      },
+      purple: {
+        gradient: 'from-purple-500 to-pink-500',
+        bg: 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20',
+        text: 'text-purple-600 dark:text-purple-400',
+        icon: 'text-purple-500 dark:text-purple-400',
+        value: 'text-gray-900 dark:text-gray-100',
+        accent: 'bg-purple-500',
+        border: 'border-purple-200 dark:border-purple-800',
+      },
+      red: {
+        gradient: 'from-red-500 to-pink-500',
+        bg: 'bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20',
+        text: 'text-red-600 dark:text-red-400',
+        icon: 'text-red-500 dark:text-red-400',
+        value: 'text-gray-900 dark:text-gray-100',
+        accent: 'bg-red-500',
+        border: 'border-red-200 dark:border-red-800',
+      },
+      yellow: {
+        gradient: 'from-yellow-500 to-orange-500',
+        bg: 'bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20',
+        text: 'text-yellow-600 dark:text-yellow-400',
+        icon: 'text-yellow-500 dark:text-yellow-400',
+        value: 'text-gray-900 dark:text-gray-100',
+        accent: 'bg-yellow-500',
+        border: 'border-yellow-200 dark:border-yellow-800',
+      },
+    };
+    return colors[colorName] || colors.primary;
   };
 
-  const classes = colorClasses[color];
+  const colorClasses = getColorClasses(color);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
-      className={`rounded-xl border ${classes.border} ${classes.bg} p-6 shadow-sm dark:shadow-gray-900/10 overflow-hidden relative`}
+      initial={animate ? { opacity: 0, y: 20 } : {}}
+      animate={animate ? { opacity: 1, y: 0 } : {}}
+      whileHover={animate ? { y: -4 } : {}}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      className={cn(
+        'group relative overflow-hidden rounded-2xl border backdrop-blur-sm transition-all duration-300',
+        gradient ? `bg-gradient-to-br ${colorClasses.gradient}` : colorClasses.bg,
+        colorClasses.border,
+        'hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-black/20',
+        'hover:border-opacity-50',
+        className
+      )}
     >
-      {/* Background pattern for visual interest */}
-      <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-10 bg-gradient-to-br from-current to-transparent" />
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-30">
+        <div
+          className={cn(
+            'absolute -right-8 -top-8 h-32 w-32 rounded-full transition-all duration-500',
+            `bg-gradient-to-br ${colorClasses.gradient}`,
+            isHovered ? 'scale-110 opacity-20' : 'scale-100 opacity-10'
+          )}
+        />
+        <div
+          className={cn(
+            'absolute -left-4 -bottom-4 h-20 w-20 rounded-full transition-all duration-700',
+            `bg-gradient-to-tr ${colorClasses.gradient}`,
+            isHovered ? 'scale-125 opacity-15' : 'scale-100 opacity-5'
+          )}
+        />
+      </div>
+
+      {/* Sparkles effect */}
+      {showSparkles && (
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute"
+              style={{
+                left: `${20 + i * 15}%`,
+                top: `${10 + i * 10}%`,
+              }}
+              animate={{
+                scale: [0, 1, 0],
+                rotate: [0, 180, 360],
+                opacity: [0, 1, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: i * 0.3,
+              }}
+            >
+              <SparklesIcon className="h-3 w-3 text-yellow-400" />
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Action buttons */}
-      <div className="absolute top-2 right-2 flex space-x-1">
+      <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         {fetchData && (
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleRefresh}
             disabled={isLoading}
-            className={`p-1 rounded-full ${classes.text} hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150`}
+            className={cn(
+              'p-2 rounded-xl backdrop-blur-sm transition-all duration-200',
+              'bg-white/20 dark:bg-black/20 hover:bg-white/30 dark:hover:bg-black/30',
+              colorClasses.text,
+              isLoading && 'animate-pulse'
+            )}
             title={t('refreshData')}
           >
-            <ArrowPathIcon className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <ArrowPathIcon className={cn('h-4 w-4', isLoading && 'animate-spin')} />
           </motion.button>
         )}
         {detailsPath && (
@@ -163,7 +233,11 @@ const StatCard = ({
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setShowDetails(!showDetails)}
-            className={`p-1 rounded-full ${classes.text} hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-150`}
+            className={cn(
+              'p-2 rounded-xl backdrop-blur-sm transition-all duration-200',
+              'bg-white/20 dark:bg-black/20 hover:bg-white/30 dark:hover:bg-black/30',
+              colorClasses.text
+            )}
             title={t('viewDetails')}
           >
             <ChartBarIcon className="h-4 w-4" />
@@ -171,131 +245,151 @@ const StatCard = ({
         )}
       </div>
 
-      <div className="flex items-center justify-between relative">
-        <div>
-          <p className={`text-sm font-medium ${classes.text}`}>{title}</p>
-          <motion.p
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className={`mt-2 text-3xl font-bold ${classes.value}`}
+      {/* Main content */}
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <p className={cn('text-sm font-medium mb-2', colorClasses.text)}>{title}</p>
+          <motion.div
+            initial={animate ? { scale: 0.8, opacity: 0 } : {}}
+            animate={animate ? { scale: 1, opacity: 1 } : {}}
+            transition={{ delay: 0.1 }}
+            className="flex items-baseline space-x-2"
           >
             {isLoading ? (
-              <span className="inline-block w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
+              <LoadingSpinner size="md" color={color} />
             ) : (
-              value
+              <span className={cn('text-3xl font-bold', colorClasses.value)}>{value}</span>
             )}
-          </motion.p>
-          {lastUpdated && fetchData && (
-            <p className="text-xs text-gray-400 mt-1">
+          </motion.div>
+
+          {/* Trend indicator */}
+          {trend && !isLoading && (
+            <motion.div
+              initial={animate ? { opacity: 0, x: -10 } : {}}
+              animate={animate ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: 0.3 }}
+              className="flex items-center mt-3 space-x-1"
+            >
+              <div
+                className={cn(
+                  'flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                  trend > 0
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                )}
+              >
+                {trend > 0 ? (
+                  <TrendingUpIcon className="h-3 w-3 mr-1" />
+                ) : (
+                  <TrendingDownIcon className="h-3 w-3 mr-1" />
+                )}
+                {Math.abs(trend)}%
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{t('fromLastMonth')}</span>
+            </motion.div>
+          )}
+
+          {/* Last updated */}
+          {lastUpdated && fetchData && !isLoading && (
+            <p className="text-xs text-gray-400 mt-2">
               {t('lastUpdated')}: {lastUpdated.toLocaleTimeString()}
             </p>
           )}
         </div>
+
+        {/* Icon */}
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className={`p-3 rounded-lg ${classes.bg} shadow-sm`}
+          initial={animate ? { scale: 0, rotate: -180 } : {}}
+          animate={animate ? { scale: 1, rotate: 0 } : {}}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+          className={cn(
+            'flex-shrink-0 p-3 rounded-2xl transition-all duration-300',
+            gradient
+              ? 'bg-white/20 dark:bg-black/20'
+              : `bg-gradient-to-br ${colorClasses.gradient}`,
+            'group-hover:scale-110 group-hover:rotate-3'
+          )}
         >
-          <Icon className={`h-6 w-6 ${classes.icon}`} />
+          <Icon
+            className={cn(
+              'h-6 w-6 transition-colors duration-300',
+              gradient ? 'text-white' : 'text-white'
+            )}
+          />
         </motion.div>
       </div>
 
-      {trend && (
-        <div className="mt-4 flex items-center group relative">
-          <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              trend > 0
-                ? isDark
-                  ? 'bg-green-900/30 text-green-300'
-                  : 'bg-green-100 text-green-800'
-                : isDark
-                  ? 'bg-red-900/30 text-red-300'
-                  : 'bg-red-100 text-red-800'
-            }`}
+        {/* Link button */}
+        {linkTo && (
+          <motion.div
+            initial={animate ? { opacity: 0, y: 10 } : {}}
+            animate={animate ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.4 }}
+            className="mt-6 pt-4 border-t border-gray-200/50 dark:border-gray-700/50"
           >
-            {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
-          </span>
-          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-            {t('fromLastMonth')}
-          </span>
-
-          {/* Tooltip for percentage change */}
-          <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block pointer-events-none z-10">
-            <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
-              {trend > 0
-                ? t('percentIncrease', {
-                    percent: Math.abs(trend),
-                    defaultValue: `${Math.abs(trend)}% increase`,
-                  })
-                : t('percentDecrease', {
-                    percent: Math.abs(trend),
-                    defaultValue: `${Math.abs(trend)}% decrease`,
-                  })}{' '}
-              {t('fromLastMonth')}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Link button with consistent styling */}
-      {linkTo && (
-        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
-          <Link
-            to={linkTo}
-            className={`inline-flex items-center text-sm font-medium ${classes.text} hover:underline transition-all duration-300 ease-in-out transform hover:translate-x-1 group`}
-          >
-            {linkText || t('viewAll')}
-            <ArrowRightIcon className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
-        </div>
-      )}
+            <Link
+              to={linkTo}
+              className={cn(
+                'inline-flex items-center text-sm font-medium transition-all duration-300',
+                'hover:translate-x-1 group',
+                colorClasses.text,
+                'hover:underline'
+              )}
+            >
+              {linkText || t('viewAll')}
+              <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </motion.div>
+        )}
+      </div>
 
       {/* Detailed view modal */}
       {showDetails && detailsPath && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowDetails(false)}
+        >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 {title} {t('details')}
               </h3>
               <button
                 onClick={() => setShowDetails(false)}
-                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                className="p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
               >
                 <span className="sr-only">{t('close')}</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
             <div className="flex-1 p-6 overflow-y-auto">
               <iframe
                 src={detailsPath}
-                className="w-full h-full border-0"
+                className="w-full h-full border-0 rounded-xl"
                 title={`${title} ${t('details')}`}
               />
             </div>
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
               <button
                 onClick={() => setShowDetails(false)}
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-150"
+                className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 font-medium"
               >
                 {t('close')}
               </button>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
     </motion.div>
   );
