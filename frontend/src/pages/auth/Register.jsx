@@ -9,6 +9,9 @@ import BackgroundPattern from '../../components/common/BackgroundPattern';
 import PasswordStrengthMeter from '../../components/common/PasswordStrengthMeter';
 import SocialLoginButtons from '../../components/common/SocialLoginButtons';
 
+// Services
+import authService from '../../api/authService';
+
 // Enhanced animations
 import '../../styles/auth-animations.css';
 
@@ -126,12 +129,60 @@ export default function Register() {
   };
 
   // Social login handlers
-  const handleGoogleLogin = () => {
-    toast.error(t('auth.notImplemented') || 'Google login not implemented yet');
+  const handleGoogleLogin = async () => {
+    try {
+      const { default: socialAuthService } = await import('../../services/socialAuthService');
+
+      // Check if Google login is available
+      const availability = socialAuthService.isAvailable();
+      if (!availability.google) {
+        toast.error('Google login is not configured. Please contact administrator.');
+        return;
+      }
+
+      const socialData = await socialAuthService.loginWithGoogle();
+      const result = await authService.socialLogin(socialData);
+
+      if (result.success) {
+        toast.success(t('auth.registerSuccess') || 'Registration successful!');
+        navigate('/');
+      } else {
+        toast.error(result.message);
+        setErrors({ general: result.message });
+      }
+    } catch (error) {
+      console.error('Google registration error:', error);
+      toast.error(error.message || 'Google registration failed. Please try again.');
+      setErrors({ general: error.message || 'Google registration failed' });
+    }
   };
 
-  const handleFacebookLogin = () => {
-    toast.error(t('auth.notImplemented') || 'Facebook login not implemented yet');
+  const handleFacebookLogin = async () => {
+    try {
+      const { default: socialAuthService } = await import('../../services/socialAuthService');
+
+      // Check if Facebook login is available
+      const availability = socialAuthService.isAvailable();
+      if (!availability.facebook) {
+        toast.error('Facebook login is not configured. Please contact administrator.');
+        return;
+      }
+
+      const socialData = await socialAuthService.loginWithFacebook();
+      const result = await authService.socialLogin(socialData);
+
+      if (result.success) {
+        toast.success(t('auth.registerSuccess') || 'Registration successful!');
+        navigate('/');
+      } else {
+        toast.error(result.message);
+        setErrors({ general: result.message });
+      }
+    } catch (error) {
+      console.error('Facebook registration error:', error);
+      toast.error(error.message || 'Facebook registration failed. Please try again.');
+      setErrors({ general: error.message || 'Facebook registration failed' });
+    }
   };
 
   return (

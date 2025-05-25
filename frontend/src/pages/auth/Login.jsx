@@ -8,6 +8,9 @@ import BackgroundPattern from '../../components/common/BackgroundPattern';
 import SocialLoginButtons from '../../components/common/SocialLoginButtons';
 import toast from 'react-hot-toast';
 
+// Services
+import authService from '../../api/authService';
+
 // Enhanced animations
 import '../../styles/auth-animations.css';
 
@@ -104,12 +107,60 @@ export default function Login() {
   };
 
   // Social login handlers
-  const handleGoogleLogin = () => {
-    toast.error(t('auth.notImplemented') || 'Google login not implemented yet');
+  const handleGoogleLogin = async () => {
+    try {
+      const { default: socialAuthService } = await import('../../services/socialAuthService');
+
+      // Check if Google login is available
+      const availability = socialAuthService.isAvailable();
+      if (!availability.google) {
+        toast.error('Google login is not configured. Please contact administrator.');
+        return;
+      }
+
+      const socialData = await socialAuthService.loginWithGoogle();
+      const result = await authService.socialLogin(socialData);
+
+      if (result.success) {
+        toast.success(t('auth.loginSuccess') || 'Login successful!');
+        navigate('/');
+      } else {
+        toast.error(result.message);
+        setErrors({ general: result.message });
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error(error.message || 'Google login failed. Please try again.');
+      setErrors({ general: error.message || 'Google login failed' });
+    }
   };
 
-  const handleFacebookLogin = () => {
-    toast.error(t('auth.notImplemented') || 'Facebook login not implemented yet');
+  const handleFacebookLogin = async () => {
+    try {
+      const { default: socialAuthService } = await import('../../services/socialAuthService');
+
+      // Check if Facebook login is available
+      const availability = socialAuthService.isAvailable();
+      if (!availability.facebook) {
+        toast.error('Facebook login is not configured. Please contact administrator.');
+        return;
+      }
+
+      const socialData = await socialAuthService.loginWithFacebook();
+      const result = await authService.socialLogin(socialData);
+
+      if (result.success) {
+        toast.success(t('auth.loginSuccess') || 'Login successful!');
+        navigate('/');
+      } else {
+        toast.error(result.message);
+        setErrors({ general: result.message });
+      }
+    } catch (error) {
+      console.error('Facebook login error:', error);
+      toast.error(error.message || 'Facebook login failed. Please try again.');
+      setErrors({ general: error.message || 'Facebook login failed' });
+    }
   };
 
   return (

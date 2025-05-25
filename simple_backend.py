@@ -117,6 +117,52 @@ async def login(login_data: LoginRequest):
 async def register(user_data: dict):
     return {"message": "User registered successfully", "user_id": len(mock_users) + 1}
 
+@app.post("/api/v1/auth/social-login", response_model=TokenResponse)
+async def social_login(social_data: dict):
+    """
+    Handle social login (Google/Facebook)
+    """
+    provider = social_data.get("provider")
+    user_info = social_data.get("user_info", {})
+
+    # Mock social login - in real implementation, verify the token with the provider
+    if provider not in ["google", "facebook"]:
+        raise HTTPException(status_code=400, detail="Unsupported social provider")
+
+    # Check if user exists or create new user
+    email = user_info.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required for social login")
+
+    # Find existing user or create new one
+    existing_user = None
+    for user in mock_users:
+        if user["email"] == email:
+            existing_user = user
+            break
+
+    if existing_user:
+        # Return existing user
+        user_data = existing_user
+    else:
+        # Create new user from social data
+        user_data = {
+            "id": len(mock_users) + 1,
+            "email": email,
+            "full_name": user_info.get("name", "Social User"),
+            "role": "student",
+            "is_active": True,
+            "preferred_language": "en",
+            "social_provider": provider,
+            "avatar_url": user_info.get("picture")
+        }
+        mock_users.append(user_data)
+
+    return TokenResponse(
+        access_token=f"social_token_{provider}_{user_data['id']}",
+        user=User(**user_data)
+    )
+
 @app.get("/api/v1/auth/me", response_model=User)
 async def get_current_user():
     return User(**mock_users[0])  # Return admin user by default

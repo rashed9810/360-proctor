@@ -40,11 +40,12 @@ class AuthService {
       };
     } catch (error) {
       console.error('Login error:', error);
-      
+
       // Extract error message from response
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          'Login failed. Please check your credentials.';
+      const errorMessage =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        'Login failed. Please check your credentials.';
 
       return {
         success: false,
@@ -76,14 +77,14 @@ class AuthService {
       };
     } catch (error) {
       console.error('Registration error:', error);
-      
+
       // Handle validation errors
       if (error.response?.status === 422) {
         const validationErrors = error.response.data?.detail || [];
-        const errorMessages = validationErrors.map(err => 
-          `${err.loc?.[1] || 'Field'}: ${err.msg}`
-        ).join(', ');
-        
+        const errorMessages = validationErrors
+          .map(err => `${err.loc?.[1] || 'Field'}: ${err.msg}`)
+          .join(', ');
+
         return {
           success: false,
           message: errorMessages || 'Validation failed',
@@ -100,9 +101,10 @@ class AuthService {
         };
       }
 
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          'Registration failed. Please try again.';
+      const errorMessage =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        'Registration failed. Please try again.';
 
       return {
         success: false,
@@ -119,19 +121,19 @@ class AuthService {
   async getCurrentUser() {
     try {
       const response = await api.get('/users/me');
-      
+
       // Store user data in localStorage for quick access
       localStorage.setItem('user', JSON.stringify(response.data));
-      
+
       return response.data;
     } catch (error) {
       console.error('Get current user error:', error);
-      
+
       // Clear invalid token
       if (error.response?.status === 401) {
         this.logout();
       }
-      
+
       throw error;
     }
   }
@@ -143,11 +145,11 @@ class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
+
     // Clear any cached data
     localStorage.removeItem('theme');
     localStorage.removeItem('language');
-    
+
     // Redirect to login page
     window.location.href = '/login';
   }
@@ -191,10 +193,10 @@ class AuthService {
   async updateProfile(profileData) {
     try {
       const response = await api.put('/users/me', profileData);
-      
+
       // Update stored user data
       localStorage.setItem('user', JSON.stringify(response.data));
-      
+
       return {
         success: true,
         user: response.data,
@@ -202,10 +204,9 @@ class AuthService {
       };
     } catch (error) {
       console.error('Update profile error:', error);
-      
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          'Failed to update profile';
+
+      const errorMessage =
+        error.response?.data?.detail || error.response?.data?.message || 'Failed to update profile';
 
       return {
         success: false,
@@ -233,15 +234,57 @@ class AuthService {
       };
     } catch (error) {
       console.error('Change password error:', error);
-      
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          'Failed to change password';
+
+      const errorMessage =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        'Failed to change password';
 
       return {
         success: false,
         message: errorMessage,
         error: error.response?.status || 'UNKNOWN_ERROR',
+      };
+    }
+  }
+
+  /**
+   * Social login with Google or Facebook
+   * @param {Object} socialData - Social login data
+   * @returns {Promise<Object>} Login result
+   */
+  async socialLogin(socialData) {
+    try {
+      const response = await api.post('/auth/social-login', {
+        provider: socialData.provider,
+        token: socialData.token,
+        user_info: socialData.user,
+      });
+
+      const { access_token, user } = response.data;
+
+      // Store authentication data
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      return {
+        success: true,
+        user,
+        token: access_token,
+        message: 'Social login successful!',
+      };
+    } catch (error) {
+      console.error('Social login error:', error);
+
+      const errorMessage =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        'Social login failed. Please try again.';
+
+      return {
+        success: false,
+        message: errorMessage,
+        error: error.response?.status || 'SOCIAL_LOGIN_ERROR',
       };
     }
   }
@@ -254,19 +297,19 @@ class AuthService {
     try {
       const response = await api.post('/auth/refresh');
       const { access_token } = response.data;
-      
+
       localStorage.setItem('token', access_token);
-      
+
       return {
         success: true,
         token: access_token,
       };
     } catch (error) {
       console.error('Token refresh error:', error);
-      
+
       // If refresh fails, logout user
       this.logout();
-      
+
       return {
         success: false,
         message: 'Session expired. Please login again.',
