@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   UserIcon,
+  UserCircleIcon,
   Cog6ToothIcon,
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,

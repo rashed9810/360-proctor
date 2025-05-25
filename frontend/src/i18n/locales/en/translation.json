@@ -411,6 +411,7 @@
     "activityDescription": "View your recent account activity"
   },
   "admin": {
+    "adminProfile": "Admin Profile",
     "manageUsers": "Manage Users",
     "security": "Security Settings",
     "systemSettings": "System Settings",
