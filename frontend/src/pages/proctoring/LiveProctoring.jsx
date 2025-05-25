@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { LoadingPage, LoadingSpinner } from '../../components/ui/Loading';
+import TrustScoreVisualization from '../../components/proctoring/TrustScoreVisualization';
 
 // Icons
 import {
@@ -44,6 +45,8 @@ const LiveProctoring = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const wsRef = useRef(null);
+  const monitoringCleanupRef = useRef(null);
 
   // State management
   const [exam, setExam] = useState(null);
@@ -168,6 +171,18 @@ const LiveProctoring = () => {
     try {
       setIsMonitoring(false);
 
+      // Close WebSocket connection
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+
+      // Clean up monitoring event listeners
+      if (monitoringCleanupRef.current) {
+        monitoringCleanupRef.current();
+        monitoringCleanupRef.current = null;
+      }
+
       // Stop proctoring session
       const response = await proctorService.stopSession(examId);
       if (response.success) {
@@ -177,6 +192,7 @@ const LiveProctoring = () => {
       // Stop camera stream
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
       }
     } catch (error) {
       console.error('Error stopping monitoring:', error);
@@ -188,15 +204,288 @@ const LiveProctoring = () => {
    * Start real-time monitoring with AI detection
    */
   const startRealTimeMonitoring = () => {
-    // This would integrate with AI models for:
-    // - Face detection and recognition
-    // - Multiple person detection
-    // - Suspicious activity detection
-    // - Audio analysis
-    // - Screen monitoring
+    // Initialize WebSocket connection for real-time updates
+    if (wsRef.current) {
+      wsRef.current.close();
+    }
 
-    // For now, simulate monitoring with mock data
+    const wsUrl = `ws://localhost:8000/ws/proctoring/${examId}`;
+    wsRef.current = new WebSocket(wsUrl);
+
+    wsRef.current.onopen = () => {
+      console.log('Proctoring WebSocket connected');
+      toast.success(t('proctoring.websocketConnected'));
+    };
+
+    wsRef.current.onmessage = event => {
+      const data = JSON.parse(event.data);
+      handleWebSocketMessage(data);
+    };
+
+    wsRef.current.onclose = () => {
+      console.log('Proctoring WebSocket disconnected');
+      if (isMonitoring) {
+        // Attempt to reconnect if monitoring is still active
+        setTimeout(() => startRealTimeMonitoring(), 3000);
+      }
+    };
+
+    wsRef.current.onerror = error => {
+      console.error('WebSocket error:', error);
+      toast.error(t('proctoring.websocketError'));
+    };
+
+    // Start AI monitoring processes
+    startFaceDetection();
+    startAudioAnalysis();
+    monitoringCleanupRef.current = startScreenMonitoring();
+
+    // For now, also simulate monitoring with mock data
     simulateMonitoring();
+  };
+
+  /**
+   * Handle WebSocket messages
+   */
+  const handleWebSocketMessage = data => {
+    switch (data.type) {
+      case 'violation':
+        handleViolationAlert(data.violation);
+        break;
+      case 'trust_score_update':
+        updateTrustScore(data.studentId, data.trustScore);
+        break;
+      case 'student_status_update':
+        updateStudentStatus(data.studentId, data.status);
+        break;
+      case 'monitoring_stats':
+        setMonitoringStats(data.stats);
+        break;
+      default:
+        console.log('Unknown WebSocket message type:', data.type);
+    }
+  };
+
+  /**
+   * Handle violation alerts
+   */
+  const handleViolationAlert = violation => {
+    setViolations(prev => [violation, ...prev]);
+
+    // Show toast notification for high severity violations
+    if (violation.severity === 'high' || violation.severity === 'critical') {
+      toast.error(`${t('proctoring.violation')}: ${violation.description}`);
+    }
+
+    // Update monitoring stats
+    setMonitoringStats(prev => ({
+      ...prev,
+      violations: prev.violations + 1,
+    }));
+
+    // Send notification to admin/teacher
+    if (violation.severity === 'critical') {
+      sendCriticalViolationNotification(violation);
+    }
+  };
+
+  /**
+   * Update student trust score
+   */
+  const updateTrustScore = (studentId, trustScore) => {
+    setStudents(prev =>
+      prev.map(student => (student.id === studentId ? { ...student, trustScore } : student))
+    );
+  };
+
+  /**
+   * Update student status
+   */
+  const updateStudentStatus = (studentId, status) => {
+    setStudents(prev =>
+      prev.map(student => (student.id === studentId ? { ...student, status } : student))
+    );
+
+    // Update active students count
+    setMonitoringStats(prev => ({
+      ...prev,
+      activeStudents: students.filter(s => s.status === 'active').length,
+    }));
+  };
+
+  /**
+   * Start face detection monitoring
+   */
+  const startFaceDetection = () => {
+    if (!settings.faceDetection || !videoRef.current) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const detectFaces = () => {
+      if (!isMonitoring || !videoRef.current) return;
+
+      const video = videoRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+
+      // Get image data for AI processing
+      const imageData = canvas.toDataURL('image/jpeg', 0.8);
+
+      // Send to backend for AI processing
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(
+          JSON.stringify({
+            type: 'face_detection',
+            imageData,
+            timestamp: Date.now(),
+            examId,
+          })
+        );
+      }
+
+      // Continue detection
+      setTimeout(detectFaces, 1000); // Check every second
+    };
+
+    detectFaces();
+  };
+
+  /**
+   * Start audio analysis
+   */
+  const startAudioAnalysis = () => {
+    if (!settings.audioMonitoring) return;
+
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(stream => {
+        const audioContext = new AudioContext();
+        const analyser = audioContext.createAnalyser();
+        const microphone = audioContext.createMediaStreamSource(stream);
+
+        microphone.connect(analyser);
+        analyser.fftSize = 256;
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        const analyzeAudio = () => {
+          if (!isMonitoring) return;
+
+          analyser.getByteFrequencyData(dataArray);
+
+          // Calculate audio level
+          const audioLevel = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+
+          // Detect suspicious audio activity
+          if (audioLevel > 50) {
+            // Threshold for suspicious audio
+            const violation = {
+              type: 'audio_detected',
+              severity: 'medium',
+              description: t('proctoring.violations.audioDetected'),
+              timestamp: Date.now(),
+              audioLevel,
+            };
+
+            // Send violation through WebSocket
+            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+              wsRef.current.send(
+                JSON.stringify({
+                  type: 'violation_report',
+                  violation,
+                  examId,
+                })
+              );
+            }
+          }
+
+          setTimeout(analyzeAudio, 2000); // Check every 2 seconds
+        };
+
+        analyzeAudio();
+      })
+      .catch(error => {
+        console.error('Error accessing microphone:', error);
+      });
+  };
+
+  /**
+   * Start screen monitoring
+   */
+  const startScreenMonitoring = () => {
+    if (!settings.tabSwitchDetection) return;
+
+    // Monitor tab visibility changes
+    const handleVisibilityChange = () => {
+      if (document.hidden && isMonitoring) {
+        const violation = {
+          type: 'tab_switch',
+          severity: 'high',
+          description: t('proctoring.violations.tabSwitch'),
+          timestamp: Date.now(),
+        };
+
+        // Send violation through WebSocket
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send(
+            JSON.stringify({
+              type: 'violation_report',
+              violation,
+              examId,
+            })
+          );
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Monitor window focus changes
+    const handleWindowBlur = () => {
+      if (isMonitoring) {
+        const violation = {
+          type: 'window_focus_lost',
+          severity: 'medium',
+          description: t('proctoring.violations.windowFocusLost'),
+          timestamp: Date.now(),
+        };
+
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send(
+            JSON.stringify({
+              type: 'violation_report',
+              violation,
+              examId,
+            })
+          );
+        }
+      }
+    };
+
+    window.addEventListener('blur', handleWindowBlur);
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  };
+
+  /**
+   * Send critical violation notification
+   */
+  const sendCriticalViolationNotification = violation => {
+    // This would send notifications to admins/teachers
+    console.log('Critical violation detected:', violation);
+
+    // In a real implementation, this would:
+    // 1. Send email notifications
+    // 2. Send push notifications
+    // 3. Log to audit trail
+    // 4. Trigger automatic actions (pause exam, flag student, etc.)
   };
 
   /**

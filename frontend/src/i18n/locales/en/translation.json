@@ -360,16 +360,44 @@
     "status": "Status"
   },
   "proctoring": {
+    "title": "Live Proctoring",
+    "startMonitoring": "Start Monitoring",
+    "stopMonitoring": "Stop Monitoring",
+    "monitoringActive": "Monitoring Active",
+    "monitoringStarted": "Monitoring started successfully",
+    "monitoringStopped": "Monitoring stopped successfully",
+    "startError": "Failed to start monitoring",
+    "stopError": "Failed to stop monitoring",
+    "cameraError": "Failed to access camera",
+    "websocketConnected": "Real-time connection established",
+    "websocketError": "Real-time connection failed",
+    "violation": "Violation Detected",
     "faceDetection": "Face Detection",
     "multiplePeople": "Multiple People Detection",
     "noiseDetection": "Noise Detection",
     "eyeMovement": "Eye Movement Tracking",
     "tabSwitching": "Tab Switching Detection",
     "phoneDetection": "Phone Detection",
+    "trustScoreSettings": {
+      "high": "High Trust",
+      "medium": "Medium Trust",
+      "low": "Low Trust",
+      "average": "Average Score",
+      "distribution": "Score Distribution"
+    },
     "trustScore": "Trust Score",
     "alerts": "Alerts",
     "screenshots": "Screenshots",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "violations": {
+      "audioDetected": "Suspicious audio activity detected",
+      "tabSwitch": "Student switched to another tab",
+      "windowFocusLost": "Student lost window focus",
+      "faceNotDetected": "Face not detected in camera",
+      "multipleFaces": "Multiple faces detected",
+      "lookingAway": "Student looking away from screen",
+      "phoneDetected": "Mobile phone detected"
+    }
   },
   "profile": {
     "title": "Profile",
