@@ -115,5 +115,13 @@ async def get_current_user():
     }
 
 if __name__ == "__main__":
-    print("Starting 360° Proctor Backend Server...")
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    print("🚀 Starting 360° Proctor Backend Server...")
+    print("📚 Educational Exam Proctoring System")
+    print("🌐 Server will be available at: http://localhost:8000")
+    uvicorn.run(
+        "working_main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info"
+    )

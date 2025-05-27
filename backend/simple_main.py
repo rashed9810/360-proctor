@@ -3,12 +3,29 @@ Simple FastAPI server for 360° Proctor - Backend
 Basic working version without complex dependencies
 """
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+import sys
+import os
 from datetime import datetime
-import logging
+
+# Add the current directory to Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+try:
+    # Import FastAPI components
+    from fastapi import FastAPI, HTTPException, status
+    from fastapi.middleware.cors import CORSMiddleware
+    from fastapi.responses import JSONResponse
+    from pydantic import BaseModel
+    import uvicorn
+    import logging
+
+    print("✅ All imports successful!")
+
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print("Please install required packages:")
+    print("pip install fastapi uvicorn pydantic python-multipart")
+    sys.exit(1)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -220,7 +237,7 @@ async def http_exception_handler(request, exc):
     )
 
 if __name__ == "__main__":
-    import uvicorn
+    print("Starting 360° Proctor Backend Server...")
     uvicorn.run(
         "simple_main:app",
         host="0.0.0.0",

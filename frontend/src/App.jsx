@@ -6,7 +6,6 @@ import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
-import DebugInfo from './components/DebugInfo';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Dashboard from './pages/Dashboard';
@@ -137,7 +136,6 @@ function App() {
               }}
             />
             <AppRoutes />
-            <DebugInfo />
           </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
