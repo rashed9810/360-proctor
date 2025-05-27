@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Authentication - 360° Proctor</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a76e8;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #4a76e8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #3a66d8;
+        }
+        .success {
+            color: #10b981;
+            margin-top: 20px;
+        }
+        .info {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #0c4a6e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">360° Proctor</div>
+        <h2>Clear Authentication Data</h2>
+        <p>This will clear all stored authentication data and log you out.</p>
+        
+        <div class="info">
+            <strong>Recommended Test Accounts:</strong><br>
+            • <strong>Admin:</strong> admin@360proctor.com<br>
+            • <strong>Teacher:</strong> teacher@360proctor.com<br>
+            • <strong>Student:</strong> student@360proctor.com<br>
+            <em>Password: any password (demo mode)</em>
+        </div>
+        
+        <button onclick="clearAuth()">Clear Authentication</button>
+        <button onclick="goToLogin()">Go to Login</button>
+        
+        <div id="message"></div>
+    </div>
+
+    <script>
+        function clearAuth() {
+            // Clear all authentication-related localStorage items
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            localStorage.removeItem('mock_auth_user');
+            
+            // Clear all localStorage items (comprehensive clear)
+            localStorage.clear();
+            
+            // Clear sessionStorage as well
+            sessionStorage.clear();
+            
+            document.getElementById('message').innerHTML = 
+                '<div class="success">✅ Authentication data cleared successfully!</div>';
+        }
+        
+        function goToLogin() {
+            clearAuth();
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

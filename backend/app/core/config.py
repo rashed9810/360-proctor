@@ -1,13 +1,19 @@
 import os
-from typing import List, Union, Dict, Any
-from pydantic import BaseSettings, PostgresDsn, validator
+from typing import List, Union, Dict, Any, Optional
 
-class Settings(BaseSettings):
+class Settings:
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "Auto Proctoring System"
+    PROJECT_NAME: str = "360° Proctor"
+
+    # Server settings
+    HOST: str = os.getenv("HOST", "0.0.0.0")
+    PORT: int = int(os.getenv("PORT", "8000"))
+    DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
 
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"]
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"]
+    ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1", "*"]
 
     # JWT
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-for-development-only")
@@ -19,19 +25,11 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "auto_proctoring")
-    SQLALCHEMY_DATABASE_URI: Union[PostgresDsn, str] = None
 
-    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, v: Union[str, None], values: Dict[str, Any]) -> Any:
-        if isinstance(v, str):
-            return v
-        return PostgresDsn.build(
-            scheme="postgresql",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_SERVER"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
-        )
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        """Build database URI"""
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
 
     # AI Models
     FACE_DETECTION_MODEL_PATH: str = os.getenv("FACE_DETECTION_MODEL_PATH", "app/ai/models/face_detection")
@@ -40,9 +38,5 @@ class Settings(BaseSettings):
     # Languages
     SUPPORTED_LANGUAGES: List[str] = ["en", "bn"]
     DEFAULT_LANGUAGE: str = "en"
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 settings = Settings()

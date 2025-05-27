@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import mockAuthService from '../services/mockAuth';
+import authService from '../api/authService';
 
 const AuthContext = createContext(null);
 
@@ -14,9 +14,11 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const currentUser = mockAuthService.getCurrentUser();
-      if (currentUser) {
-        setUser(currentUser);
+      if (authService.isAuthenticated()) {
+        const currentUser = authService.getStoredUser();
+        if (currentUser) {
+          setUser(currentUser);
+        }
       }
     } catch (err) {
       setError(err.message || 'Authentication failed');
@@ -27,10 +29,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const user = await mockAuthService.login(email, password);
-      setUser(user);
-      setError(null);
-      return user;
+      const result = await authService.login(email, password);
+      if (result.success) {
+        setUser(result.user);
+        setError(null);
+        return result.user;
+      } else {
+        throw new Error(result.message);
+      }
     } catch (err) {
       setError(err.message || 'Login failed');
       throw err;
@@ -39,10 +45,14 @@ export const AuthProvider = ({ children }) => {
 
   const register = async userData => {
     try {
-      const user = await mockAuthService.register(userData);
-      setUser(user);
-      setError(null);
-      return user;
+      const result = await authService.register(userData);
+      if (result.success) {
+        setUser(result.user);
+        setError(null);
+        return result.user;
+      } else {
+        throw new Error(result.message);
+      }
     } catch (err) {
       setError(err.message || 'Registration failed');
       throw err;
@@ -50,16 +60,20 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    mockAuthService.logout();
+    authService.logout();
     setUser(null);
   };
 
   const updateProfile = async userData => {
     try {
-      const updatedUser = await mockAuthService.updateProfile(userData);
-      setUser(updatedUser);
-      setError(null);
-      return updatedUser;
+      const result = await authService.updateProfile(userData);
+      if (result.success) {
+        setUser(result.user);
+        setError(null);
+        return result.user;
+      } else {
+        throw new Error(result.message);
+      }
     } catch (err) {
       setError(err.message || 'Profile update failed');
       throw err;
@@ -68,8 +82,12 @@ export const AuthProvider = ({ children }) => {
 
   const changePassword = async passwordData => {
     try {
-      await mockAuthService.changePassword(passwordData);
-      setError(null);
+      const result = await authService.changePassword(passwordData);
+      if (result.success) {
+        setError(null);
+      } else {
+        throw new Error(result.message);
+      }
     } catch (err) {
       setError(err.message || 'Password change failed');
       throw err;
@@ -88,7 +106,7 @@ export const AuthProvider = ({ children }) => {
 
     // Utility methods
     isAuthenticated: !!user,
-    token: user ? 'mock-token' : null, // Mock token for WebSocket
+    token: authService.getStoredToken(), // Real token from authService
     getUserRole: () => user?.role || null,
     getUserName: () => user?.full_name || user?.name || 'User',
     getUserEmail: () => user?.email || '',

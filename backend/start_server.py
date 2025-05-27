@@ -17,10 +17,10 @@ def main():
         print("📚 API Documentation: http://localhost:8000/docs")
         print("🔄 Auto-reload enabled for development")
         print("-" * 50)
-        
+
         # Start the server
         uvicorn.run(
-            "app.main:app",
+            "main:app",
             host="0.0.0.0",
             port=8000,
             reload=True,

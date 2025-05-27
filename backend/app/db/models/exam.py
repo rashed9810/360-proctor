@@ -118,7 +118,7 @@ class AlertSeverity(str, enum.Enum):
 
 class Alert(Base):
     id = Column(Integer, primary_key=True, index=True)
-    exam_session_id = Column(Integer, ForeignKey("examsession.id"))
+    exam_session_id = Column(Integer, ForeignKey("exam_session.id"))
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     alert_type = Column(Enum(AlertType))
     severity = Column(Enum(AlertSeverity))

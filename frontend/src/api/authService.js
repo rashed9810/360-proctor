@@ -13,28 +13,21 @@ class AuthService {
    */
   async login(email, password) {
     try {
-      // Prepare form data as required by FastAPI OAuth2PasswordRequestForm
-      const formData = new FormData();
-      formData.append('username', email);
-      formData.append('password', password);
-
-      const response = await api.post('/auth/login', formData, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+      // For demo purposes, just make a simple POST request
+      const response = await api.post('/auth/login', {
+        email: email,
+        password: password,
       });
 
-      const { access_token, token_type } = response.data;
+      const { access_token, token_type, user } = response.data;
 
       // Store token in localStorage
       localStorage.setItem('token', access_token);
-
-      // Fetch user data
-      const userData = await this.getCurrentUser();
+      localStorage.setItem('user', JSON.stringify(user));
 
       return {
         success: true,
-        user: userData,
+        user: user,
         token: access_token,
         tokenType: token_type,
       };
@@ -128,6 +121,12 @@ class AuthService {
       return response.data;
     } catch (error) {
       console.error('Get current user error:', error);
+
+      // For demo purposes, return stored user data if API fails
+      const storedUser = this.getStoredUser();
+      if (storedUser) {
+        return storedUser;
+      }
 
       // Clear invalid token
       if (error.response?.status === 401) {

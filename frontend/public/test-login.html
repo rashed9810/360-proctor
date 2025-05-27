@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - 360° Proctor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+        .success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            color: #856404;
+        }
+        .test-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .test-btn {
+            padding: 10px 15px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .test-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 360° Proctor Login Test</h1>
+        <p class="subtitle">Test the login functionality with the backend API</p>
+        
+        <div id="backendStatus" class="status">
+            🔄 Checking backend status...
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">📧 Email:</label>
+                <input type="email" id="email" value="admin@test.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">🔒 Password:</label>
+                <input type="password" id="password" value="password123" required>
+            </div>
+            
+            <button type="submit" id="loginBtn">🚀 Test Login</button>
+        </form>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testHealth()">🏥 Test Health</button>
+            <button class="test-btn" onclick="testUserMe()">👤 Test User Info</button>
+            <button class="test-btn" onclick="clearResults()">🧹 Clear Results</button>
+            <button class="test-btn" onclick="openFrontend()">🌐 Open Frontend</button>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        // Check backend status on page load
+        async function checkBackendStatus() {
+            const statusDiv = document.getElementById('backendStatus');
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                statusDiv.innerHTML = '✅ Backend Online - ' + data.status;
+                statusDiv.className = 'status success';
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Backend Offline - Cannot connect';
+                statusDiv.className = 'status error';
+            }
+        }
+        
+        // Test login functionality
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = '⏳ Testing...';
+            
+            try {
+                resultDiv.innerHTML = '<div class="result loading">⏳ Testing login...</div>';
+                
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✅ LOGIN SUCCESS!
+                            
+                            Status: ${response.status}
+                            Token: ${data.access_token}
+                            User: ${JSON.stringify(data.user, null, 2)}
+                            
+                            Full Response:
+                            ${JSON.stringify(data, null, 2)}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ LOGIN FAILED!
+                            
+                            Status: ${response.status}
+                            Response:
+                            ${JSON.stringify(data, null, 2)}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ NETWORK ERROR!
+                        
+                        Error: ${error.message}
+                        
+                        Possible causes:
+                        - Backend server not running
+                        - CORS issues
+                        - Network connectivity problems
+                    </div>
+                `;
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '🚀 Test Login';
+            }
+        });
+        
+        // Test health endpoint
+        async function testHealth() {
+            const resultDiv = document.getElementById('result');
+            try {
+                resultDiv.innerHTML = '<div class="result loading">⏳ Testing health endpoint...</div>';
+                
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✅ HEALTH CHECK SUCCESS!
+                        
+                        ${JSON.stringify(data, null, 2)}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ HEALTH CHECK FAILED!
+                        
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Test user info endpoint
+        async function testUserMe() {
+            const resultDiv = document.getElementById('result');
+            try {
+                resultDiv.innerHTML = '<div class="result loading">⏳ Testing user info endpoint...</div>';
+                
+                const response = await fetch(`${API_BASE}/api/users/me`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✅ USER INFO SUCCESS!
+                        
+                        ${JSON.stringify(data, null, 2)}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ USER INFO FAILED!
+                        
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Clear results
+        function clearResults() {
+            document.getElementById('result').innerHTML = '';
+        }
+        
+        // Open frontend
+        function openFrontend() {
+            window.open('http://localhost:3000/login', '_blank');
+        }
+        
+        // Check status on page load
+        checkBackendStatus();
+        
+        // Auto-refresh status every 10 seconds
+        setInterval(checkBackendStatus, 10000);
+    </script>
+</body>
+</html>

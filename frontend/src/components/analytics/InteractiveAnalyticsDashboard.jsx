@@ -9,8 +9,8 @@ import {
   UserGroupIcon,
   AcademicCapIcon,
   ClockIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
   EyeIcon,
   CalendarIcon,
   DocumentChartBarIcon,
@@ -192,9 +192,9 @@ const InteractiveAnalyticsDashboard = () => {
             {trend !== undefined && (
               <div className="flex items-center">
                 {trend > 0 ? (
-                  <TrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
+                  <ArrowTrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
                 ) : (
-                  <TrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
+                  <ArrowTrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
                 )}
                 <span
                   className={`text-sm font-medium ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}

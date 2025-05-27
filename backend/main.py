@@ -17,7 +17,7 @@ import json
 from datetime import datetime
 
 # Import routers
-from app.routers import auth, users, exams, proctoring, analytics, notifications
+from app.api.api_v1.endpoints import auth, users, exams, proctoring, analytics, notifications
 from app.core.config import settings
 from app.core.database import engine, Base
 from app.core.security import verify_token
@@ -45,17 +45,17 @@ async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
     logger.info("Starting 360° Proctor API server...")
-    
+
     # Create database tables
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables created successfully")
-    
+
     # Initialize WebSocket manager
     await websocket_manager.initialize()
     logger.info("WebSocket manager initialized")
-    
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down 360° Proctor API server...")
     await websocket_manager.cleanup()
@@ -152,7 +152,7 @@ async def websocket_endpoint(
 ):
     """
     WebSocket endpoint for real-time communication
-    
+
     Args:
         client_type: Type of client (admin, student, proctor)
         client_id: Unique client identifier
@@ -165,11 +165,11 @@ async def websocket_endpoint(
             if not user:
                 await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
                 return
-        
+
         # Accept connection
         await websocket_manager.connect(websocket, client_type, client_id)
         logger.info(f"WebSocket connected: {client_type}:{client_id}")
-        
+
         # Send welcome message
         await websocket_manager.send_personal_message(
             client_id,
@@ -179,16 +179,16 @@ async def websocket_endpoint(
                 "timestamp": datetime.utcnow().isoformat()
             }
         )
-        
+
         # Listen for messages
         while True:
             try:
                 data = await websocket.receive_text()
                 message = json.loads(data)
-                
+
                 # Handle different message types
                 await handle_websocket_message(client_id, client_type, message)
-                
+
             except WebSocketDisconnect:
                 break
             except json.JSONDecodeError:
@@ -210,7 +210,7 @@ async def websocket_endpoint(
                         "timestamp": datetime.utcnow().isoformat()
                     }
                 )
-                
+
     except Exception as e:
         logger.error(f"WebSocket connection error: {str(e)}")
     finally:
@@ -220,7 +220,7 @@ async def websocket_endpoint(
 async def handle_websocket_message(client_id: str, client_type: str, message: dict):
     """Handle incoming WebSocket messages"""
     message_type = message.get("type")
-    
+
     if message_type == "ping":
         # Respond to ping with pong
         await websocket_manager.send_personal_message(
@@ -230,19 +230,19 @@ async def handle_websocket_message(client_id: str, client_type: str, message: di
                 "timestamp": datetime.utcnow().isoformat()
             }
         )
-    
+
     elif message_type == "violation_report":
         # Handle violation reports from proctoring
         await handle_violation_report(client_id, message.get("data", {}))
-    
+
     elif message_type == "analytics_request":
         # Handle analytics data requests
         await handle_analytics_request(client_id, message.get("data", {}))
-    
+
     elif message_type == "notification_read":
         # Handle notification read status
         await handle_notification_read(client_id, message.get("data", {}))
-    
+
     else:
         logger.warning(f"Unknown message type: {message_type} from {client_id}")
 
@@ -260,7 +260,7 @@ async def handle_violation_report(client_id: str, data: dict):
             "timestamp": datetime.utcnow().isoformat(),
             "metadata": data.get("metadata", {})
         }
-        
+
         # Broadcast to admin clients
         await websocket_manager.broadcast_to_type(
             "admin",
@@ -269,7 +269,7 @@ async def handle_violation_report(client_id: str, data: dict):
                 "data": violation
             }
         )
-        
+
         # Send to specific proctor if assigned
         proctor_id = data.get("proctor_id")
         if proctor_id:
@@ -280,9 +280,9 @@ async def handle_violation_report(client_id: str, data: dict):
                     "data": violation
                 }
             )
-        
+
         logger.info(f"Violation reported: {violation['type']} for student {violation['student_id']}")
-        
+
     except Exception as e:
         logger.error(f"Error handling violation report: {str(e)}")
 
@@ -308,7 +308,7 @@ async def handle_analytics_request(client_id: str, data: dict):
             ],
             "timestamp": datetime.utcnow().isoformat()
         }
-        
+
         await websocket_manager.send_personal_message(
             client_id,
             {
@@ -316,7 +316,7 @@ async def handle_analytics_request(client_id: str, data: dict):
                 "data": analytics_data
             }
         )
-        
+
     except Exception as e:
         logger.error(f"Error handling analytics request: {str(e)}")
 
@@ -328,7 +328,7 @@ async def handle_notification_read(client_id: str, data: dict):
             # Update notification status in database
             # This is a placeholder - implement actual database update
             logger.info(f"Notification {notification_id} marked as read by {client_id}")
-            
+
     except Exception as e:
         logger.error(f"Error handling notification read: {str(e)}")
 

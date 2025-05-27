@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
+import DebugInfo from './components/DebugInfo';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Dashboard from './pages/Dashboard';
@@ -62,6 +63,7 @@ const AppRoutes = () => {
       <Route path="/test" element={<TestPage />} />
       <Route path="/" element={<PrivateRoute />}>
         <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="students" element={<Students />} />
         <Route path="exams" element={<Exams />} />
         <Route path="exams/list" element={<ExamListPage />} />
@@ -87,6 +89,20 @@ const AppRoutes = () => {
         {/* Student Routes */}
         <Route path="student/dashboard" element={<StudentDashboard />} />
       </Route>
+      {/* Catch-all route for debugging */}
+      <Route
+        path="*"
+        element={
+          <div className="p-8 text-center">
+            <h1 className="text-2xl font-bold text-red-600">404 - Page Not Found</h1>
+            <p className="mt-4">The page you're looking for doesn't exist.</p>
+            <p className="mt-2">Current path: {window.location.pathname}</p>
+            <a href="/login" className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded">
+              Go to Login
+            </a>
+          </div>
+        }
+      />
     </Routes>
   );
 };
@@ -121,6 +137,7 @@ function App() {
               }}
             />
             <AppRoutes />
+            <DebugInfo />
           </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>

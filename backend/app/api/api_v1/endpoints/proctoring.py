@@ -1,49 +1,122 @@
-from typing import Any, List
+from typing import Any, List, Optional, Dict
+from datetime import datetime, timedelta
+import random
+import base64
+import json
 
-from fastapi import APIRouter, Depends, HTTPException, status, WebSocket, WebSocketDisconnect
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
+from app.core import security
 
-from app import schemas
-from app.api import deps
-from app.db.models.user import User, UserRole
-from app.db.models.exam import ExamSession, Alert
-from app.services import exam_session_service, alert_service
-from app.websockets.connection_manager import ConnectionManager
-from app.ai.proctoring_service import ProctorService
+# Mock proctoring database
+class MockProctoringDB:
+    def __init__(self):
+        self.sessions = {}
+        self.violations = {}
+        self.next_session_id = 1
+        self.next_violation_id = 1
+        self.active_connections = {}
+
+    def create_session(self, exam_id: int, user_id: int):
+        session_id = self.next_session_id
+        self.next_session_id += 1
+
+        session = {
+            "id": session_id,
+            "exam_id": exam_id,
+            "user_id": user_id,
+            "start_time": datetime.utcnow().isoformat(),
+            "end_time": None,
+            "status": "active",
+            "trust_score": 100.0,
+            "violations_count": 0,
+            "face_detection_enabled": True,
+            "audio_detection_enabled": True,
+            "tab_switch_count": 0,
+            "suspicious_activities": []
+        }
+
+        self.sessions[session_id] = session
+        return session
+
+    def get_session(self, session_id: int):
+        return self.sessions.get(session_id)
+
+    def update_session(self, session_id: int, update_data: dict):
+        if session_id in self.sessions:
+            self.sessions[session_id].update(update_data)
+            return self.sessions[session_id]
+        return None
+
+    def add_violation(self, session_id: int, violation_type: str, severity: str, description: str):
+        violation_id = self.next_violation_id
+        self.next_violation_id += 1
+
+        violation = {
+            "id": violation_id,
+            "session_id": session_id,
+            "type": violation_type,
+            "severity": severity,
+            "description": description,
+            "timestamp": datetime.utcnow().isoformat(),
+            "resolved": False
+        }
+
+        if session_id not in self.violations:
+            self.violations[session_id] = []
+        self.violations[session_id].append(violation)
+
+        # Update session violation count
+        if session_id in self.sessions:
+            self.sessions[session_id]["violations_count"] += 1
+            # Reduce trust score based on severity
+            reduction = {"low": 5, "medium": 15, "high": 30}.get(severity, 10)
+            self.sessions[session_id]["trust_score"] = max(0, self.sessions[session_id]["trust_score"] - reduction)
+
+        return violation
+
+    def get_session_violations(self, session_id: int):
+        return self.violations.get(session_id, [])
+
+mock_proctoring_db = MockProctoringDB()
 
 router = APIRouter()
-connection_manager = ConnectionManager()
-proctor_service = ProctorService()
 
-
-@router.post("/start-session", response_model=schemas.ExamSession)
-def start_exam_session(
-    *,
-    db: Session = Depends(deps.get_db),
-    session_in: schemas.ExamSessionCreate,
-    current_user: User = Depends(deps.get_current_user),
+@router.post("/start-session")
+async def start_proctoring_session(
+    exam_id: int,
+    authorization: Optional[str] = None
 ) -> Any:
     """
-    Start a new exam session
+    Start a new proctoring session
     """
-    if current_user.role != UserRole.STUDENT:
+    # Verify authentication
+    if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only students can start exam sessions",
+            status_code=401,
+            detail="Authentication required"
         )
 
-    # Check if there's already an active session for this exam and student
-    active_session = exam_session_service.get_active_session(
-        db, exam_id=session_in.exam_id, student_id=current_user.id
-    )
-    if active_session:
-        return active_session
+    token = authorization.replace("Bearer ", "")
+    token_data = await security.verify_token(token)
+    if not token_data:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication credentials"
+        )
 
-    # Create new session
-    session = exam_session_service.create(
-        db, obj_in=session_in, student_id=current_user.id
-    )
-    return session
+    user_id = int(token_data["user_id"])
+
+    # Create proctoring session
+    session = mock_proctoring_db.create_session(exam_id, user_id)
+
+    return {
+        "session_id": session["id"],
+        "exam_id": exam_id,
+        "user_id": user_id,
+        "status": "started",
+        "trust_score": session["trust_score"],
+        "timestamp": session["start_time"]
+    }
 
 
 @router.post("/end-session/{session_id}", response_model=schemas.ExamSession)
