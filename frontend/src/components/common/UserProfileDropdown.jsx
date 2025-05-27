@@ -53,9 +53,11 @@ export default function UserProfileDropdown() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 sm:w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none z-50">
+        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 sm:w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 dark:ring-gray-600 divide-y divide-gray-100 dark:divide-gray-700 focus:outline-none z-[60]">
           <div className="px-4 py-3">
-            <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              {user?.name}
+            </p>
           </div>
           <div className="py-1">
             <Menu.Item>
@@ -63,7 +65,9 @@ export default function UserProfileDropdown() {
                 <Link
                   to="/profile"
                   className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    active
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                      : 'text-gray-700 dark:text-gray-300',
                     'group flex items-center px-4 py-2 text-sm transition-colors duration-150'
                   )}
                 >
@@ -80,7 +84,9 @@ export default function UserProfileDropdown() {
                 <Link
                   to="/settings"
                   className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    active
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                      : 'text-gray-700 dark:text-gray-300',
                     'group flex items-center px-4 py-2 text-sm transition-colors duration-150'
                   )}
                 >
@@ -101,7 +107,9 @@ export default function UserProfileDropdown() {
                     <Link
                       to="/admin/profile"
                       className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        active
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                          : 'text-gray-700 dark:text-gray-300',
                         'group flex items-center px-4 py-2 text-sm transition-colors duration-150'
                       )}
                     >
@@ -118,7 +126,9 @@ export default function UserProfileDropdown() {
                     <Link
                       to="/admin/users"
                       className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        active
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                          : 'text-gray-700 dark:text-gray-300',
                         'group flex items-center px-4 py-2 text-sm transition-colors duration-150'
                       )}
                     >
@@ -135,7 +145,9 @@ export default function UserProfileDropdown() {
                     <Link
                       to="/admin/security"
                       className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        active
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                          : 'text-gray-700 dark:text-gray-300',
                         'group flex items-center px-4 py-2 text-sm transition-colors duration-150'
                       )}
                     >
@@ -156,7 +168,9 @@ export default function UserProfileDropdown() {
                 <button
                   onClick={logout}
                   className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                    active
+                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                      : 'text-gray-700 dark:text-gray-300',
                     'group flex items-center px-4 py-2 text-sm w-full transition-colors duration-150'
                   )}
                 >

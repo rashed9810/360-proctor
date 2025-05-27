@@ -57,7 +57,7 @@ const NotificationDropdown = forwardRef(({ onClose, onMarkAllAsRead, size = 'w-8
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.2 }}
-      className={`absolute right-0 mt-2 ${size} bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden z-50 border border-gray-200 dark:border-gray-700`}
+      className={`absolute right-0 mt-2 ${size} bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden z-[60] border border-gray-200 dark:border-gray-700`}
     >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">

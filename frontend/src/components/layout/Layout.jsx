@@ -37,10 +37,10 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col theme-transition bg-gray-50 dark:bg-gray-900">
-      {/* Mobile sidebar overlay - darkens the screen when sidebar is open */}
-      {sidebarOpen && (
+      {/* Mobile sidebar overlay - only shows on mobile/tablet when sidebar is open */}
+      {sidebarOpen && (isMobile || isTablet) && (
         <div
-          className="fixed inset-0 bg-gray-600 dark:bg-gray-800 bg-opacity-75 z-20 transition-opacity lg:hidden"
+          className="fixed inset-0 bg-gray-600 dark:bg-gray-800 bg-opacity-75 z-20 transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}

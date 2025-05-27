@@ -117,8 +117,8 @@ export default function Navbar({ onMenuClick, isMobile, isTablet }) {
           {/* Language switcher with improved styling */}
           <div className="hidden sm:block relative group">
             <LanguageSwitcher variant="select" position="navbar" />
-            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 hidden group-hover:block pointer-events-none">
-              <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 hidden group-hover:block pointer-events-none z-[70]">
+              <div className="bg-gray-900 dark:bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
                 {t('common.language')}
               </div>
             </div>
@@ -127,8 +127,8 @@ export default function Navbar({ onMenuClick, isMobile, isTablet }) {
           {/* Notifications with tooltip */}
           <div className="relative group">
             <NotificationBell size={isMobile ? 'sm' : 'md'} />
-            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 hidden group-hover:block pointer-events-none">
-              <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 hidden group-hover:block pointer-events-none z-[70]">
+              <div className="bg-gray-900 dark:bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
                 {t('notifications.title')}
               </div>
             </div>
