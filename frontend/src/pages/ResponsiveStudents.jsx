@@ -147,22 +147,40 @@ export default function ResponsiveStudents() {
           <table className="min-w-full divide-y divide-gray-300">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900">
+                <th
+                  scope="col"
+                  className="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900"
+                >
                   Name
                 </th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
                   Email
                 </th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
                   Student ID
                 </th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
                   Department
                 </th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
                   Trust Score
                 </th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                <th
+                  scope="col"
+                  className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
                   Status
                 </th>
                 <th scope="col" className="relative py-3.5 pl-3 pr-6 text-right">
@@ -189,18 +207,20 @@ export default function ResponsiveStudents() {
                   <td className="whitespace-nowrap px-3 py-4 text-sm">
                     <div className="flex items-center">
                       <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div 
+                        <div
                           className={`h-2.5 rounded-full ${
-                            student.trustScore > 0.8 
-                              ? 'bg-green-500' 
-                              : student.trustScore > 0.6 
-                                ? 'bg-yellow-500' 
+                            student.trustScore > 0.8
+                              ? 'bg-green-500'
+                              : student.trustScore > 0.6
+                                ? 'bg-yellow-500'
                                 : 'bg-red-500'
-                          }`} 
+                          }`}
                           style={{ width: `${student.trustScore * 100}%` }}
                         ></div>
                       </div>
-                      <span className="ml-2 text-gray-700">{(student.trustScore * 100).toFixed(0)}%</span>
+                      <span className="ml-2 text-gray-700">
+                        {(student.trustScore * 100).toFixed(0)}%
+                      </span>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm">

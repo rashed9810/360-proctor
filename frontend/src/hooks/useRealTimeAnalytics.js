@@ -31,34 +31,37 @@ export const useRealTimeAnalytics = (options = {}) => {
   });
   const [error, setError] = useState(null);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
-  
+
   const listenersRef = useRef(new Map());
   const notificationQueueRef = useRef([]);
 
   /**
    * Handle connection status changes
    */
-  const handleConnectionChange = useCallback((status) => {
-    setConnectionStatus(status);
-    setIsConnected(status === 'connected');
-    
-    if (status === 'connected') {
-      setError(null);
-      setReconnectAttempts(0);
-      if (enableNotifications) {
-        toast.success('Real-time analytics connected');
+  const handleConnectionChange = useCallback(
+    status => {
+      setConnectionStatus(status);
+      setIsConnected(status === 'connected');
+
+      if (status === 'connected') {
+        setError(null);
+        setReconnectAttempts(0);
+        if (enableNotifications) {
+          toast.success('Real-time analytics connected');
+        }
+      } else if (status === 'disconnected') {
+        if (enableNotifications) {
+          toast.error('Real-time analytics disconnected');
+        }
       }
-    } else if (status === 'disconnected') {
-      if (enableNotifications) {
-        toast.error('Real-time analytics disconnected');
-      }
-    }
-  }, [enableNotifications]);
+    },
+    [enableNotifications]
+  );
 
   /**
    * Handle analytics updates
    */
-  const handleAnalyticsUpdate = useCallback((data) => {
+  const handleAnalyticsUpdate = useCallback(data => {
     setAnalyticsData(prev => ({
       ...prev,
       overview: {
@@ -72,43 +75,49 @@ export const useRealTimeAnalytics = (options = {}) => {
   /**
    * Handle violation alerts
    */
-  const handleViolationAlert = useCallback((violation) => {
-    setAnalyticsData(prev => ({
-      ...prev,
-      recentViolations: [violation, ...prev.recentViolations.slice(0, 9)], // Keep last 10
-      lastUpdate: new Date(),
-    }));
+  const handleViolationAlert = useCallback(
+    violation => {
+      setAnalyticsData(prev => ({
+        ...prev,
+        recentViolations: [violation, ...prev.recentViolations.slice(0, 9)], // Keep last 10
+        lastUpdate: new Date(),
+      }));
 
-    if (enableNotifications && violation.severity === 'high') {
-      toast.error(`High severity violation: ${violation.type}`, {
-        duration: 5000,
-        icon: '🚨',
-      });
-    }
-  }, [enableNotifications]);
+      if (enableNotifications && violation.severity === 'high') {
+        toast.error(`High severity violation: ${violation.type}`, {
+          duration: 5000,
+          icon: '🚨',
+        });
+      }
+    },
+    [enableNotifications]
+  );
 
   /**
    * Handle trust score updates
    */
-  const handleTrustScoreUpdate = useCallback((update) => {
-    setAnalyticsData(prev => ({
-      ...prev,
-      trustScoreUpdates: [update, ...prev.trustScoreUpdates.slice(0, 19)], // Keep last 20
-      lastUpdate: new Date(),
-    }));
+  const handleTrustScoreUpdate = useCallback(
+    update => {
+      setAnalyticsData(prev => ({
+        ...prev,
+        trustScoreUpdates: [update, ...prev.trustScoreUpdates.slice(0, 19)], // Keep last 20
+        lastUpdate: new Date(),
+      }));
 
-    if (enableNotifications && update.score < 60) {
-      toast.warning(`Low trust score: ${Math.round(update.score)}%`, {
-        duration: 4000,
-        icon: '⚠️',
-      });
-    }
-  }, [enableNotifications]);
+      if (enableNotifications && update.score < 60) {
+        toast.warning(`Low trust score: ${Math.round(update.score)}%`, {
+          duration: 4000,
+          icon: '⚠️',
+        });
+      }
+    },
+    [enableNotifications]
+  );
 
   /**
    * Handle system metrics updates
    */
-  const handleSystemMetrics = useCallback((metrics) => {
+  const handleSystemMetrics = useCallback(metrics => {
     setAnalyticsData(prev => ({
       ...prev,
       systemMetrics: metrics,
@@ -119,12 +128,15 @@ export const useRealTimeAnalytics = (options = {}) => {
   /**
    * Handle connection errors
    */
-  const handleError = useCallback((errorData) => {
-    setError(errorData.error);
-    if (enableNotifications) {
-      toast.error('Analytics connection error');
-    }
-  }, [enableNotifications]);
+  const handleError = useCallback(
+    errorData => {
+      setError(errorData.error);
+      if (enableNotifications) {
+        toast.error('Analytics connection error');
+      }
+    },
+    [enableNotifications]
+  );
 
   /**
    * Handle reconnection attempts
@@ -178,7 +190,7 @@ export const useRealTimeAnalytics = (options = {}) => {
   const connect = useCallback(() => {
     try {
       realTimeAnalyticsService.connect();
-      
+
       // Setup subscriptions after connection
       setTimeout(() => {
         if (subscriptions.includes('analytics')) {
@@ -221,20 +233,26 @@ export const useRealTimeAnalytics = (options = {}) => {
   /**
    * Subscribe to specific exam violations
    */
-  const subscribeToExam = useCallback((examId) => {
-    if (isConnected) {
-      realTimeAnalyticsService.subscribeToViolations([examId]);
-    }
-  }, [isConnected]);
+  const subscribeToExam = useCallback(
+    examId => {
+      if (isConnected) {
+        realTimeAnalyticsService.subscribeToViolations([examId]);
+      }
+    },
+    [isConnected]
+  );
 
   /**
    * Subscribe to specific student trust scores
    */
-  const subscribeToStudent = useCallback((studentId) => {
-    if (isConnected) {
-      realTimeAnalyticsService.subscribeToTrustScores([studentId]);
-    }
-  }, [isConnected]);
+  const subscribeToStudent = useCallback(
+    studentId => {
+      if (isConnected) {
+        realTimeAnalyticsService.subscribeToTrustScores([studentId]);
+      }
+    },
+    [isConnected]
+  );
 
   /**
    * Get connection statistics
@@ -295,16 +313,19 @@ export const useRealTimeViolations = (examIds = []) => {
   const [violations, setViolations] = useState([]);
   const [alertCount, setAlertCount] = useState(0);
 
-  const handleViolationAlert = useCallback((violation) => {
-    if (examIds.length === 0 || examIds.includes(violation.examId)) {
-      setViolations(prev => [violation, ...prev.slice(0, 49)]); // Keep last 50
-      setAlertCount(prev => prev + 1);
-    }
-  }, [examIds]);
+  const handleViolationAlert = useCallback(
+    violation => {
+      if (examIds.length === 0 || examIds.includes(violation.examId)) {
+        setViolations(prev => [violation, ...prev.slice(0, 49)]); // Keep last 50
+        setAlertCount(prev => prev + 1);
+      }
+    },
+    [examIds]
+  );
 
   useEffect(() => {
     realTimeAnalyticsService.on('violationAlert', handleViolationAlert);
-    
+
     if (examIds.length > 0) {
       realTimeAnalyticsService.subscribeToViolations(examIds);
     }
@@ -333,19 +354,22 @@ export const useRealTimeTrustScores = (studentIds = []) => {
   const [trustScores, setTrustScores] = useState(new Map());
   const [lowScoreAlerts, setLowScoreAlerts] = useState([]);
 
-  const handleTrustScoreUpdate = useCallback((update) => {
-    if (studentIds.length === 0 || studentIds.includes(update.studentId)) {
-      setTrustScores(prev => new Map(prev.set(update.studentId, update)));
-      
-      if (update.score < 70) {
-        setLowScoreAlerts(prev => [update, ...prev.slice(0, 9)]); // Keep last 10
+  const handleTrustScoreUpdate = useCallback(
+    update => {
+      if (studentIds.length === 0 || studentIds.includes(update.studentId)) {
+        setTrustScores(prev => new Map(prev.set(update.studentId, update)));
+
+        if (update.score < 70) {
+          setLowScoreAlerts(prev => [update, ...prev.slice(0, 9)]); // Keep last 10
+        }
       }
-    }
-  }, [studentIds]);
+    },
+    [studentIds]
+  );
 
   useEffect(() => {
     realTimeAnalyticsService.on('trustScoreUpdate', handleTrustScoreUpdate);
-    
+
     if (studentIds.length > 0) {
       realTimeAnalyticsService.subscribeToTrustScores(studentIds);
     }
@@ -355,9 +379,12 @@ export const useRealTimeTrustScores = (studentIds = []) => {
     };
   }, [studentIds, handleTrustScoreUpdate]);
 
-  const getTrustScore = useCallback((studentId) => {
-    return trustScores.get(studentId);
-  }, [trustScores]);
+  const getTrustScore = useCallback(
+    studentId => {
+      return trustScores.get(studentId);
+    },
+    [trustScores]
+  );
 
   const clearAlerts = useCallback(() => {
     setLowScoreAlerts([]);

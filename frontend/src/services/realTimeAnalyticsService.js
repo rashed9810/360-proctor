@@ -20,7 +20,7 @@ class RealTimeAnalyticsService {
    */
   connect() {
     const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/analytics';
-    
+
     try {
       this.ws = new WebSocket(wsUrl);
       this.setupEventHandlers();
@@ -42,7 +42,7 @@ class RealTimeAnalyticsService {
       this.emit('connected', { timestamp: new Date() });
     };
 
-    this.ws.onmessage = (event) => {
+    this.ws.onmessage = event => {
       try {
         const data = JSON.parse(event.data);
         this.handleMessage(data);
@@ -51,18 +51,19 @@ class RealTimeAnalyticsService {
       }
     };
 
-    this.ws.onclose = (event) => {
+    this.ws.onclose = event => {
       console.log('Real-time analytics disconnected:', event.code, event.reason);
       this.isConnected = false;
       this.stopHeartbeat();
       this.emit('disconnected', { code: event.code, reason: event.reason });
-      
-      if (event.code !== 1000) { // Not a normal closure
+
+      if (event.code !== 1000) {
+        // Not a normal closure
         this.handleReconnect();
       }
     };
 
-    this.ws.onerror = (error) => {
+    this.ws.onerror = error => {
       console.error('WebSocket error:', error);
       this.emit('error', { error });
     };
@@ -129,9 +130,9 @@ class RealTimeAnalyticsService {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
-      
+
       console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
-      
+
       setTimeout(() => {
         this.connect();
       }, delay);
@@ -277,7 +278,7 @@ class RealTimeAnalyticsService {
   startMockData() {
     if (import.meta.env.VITE_ENABLE_MOCK_DATA === 'true') {
       console.log('Starting mock real-time analytics data');
-      
+
       // Mock analytics updates every 5 seconds
       setInterval(() => {
         this.emit('analyticsUpdate', {
@@ -291,10 +292,13 @@ class RealTimeAnalyticsService {
 
       // Mock violation alerts randomly
       setInterval(() => {
-        if (Math.random() < 0.3) { // 30% chance
+        if (Math.random() < 0.3) {
+          // 30% chance
           this.emit('violationAlert', {
             id: Date.now(),
-            type: ['faceNotDetected', 'multipleFaces', 'tabSwitch', 'phoneDetected'][Math.floor(Math.random() * 4)],
+            type: ['faceNotDetected', 'multipleFaces', 'tabSwitch', 'phoneDetected'][
+              Math.floor(Math.random() * 4)
+            ],
             studentId: Math.floor(Math.random() * 100) + 1,
             examId: Math.floor(Math.random() * 20) + 1,
             severity: Math.random() > 0.5 ? 'high' : 'medium',

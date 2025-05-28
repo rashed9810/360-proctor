@@ -27,12 +27,8 @@ const ExamDetailsView = ({ exam }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {exam.title}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            {exam.subject}
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{exam.title}</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">{exam.subject}</p>
         </div>
         <div className="mt-4 md:mt-0 flex items-center space-x-2">
           <Link
@@ -41,9 +37,7 @@ const ExamDetailsView = ({ exam }) => {
           >
             {t('common.edit', { ns: 'translation' })}
           </Link>
-          <button
-            className="px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-          >
+          <button className="px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
             {t('common.delete', { ns: 'translation' })}
           </button>
         </div>
@@ -52,11 +46,17 @@ const ExamDetailsView = ({ exam }) => {
       <div className="mt-4 flex flex-wrap items-center text-sm text-gray-500 dark:text-gray-400 gap-x-4 gap-y-2">
         <div className="flex items-center">
           <CalendarIcon className="h-4 w-4 mr-1" />
-          {new Date(exam.startTime).toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : undefined)}
+          {new Date(exam.startTime).toLocaleDateString(
+            i18n.language === 'bn' ? 'bn-BD' : undefined
+          )}
         </div>
         <div className="flex items-center">
           <ClockIcon className="h-4 w-4 mr-1" />
-          {new Date(exam.startTime).toLocaleTimeString(i18n.language === 'bn' ? 'bn-BD' : undefined)} - {new Date(exam.endTime).toLocaleTimeString(i18n.language === 'bn' ? 'bn-BD' : undefined)}
+          {new Date(exam.startTime).toLocaleTimeString(
+            i18n.language === 'bn' ? 'bn-BD' : undefined
+          )}{' '}
+          -{' '}
+          {new Date(exam.endTime).toLocaleTimeString(i18n.language === 'bn' ? 'bn-BD' : undefined)}
         </div>
         <div className="flex items-center">
           <UserGroupIcon className="h-4 w-4 mr-1" />
@@ -129,27 +129,21 @@ const ExamDetailsView = ({ exam }) => {
       {/* Tab content */}
       <div className="space-y-6">
         {activeTab === 'overview' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                 {t('examDetails')}
               </h2>
-              
+
               {exam.description && (
                 <div className="mb-6">
                   <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('description')}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {exam.description}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-400">{exam.description}</p>
                 </div>
               )}
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -158,27 +152,45 @@ const ExamDetailsView = ({ exam }) => {
                   <ul className="space-y-2">
                     <li className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">{t('startDate')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{new Date(exam.startTime).toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : undefined)}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {new Date(exam.startTime).toLocaleDateString(
+                          i18n.language === 'bn' ? 'bn-BD' : undefined
+                        )}
+                      </span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">{t('startTime')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{new Date(exam.startTime).toLocaleTimeString(i18n.language === 'bn' ? 'bn-BD' : undefined)}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {new Date(exam.startTime).toLocaleTimeString(
+                          i18n.language === 'bn' ? 'bn-BD' : undefined
+                        )}
+                      </span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">{t('endDate')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{new Date(exam.endTime).toLocaleDateString(i18n.language === 'bn' ? 'bn-BD' : undefined)}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {new Date(exam.endTime).toLocaleDateString(
+                          i18n.language === 'bn' ? 'bn-BD' : undefined
+                        )}
+                      </span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">{t('endTime')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{new Date(exam.endTime).toLocaleTimeString(i18n.language === 'bn' ? 'bn-BD' : undefined)}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {new Date(exam.endTime).toLocaleTimeString(
+                          i18n.language === 'bn' ? 'bn-BD' : undefined
+                        )}
+                      </span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">{t('duration')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{exam.duration} {t('common.minutes', { ns: 'translation' })}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {exam.duration} {t('common.minutes', { ns: 'translation' })}
+                      </span>
                     </li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('proctoringSettings')}
@@ -186,23 +198,49 @@ const ExamDetailsView = ({ exam }) => {
                   <ul className="space-y-2">
                     <li className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">{t('faceDetection')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{exam.enableFaceDetection ? t('common.yes', { ns: 'translation' }) : t('common.no', { ns: 'translation' })}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {exam.enableFaceDetection
+                          ? t('common.yes', { ns: 'translation' })
+                          : t('common.no', { ns: 'translation' })}
+                      </span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">{t('multipleFaceDetection')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{exam.enableMultipleFaceDetection ? t('common.yes', { ns: 'translation' }) : t('common.no', { ns: 'translation' })}</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        {t('multipleFaceDetection')}
+                      </span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {exam.enableMultipleFaceDetection
+                          ? t('common.yes', { ns: 'translation' })
+                          : t('common.no', { ns: 'translation' })}
+                      </span>
                     </li>
                     <li className="flex justify-between">
                       <span className="text-gray-500 dark:text-gray-400">{t('eyeTracking')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{exam.enableEyeTracking ? t('common.yes', { ns: 'translation' }) : t('common.no', { ns: 'translation' })}</span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {exam.enableEyeTracking
+                          ? t('common.yes', { ns: 'translation' })
+                          : t('common.no', { ns: 'translation' })}
+                      </span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">{t('audioDetection')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{exam.enableAudioDetection ? t('common.yes', { ns: 'translation' }) : t('common.no', { ns: 'translation' })}</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        {t('audioDetection')}
+                      </span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {exam.enableAudioDetection
+                          ? t('common.yes', { ns: 'translation' })
+                          : t('common.no', { ns: 'translation' })}
+                      </span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">{t('tabSwitchingDetection')}</span>
-                      <span className="text-gray-700 dark:text-gray-300">{exam.enableTabSwitchDetection ? t('common.yes', { ns: 'translation' }) : t('common.no', { ns: 'translation' })}</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        {t('tabSwitchingDetection')}
+                      </span>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {exam.enableTabSwitchDetection
+                          ? t('common.yes', { ns: 'translation' })
+                          : t('common.no', { ns: 'translation' })}
+                      </span>
                     </li>
                   </ul>
                 </div>

@@ -68,7 +68,7 @@ const AdvancedFaceDetection = ({
   const initializeCamera = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Request camera access
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -95,7 +95,6 @@ const AdvancedFaceDetection = ({
 
       // Initialize face detection model (placeholder for actual AI model)
       await initializeFaceDetectionModel();
-
     } catch (err) {
       console.error('Error initializing camera:', err);
       setError(err.name === 'NotAllowedError' ? 'cameraPermissionDenied' : 'cameraInitError');
@@ -114,10 +113,10 @@ const AdvancedFaceDetection = ({
     // - TensorFlow.js Face Detection
     // - OpenCV.js
     console.log('Initializing AI face detection model...');
-    
+
     // Simulate model loading time
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     console.log('Face detection model loaded successfully');
   };
 
@@ -144,7 +143,7 @@ const AdvancedFaceDetection = ({
     try {
       // Perform face detection (placeholder implementation)
       const detectionResult = await simulateFaceDetection(imageData);
-      
+
       // Update statistics
       setStatistics(prev => ({
         ...prev,
@@ -154,7 +153,6 @@ const AdvancedFaceDetection = ({
 
       // Process detection result
       processDetectionResult(detectionResult);
-
     } catch (error) {
       console.error('Face detection error:', error);
     }
@@ -163,7 +161,7 @@ const AdvancedFaceDetection = ({
   /**
    * Simulate face detection (placeholder for real AI implementation)
    */
-  const simulateFaceDetection = async (imageData) => {
+  const simulateFaceDetection = async imageData => {
     // Placeholder implementation - in production, this would use real AI models
     await new Promise(resolve => setTimeout(resolve, 50)); // Simulate processing time
 
@@ -194,106 +192,112 @@ const AdvancedFaceDetection = ({
       confidence: selectedResult.confidence,
       status: selectedResult.status,
       timestamp: new Date(),
-      boundingBoxes: selectedResult.faces > 0 ? [
-        { x: 100, y: 80, width: 200, height: 240 } // Mock bounding box
-      ] : [],
+      boundingBoxes:
+        selectedResult.faces > 0
+          ? [
+              { x: 100, y: 80, width: 200, height: 240 }, // Mock bounding box
+            ]
+          : [],
     };
   };
 
   /**
    * Process face detection results
    */
-  const processDetectionResult = useCallback((result) => {
-    const { faces, confidence, status, timestamp, boundingBoxes } = result;
+  const processDetectionResult = useCallback(
+    result => {
+      const { faces, confidence, status, timestamp, boundingBoxes } = result;
 
-    // Update confidence
-    setConfidence(confidence);
-    onConfidenceChange?.(confidence);
+      // Update confidence
+      setConfidence(confidence);
+      onConfidenceChange?.(confidence);
 
-    // Determine face status
-    let newFaceStatus = 'unknown';
-    let violationType = null;
+      // Determine face status
+      let newFaceStatus = 'unknown';
+      let violationType = null;
 
-    if (faces === 0) {
-      newFaceStatus = 'not_detected';
-      violationType = 'face_not_detected';
-    } else if (faces > 1) {
-      newFaceStatus = 'multiple';
-      violationType = 'multiple_faces_detected';
-    } else if (confidence < detectionConfig.confidenceThreshold) {
-      newFaceStatus = 'low_confidence';
-      violationType = 'low_confidence_detection';
-    } else {
-      newFaceStatus = 'detected';
-      // Update face detected time
-      setStatistics(prev => ({
-        ...prev,
-        faceDetectedTime: prev.faceDetectedTime + detectionConfig.detectionInterval,
-      }));
-    }
-
-    // Update face status
-    setFaceStatus(newFaceStatus);
-    onFaceStatusChange?.(newFaceStatus, confidence);
-
-    // Handle violations
-    if (violationType) {
-      handleViolation(violationType, confidence, timestamp);
-    } else {
-      // Clear violation timeout if face is properly detected
-      if (violationTimeoutRef.current) {
-        clearTimeout(violationTimeoutRef.current);
-        violationTimeoutRef.current = null;
+      if (faces === 0) {
+        newFaceStatus = 'not_detected';
+        violationType = 'face_not_detected';
+      } else if (faces > 1) {
+        newFaceStatus = 'multiple';
+        violationType = 'multiple_faces_detected';
+      } else if (confidence < detectionConfig.confidenceThreshold) {
+        newFaceStatus = 'low_confidence';
+        violationType = 'low_confidence_detection';
+      } else {
+        newFaceStatus = 'detected';
+        // Update face detected time
+        setStatistics(prev => ({
+          ...prev,
+          faceDetectedTime: prev.faceDetectedTime + detectionConfig.detectionInterval,
+        }));
       }
-    }
 
-    // Draw detection results on canvas
-    drawDetectionResults(boundingBoxes, newFaceStatus);
+      // Update face status
+      setFaceStatus(newFaceStatus);
+      onFaceStatusChange?.(newFaceStatus, confidence);
 
-  }, [onConfidenceChange, onFaceStatusChange]);
+      // Handle violations
+      if (violationType) {
+        handleViolation(violationType, confidence, timestamp);
+      } else {
+        // Clear violation timeout if face is properly detected
+        if (violationTimeoutRef.current) {
+          clearTimeout(violationTimeoutRef.current);
+          violationTimeoutRef.current = null;
+        }
+      }
+
+      // Draw detection results on canvas
+      drawDetectionResults(boundingBoxes, newFaceStatus);
+    },
+    [onConfidenceChange, onFaceStatusChange]
+  );
 
   /**
    * Handle violation detection
    */
-  const handleViolation = useCallback((type, confidence, timestamp) => {
-    // Clear existing timeout
-    if (violationTimeoutRef.current) {
-      clearTimeout(violationTimeoutRef.current);
-    }
-
-    // Set new timeout for violation
-    violationTimeoutRef.current = setTimeout(() => {
-      const violation = {
-        id: `violation_${Date.now()}`,
-        type,
-        confidence,
-        timestamp,
-        severity: confidence < 0.3 ? 'high' : confidence < 0.6 ? 'medium' : 'low',
-      };
-
-      // Add to violations list
-      setViolations(prev => [violation, ...prev.slice(0, 9)]); // Keep last 10
-
-      // Update statistics
-      setStatistics(prev => ({
-        ...prev,
-        violationCount: prev.violationCount + 1,
-      }));
-
-      // Notify parent component
-      onViolationDetected?.(violation);
-
-      // Show toast notification for high severity violations
-      if (violation.severity === 'high') {
-        toast.error(t(`proctoring.violations.${type}`, type), {
-          duration: 5000,
-          icon: '🚨',
-        });
+  const handleViolation = useCallback(
+    (type, confidence, timestamp) => {
+      // Clear existing timeout
+      if (violationTimeoutRef.current) {
+        clearTimeout(violationTimeoutRef.current);
       }
 
-    }, detectionConfig.violationThreshold);
+      // Set new timeout for violation
+      violationTimeoutRef.current = setTimeout(() => {
+        const violation = {
+          id: `violation_${Date.now()}`,
+          type,
+          confidence,
+          timestamp,
+          severity: confidence < 0.3 ? 'high' : confidence < 0.6 ? 'medium' : 'low',
+        };
 
-  }, [onViolationDetected, t]);
+        // Add to violations list
+        setViolations(prev => [violation, ...prev.slice(0, 9)]); // Keep last 10
+
+        // Update statistics
+        setStatistics(prev => ({
+          ...prev,
+          violationCount: prev.violationCount + 1,
+        }));
+
+        // Notify parent component
+        onViolationDetected?.(violation);
+
+        // Show toast notification for high severity violations
+        if (violation.severity === 'high') {
+          toast.error(t(`proctoring.violations.${type}`, type), {
+            duration: 5000,
+            icon: '🚨',
+          });
+        }
+      }, detectionConfig.violationThreshold);
+    },
+    [onViolationDetected, t]
+  );
 
   /**
    * Draw detection results on canvas
@@ -314,19 +318,22 @@ const AdvancedFaceDetection = ({
 
     // Draw bounding boxes
     boundingBoxes.forEach(box => {
-      ctx.strokeStyle = status === 'detected' ? detectionConfig.faceBoxColor : detectionConfig.violationColor;
+      ctx.strokeStyle =
+        status === 'detected' ? detectionConfig.faceBoxColor : detectionConfig.violationColor;
       ctx.lineWidth = 3;
       ctx.strokeRect(box.x, box.y, box.width, box.height);
 
       // Draw confidence score
-      ctx.fillStyle = status === 'detected' ? detectionConfig.faceBoxColor : detectionConfig.violationColor;
+      ctx.fillStyle =
+        status === 'detected' ? detectionConfig.faceBoxColor : detectionConfig.violationColor;
       ctx.font = '16px Arial';
       ctx.fillText(`${Math.round(confidence * 100)}%`, box.x, box.y - 10);
     });
 
     // Draw status indicator
     const statusText = t(`proctoring.faceStatus.${status}`, status);
-    ctx.fillStyle = status === 'detected' ? detectionConfig.faceBoxColor : detectionConfig.violationColor;
+    ctx.fillStyle =
+      status === 'detected' ? detectionConfig.faceBoxColor : detectionConfig.violationColor;
     ctx.font = 'bold 18px Arial';
     ctx.fillText(statusText, 10, 30);
   };
@@ -338,7 +345,10 @@ const AdvancedFaceDetection = ({
     if (!isInitialized) return;
 
     setIsDetecting(true);
-    detectionIntervalRef.current = setInterval(performFaceDetection, detectionConfig.detectionInterval);
+    detectionIntervalRef.current = setInterval(
+      performFaceDetection,
+      detectionConfig.detectionInterval
+    );
   }, [isInitialized, performFaceDetection]);
 
   /**
@@ -346,7 +356,7 @@ const AdvancedFaceDetection = ({
    */
   const stopDetection = useCallback(() => {
     setIsDetecting(false);
-    
+
     if (detectionIntervalRef.current) {
       clearInterval(detectionIntervalRef.current);
       detectionIntervalRef.current = null;
@@ -400,26 +410,36 @@ const AdvancedFaceDetection = ({
   /**
    * Get status color
    */
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'detected': return 'text-green-500';
-      case 'not_detected': return 'text-red-500';
-      case 'multiple': return 'text-orange-500';
-      case 'low_confidence': return 'text-yellow-500';
-      default: return 'text-gray-500';
+      case 'detected':
+        return 'text-green-500';
+      case 'not_detected':
+        return 'text-red-500';
+      case 'multiple':
+        return 'text-orange-500';
+      case 'low_confidence':
+        return 'text-yellow-500';
+      default:
+        return 'text-gray-500';
     }
   };
 
   /**
    * Get status icon
    */
-  const getStatusIcon = (status) => {
+  const getStatusIcon = status => {
     switch (status) {
-      case 'detected': return <CheckCircleIcon className="h-5 w-5" />;
-      case 'not_detected': return <XCircleIcon className="h-5 w-5" />;
-      case 'multiple': return <UserIcon className="h-5 w-5" />;
-      case 'low_confidence': return <ExclamationTriangleIcon className="h-5 w-5" />;
-      default: return <EyeIcon className="h-5 w-5" />;
+      case 'detected':
+        return <CheckCircleIcon className="h-5 w-5" />;
+      case 'not_detected':
+        return <XCircleIcon className="h-5 w-5" />;
+      case 'multiple':
+        return <UserIcon className="h-5 w-5" />;
+      case 'low_confidence':
+        return <ExclamationTriangleIcon className="h-5 w-5" />;
+      default:
+        return <EyeIcon className="h-5 w-5" />;
     }
   };
 
@@ -436,7 +456,10 @@ const AdvancedFaceDetection = ({
               {t('proctoring.advancedFaceDetection', 'Advanced Face Detection')}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('proctoring.aiPoweredMonitoring', 'AI-powered face monitoring and violation detection')}
+              {t(
+                'proctoring.aiPoweredMonitoring',
+                'AI-powered face monitoring and violation detection'
+              )}
             </p>
           </div>
         </div>
@@ -449,9 +472,7 @@ const AdvancedFaceDetection = ({
               {t(`proctoring.faceStatus.${faceStatus}`, faceStatus)}
             </span>
           </div>
-          {isDetecting && (
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          )}
+          {isDetecting && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>}
         </div>
       </div>
 
@@ -475,23 +496,18 @@ const AdvancedFaceDetection = ({
       {showVideo && (
         <div className="relative">
           <div className="relative bg-black rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              className="w-full h-64 object-cover"
-              muted
-              playsInline
-            />
+            <video ref={videoRef} className="w-full h-64 object-cover" muted playsInline />
             <canvas
               ref={canvasRef}
               className="absolute inset-0 w-full h-full"
               style={{ pointerEvents: 'none' }}
             />
-            
+
             {/* Overlay Information */}
             <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs">
               {t('proctoring.confidence', 'Confidence')}: {Math.round(confidence * 100)}%
             </div>
-            
+
             {isDetecting && (
               <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs flex items-center space-x-1">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -553,7 +569,7 @@ const AdvancedFaceDetection = ({
           </h4>
           <div className="space-y-2 max-h-32 overflow-y-auto">
             <AnimatePresence>
-              {violations.slice(0, 5).map((violation) => (
+              {violations.slice(0, 5).map(violation => (
                 <motion.div
                   key={violation.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -563,8 +579,8 @@ const AdvancedFaceDetection = ({
                     violation.severity === 'high'
                       ? 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400'
                       : violation.severity === 'medium'
-                      ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400'
-                      : 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400'
+                        ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400'
+                        : 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400'
                   }`}
                 >
                   <span>{t(`proctoring.violations.${violation.type}`, violation.type)}</span>

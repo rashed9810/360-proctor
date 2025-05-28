@@ -62,16 +62,16 @@ const OnboardingTour = ({ isNewUser = false, onComplete, enabled = true }) => {
       const timer = setTimeout(() => {
         setShowTour(true);
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isNewUser, enabled, tourCompleted]);
 
   // Get target element position
-  const getTargetPosition = (targetId) => {
+  const getTargetPosition = targetId => {
     const element = document.querySelector(targetId);
     if (!element) return null;
-    
+
     const rect = element.getBoundingClientRect();
     return {
       top: rect.top + window.scrollY,
@@ -86,7 +86,7 @@ const OnboardingTour = ({ isNewUser = false, onComplete, enabled = true }) => {
   // Calculate tooltip position
   const calculateTooltipPosition = (targetPosition, position) => {
     if (!targetPosition) return { top: '50%', left: '50%' };
-    
+
     switch (position) {
       case 'top':
         return {
@@ -164,12 +164,14 @@ const OnboardingTour = ({ isNewUser = false, onComplete, enabled = true }) => {
   // Current step data
   const currentStepData = tourSteps[currentStep];
   const targetPosition = currentStepData ? getTargetPosition(currentStepData.target) : null;
-  const tooltipPosition = currentStepData ? calculateTooltipPosition(targetPosition, currentStepData.position) : {};
+  const tooltipPosition = currentStepData
+    ? calculateTooltipPosition(targetPosition, currentStepData.position)
+    : {};
 
   // Highlight target element
   const highlightTarget = () => {
     if (!targetPosition) return null;
-    
+
     return (
       <div
         className="absolute bg-indigo-500 bg-opacity-30 border-2 border-indigo-500 rounded-lg z-40 pointer-events-none"
@@ -186,7 +188,7 @@ const OnboardingTour = ({ isNewUser = false, onComplete, enabled = true }) => {
   // Render tooltip
   const renderTooltip = () => {
     if (!currentStepData) return null;
-    
+
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -206,9 +208,7 @@ const OnboardingTour = ({ isNewUser = false, onComplete, enabled = true }) => {
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-          {currentStepData.content}
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{currentStepData.content}</p>
         <div className="flex justify-between items-center">
           <div className="flex space-x-1">
             {tourSteps.map((_, index) => (
@@ -256,15 +256,13 @@ const OnboardingTour = ({ isNewUser = false, onComplete, enabled = true }) => {
 
   // Render overlay
   const renderOverlay = () => {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-30" onClick={skipTour} />
-    );
+    return <div className="fixed inset-0 bg-black bg-opacity-50 z-30" onClick={skipTour} />;
   };
 
   // Render restart button
   const renderRestartButton = () => {
     if (!tourCompleted || showTour) return null;
-    
+
     return (
       <div className="fixed bottom-4 left-4 z-50">
         <button

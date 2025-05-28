@@ -104,7 +104,7 @@ class MockWebSocket {
           success: ['Exam Completed', 'Results Published', 'Account Verified'],
         };
         const title = titles[type][Math.floor(Math.random() * titles[type].length)];
-        
+
         const notification = {
           id: `n${Date.now()}`,
           type,
@@ -152,7 +152,7 @@ const NotificationSystem = () => {
 
     wsRef.current.onmessage = event => {
       const data = JSON.parse(event.data);
-      
+
       if (data.type === 'initial') {
         setNotifications(data.notifications);
         setUnreadCount(data.notifications.filter(n => !n.read).length);
@@ -161,7 +161,7 @@ const NotificationSystem = () => {
         setUnreadCount(prev => prev + 1);
         setLatestNotification(data.notification);
         setShowToast(true);
-        
+
         // Hide toast after 5 seconds
         setTimeout(() => {
           setShowToast(false);
@@ -196,7 +196,7 @@ const NotificationSystem = () => {
   }, []);
 
   // Mark notification as read
-  const markAsRead = (id) => {
+  const markAsRead = id => {
     setNotifications(prev =>
       prev.map(notification =>
         notification.id === id ? { ...notification, read: true } : notification
@@ -207,14 +207,12 @@ const NotificationSystem = () => {
 
   // Mark all notifications as read
   const markAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, read: true }))
-    );
+    setNotifications(prev => prev.map(notification => ({ ...notification, read: true })));
     setUnreadCount(0);
   };
 
   // Format relative time
-  const formatRelativeTime = (dateString) => {
+  const formatRelativeTime = dateString => {
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now - date;
@@ -231,7 +229,7 @@ const NotificationSystem = () => {
   };
 
   // Get icon based on notification type
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = type => {
     switch (type) {
       case 'info':
         return <InformationCircleIcon className="h-5 w-5 text-blue-500" />;
@@ -371,19 +369,22 @@ const NotificationSystem = () => {
             exit={{ opacity: 0, y: -20 }}
             className="fixed top-4 right-4 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 overflow-hidden"
           >
-            <div className={`h-1 ${
-              latestNotification.type === 'info' ? 'bg-blue-500' :
-              latestNotification.type === 'warning' ? 'bg-yellow-500' :
-              latestNotification.type === 'error' ? 'bg-red-500' :
-              'bg-green-500'
-            }`}>
+            <div
+              className={`h-1 ${
+                latestNotification.type === 'info'
+                  ? 'bg-blue-500'
+                  : latestNotification.type === 'warning'
+                    ? 'bg-yellow-500'
+                    : latestNotification.type === 'error'
+                      ? 'bg-red-500'
+                      : 'bg-green-500'
+              }`}
+            >
               <div className="h-full bg-white dark:bg-gray-800 animate-[shrink_5s_linear]"></div>
             </div>
             <div className="p-4">
               <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  {getNotificationIcon(latestNotification.type)}
-                </div>
+                <div className="flex-shrink-0">{getNotificationIcon(latestNotification.type)}</div>
                 <div className="ml-3 w-0 flex-1">
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {latestNotification.title}

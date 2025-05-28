@@ -70,9 +70,9 @@ export default function ResponsiveLayout() {
         }}
       >
         {/* Top navigation */}
-        <ResponsiveNavbar 
-          onMenuClick={() => setSidebarOpen(true)} 
-          isMobile={isMobile} 
+        <ResponsiveNavbar
+          onMenuClick={() => setSidebarOpen(true)}
+          isMobile={isMobile}
           isTablet={isTablet}
         />
 

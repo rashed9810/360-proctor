@@ -81,7 +81,7 @@ const RealTimeNotifications = ({ className = '', maxNotifications = 5 }) => {
     }
   }, [analyticsData.trustScoreUpdates, t]);
 
-  const addNotification = (notification) => {
+  const addNotification = notification => {
     setNotifications(prev => {
       const newNotifications = [notification, ...prev.slice(0, maxNotifications - 1)];
       setUnreadCount(prev => prev + 1);
@@ -96,14 +96,12 @@ const RealTimeNotifications = ({ className = '', maxNotifications = 5 }) => {
     }
   };
 
-  const removeNotification = (id) => {
+  const removeNotification = id => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
-  const markAsRead = (id) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
+  const markAsRead = id => {
+    setNotifications(prev => prev.map(n => (n.id === id ? { ...n, read: true } : n)));
     setUnreadCount(prev => Math.max(0, prev - 1));
   };
 
@@ -112,7 +110,7 @@ const RealTimeNotifications = ({ className = '', maxNotifications = 5 }) => {
     setUnreadCount(0);
   };
 
-  const getNotificationIcon = (notification) => {
+  const getNotificationIcon = notification => {
     const IconComponent = notification.icon;
     return <IconComponent className="h-5 w-5" />;
   };
@@ -224,7 +222,7 @@ const RealTimeNotifications = ({ className = '', maxNotifications = 5 }) => {
         <AnimatePresence>
           {notifications.map((notification, index) => {
             const colors = getNotificationColor(notification.color, notification.severity);
-            
+
             return (
               <motion.div
                 key={notification.id}
@@ -241,17 +239,15 @@ const RealTimeNotifications = ({ className = '', maxNotifications = 5 }) => {
                   <div className={`flex-shrink-0 ${colors.icon}`}>
                     {getNotificationIcon(notification)}
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className={`text-sm font-medium ${colors.text}`}>
-                        {notification.title}
-                      </p>
+                      <p className={`text-sm font-medium ${colors.text}`}>{notification.title}</p>
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         {notification.timestamp.toLocaleTimeString()}
                       </span>
                     </div>
-                    
+
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       {notification.message}
                     </p>
@@ -260,7 +256,7 @@ const RealTimeNotifications = ({ className = '', maxNotifications = 5 }) => {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           notification.action.onClick();
                         }}
@@ -274,7 +270,7 @@ const RealTimeNotifications = ({ className = '', maxNotifications = 5 }) => {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       removeNotification(notification.id);
                     }}

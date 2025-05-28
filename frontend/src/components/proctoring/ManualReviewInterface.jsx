@@ -40,12 +40,7 @@ const REVIEW_STATUS = {
  * Manual Review Interface Component
  * Comprehensive interface for reviewing flagged proctoring sessions
  */
-const ManualReviewInterface = ({
-  examId,
-  onReviewComplete,
-  onStatusChange,
-  className = '',
-}) => {
+const ManualReviewInterface = ({ examId, onReviewComplete, onStatusChange, className = '' }) => {
   const { t } = useTranslation();
   const [sessions, setSessions] = useState([]);
   const [selectedSession, setSelectedSession] = useState(null);
@@ -154,22 +149,22 @@ const ManualReviewInterface = ({
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Filter mock data based on current filters
       let filteredSessions = mockSessions;
-      
+
       if (filters.status !== 'all') {
         filteredSessions = filteredSessions.filter(s => s.status === filters.status);
       }
-      
+
       if (filters.searchTerm) {
         const term = filters.searchTerm.toLowerCase();
-        filteredSessions = filteredSessions.filter(s => 
-          s.studentName.toLowerCase().includes(term) ||
-          s.examTitle.toLowerCase().includes(term)
+        filteredSessions = filteredSessions.filter(
+          s =>
+            s.studentName.toLowerCase().includes(term) || s.examTitle.toLowerCase().includes(term)
         );
       }
-      
+
       setSessions(filteredSessions);
     } catch (error) {
       console.error('Error loading sessions:', error);
@@ -192,7 +187,7 @@ const ManualReviewInterface = ({
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const reviewResult = {
         sessionId: selectedSession.id,
         decision: reviewData.decision,
@@ -203,11 +198,9 @@ const ManualReviewInterface = ({
       };
 
       // Update session status
-      setSessions(prev => 
-        prev.map(s => 
-          s.id === selectedSession.id 
-            ? { ...s, status: reviewData.decision, reviewResult }
-            : s
+      setSessions(prev =>
+        prev.map(s =>
+          s.id === selectedSession.id ? { ...s, status: reviewData.decision, reviewResult } : s
         )
       );
 
@@ -224,9 +217,8 @@ const ManualReviewInterface = ({
       });
 
       setSelectedSession(null);
-      
+
       toast.success(t('review.reviewSubmitted', 'Review submitted successfully'));
-      
     } catch (error) {
       console.error('Error submitting review:', error);
       toast.error(t('review.submitError', 'Failed to submit review'));
@@ -238,7 +230,7 @@ const ManualReviewInterface = ({
   /**
    * Get status color
    */
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     const statusConfig = REVIEW_STATUS[status.toUpperCase()];
     return statusConfig ? statusConfig.color : 'gray';
   };
@@ -246,12 +238,16 @@ const ManualReviewInterface = ({
   /**
    * Get severity color
    */
-  const getSeverityColor = (severity) => {
+  const getSeverityColor = severity => {
     switch (severity) {
-      case 'high': return 'text-red-600 bg-red-100 dark:bg-red-900/20';
-      case 'medium': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20';
-      case 'low': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
-      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-900/20';
+      case 'high':
+        return 'text-red-600 bg-red-100 dark:bg-red-900/20';
+      case 'medium':
+        return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20';
+      case 'low':
+        return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
+      default:
+        return 'text-gray-600 bg-gray-100 dark:bg-gray-900/20';
     }
   };
 
@@ -305,7 +301,7 @@ const ManualReviewInterface = ({
               </label>
               <select
                 value={filters.status}
-                onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+                onChange={e => setFilters(prev => ({ ...prev, status: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               >
                 <option value="all">{t('common.all', 'All')}</option>
@@ -323,7 +319,7 @@ const ManualReviewInterface = ({
               </label>
               <select
                 value={filters.severity}
-                onChange={(e) => setFilters(prev => ({ ...prev, severity: e.target.value }))}
+                onChange={e => setFilters(prev => ({ ...prev, severity: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               >
                 <option value="all">{t('common.all', 'All')}</option>
@@ -339,7 +335,7 @@ const ManualReviewInterface = ({
               </label>
               <select
                 value={filters.dateRange}
-                onChange={(e) => setFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+                onChange={e => setFilters(prev => ({ ...prev, dateRange: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               >
                 <option value="1d">{t('common.today', 'Today')}</option>
@@ -357,7 +353,7 @@ const ManualReviewInterface = ({
                 <input
                   type="text"
                   value={filters.searchTerm}
-                  onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
+                  onChange={e => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
                   placeholder={t('review.searchPlaceholder', 'Search students or exams...')}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
@@ -373,7 +369,9 @@ const ManualReviewInterface = ({
         <Card variant="default">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>{t('review.sessionsForReview', 'Sessions for Review')} ({sessions.length})</span>
+              <span>
+                {t('review.sessionsForReview', 'Sessions for Review')} ({sessions.length})
+              </span>
               <FunnelIcon className="h-5 w-5 text-gray-400" />
             </CardTitle>
           </CardHeader>
@@ -387,7 +385,7 @@ const ManualReviewInterface = ({
               </div>
             ) : sessions.length > 0 ? (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {sessions.map((session) => {
+                {sessions.map(session => {
                   const statusColor = getStatusColor(session.status);
                   const isSelected = selectedSession?.id === session.id;
 
@@ -412,7 +410,9 @@ const ManualReviewInterface = ({
                             {session.examTitle}
                           </p>
                         </div>
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}-800 dark:bg-${statusColor}-900/20 dark:text-${statusColor}-400`}>
+                        <div
+                          className={`px-2 py-1 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}-800 dark:bg-${statusColor}-900/20 dark:text-${statusColor}-400`}
+                        >
                           {REVIEW_STATUS[session.status.toUpperCase()]?.name || session.status}
                         </div>
                       </div>
@@ -450,10 +450,9 @@ const ManualReviewInterface = ({
         <Card variant="default">
           <CardHeader>
             <CardTitle>
-              {selectedSession 
+              {selectedSession
                 ? t('review.sessionDetails', 'Session Details')
-                : t('review.selectSession', 'Select a Session')
-              }
+                : t('review.selectSession', 'Select a Session')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -473,19 +472,21 @@ const ManualReviewInterface = ({
                     <p className="font-medium text-gray-700 dark:text-gray-300">
                       {t('review.exam', 'Exam')}:
                     </p>
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {selectedSession.examTitle}
-                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">{selectedSession.examTitle}</p>
                   </div>
                   <div>
                     <p className="font-medium text-gray-700 dark:text-gray-300">
                       {t('review.trustScore', 'Trust Score')}:
                     </p>
-                    <p className={`font-semibold ${
-                      selectedSession.trustScore > 70 ? 'text-green-600' :
-                      selectedSession.trustScore > 50 ? 'text-yellow-600' :
-                      'text-red-600'
-                    }`}>
+                    <p
+                      className={`font-semibold ${
+                        selectedSession.trustScore > 70
+                          ? 'text-green-600'
+                          : selectedSession.trustScore > 50
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                      }`}
+                    >
                       {selectedSession.trustScore}%
                     </p>
                   </div>
@@ -493,9 +494,7 @@ const ManualReviewInterface = ({
                     <p className="font-medium text-gray-700 dark:text-gray-300">
                       {t('review.violations', 'Violations')}:
                     </p>
-                    <p className="text-red-600 font-semibold">
-                      {selectedSession.violationCount}
-                    </p>
+                    <p className="text-red-600 font-semibold">{selectedSession.violationCount}</p>
                   </div>
                 </div>
 
@@ -505,7 +504,7 @@ const ManualReviewInterface = ({
                     {t('review.flaggedViolations', 'Flagged Violations')}
                   </h4>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {selectedSession.flaggedViolations.map((violation) => (
+                    {selectedSession.flaggedViolations.map(violation => (
                       <div
                         key={violation.id}
                         className={`p-2 rounded text-xs ${getSeverityColor(violation.severity)}`}
@@ -517,10 +516,12 @@ const ManualReviewInterface = ({
                           <span>{violation.timestamp.toLocaleTimeString()}</span>
                         </div>
                         <div className="text-xs opacity-75 mt-1">
-                          {t('proctoring.confidence', 'Confidence')}: {Math.round(violation.confidence * 100)}%
+                          {t('proctoring.confidence', 'Confidence')}:{' '}
+                          {Math.round(violation.confidence * 100)}%
                           {violation.duration > 0 && (
                             <span className="ml-2">
-                              {t('review.duration', 'Duration')}: {Math.round(violation.duration / 1000)}s
+                              {t('review.duration', 'Duration')}:{' '}
+                              {Math.round(violation.duration / 1000)}s
                             </span>
                           )}
                         </div>
@@ -538,28 +539,32 @@ const ManualReviewInterface = ({
                     <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-sm">
                       <div className="grid grid-cols-2 gap-2 mb-2">
                         <div>
-                          <span className="font-medium">{t('review.riskScore', 'Risk Score')}:</span>
+                          <span className="font-medium">
+                            {t('review.riskScore', 'Risk Score')}:
+                          </span>
                           <span className="ml-2 text-purple-600 dark:text-purple-400 font-semibold">
                             {Math.round(selectedSession.aiAnalysis.riskScore * 100)}%
                           </span>
                         </div>
                         <div>
-                          <span className="font-medium">{t('review.suspiciousPatterns', 'Suspicious Patterns')}:</span>
+                          <span className="font-medium">
+                            {t('review.suspiciousPatterns', 'Suspicious Patterns')}:
+                          </span>
                           <span className="ml-2">
-                            {selectedSession.aiAnalysis.suspiciousPatterns ? 
-                              t('common.yes', 'Yes') : t('common.no', 'No')
-                            }
+                            {selectedSession.aiAnalysis.suspiciousPatterns
+                              ? t('common.yes', 'Yes')
+                              : t('common.no', 'No')}
                           </span>
                         </div>
                       </div>
                       {selectedSession.aiAnalysis.recommendations.length > 0 && (
                         <div>
-                          <span className="font-medium">{t('review.recommendations', 'Recommendations')}:</span>
+                          <span className="font-medium">
+                            {t('review.recommendations', 'Recommendations')}:
+                          </span>
                           <ul className="list-disc list-inside ml-2 text-xs">
                             {selectedSession.aiAnalysis.recommendations.map((rec, index) => (
-                              <li key={index}>
-                                {t(`review.recommendations.${rec}`, rec)}
-                              </li>
+                              <li key={index}>{t(`review.recommendations.${rec}`, rec)}</li>
                             ))}
                           </ul>
                         </div>
@@ -573,7 +578,7 @@ const ManualReviewInterface = ({
                   <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     {t('review.makeDecision', 'Make Review Decision')}
                   </h4>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -581,14 +586,18 @@ const ManualReviewInterface = ({
                       </label>
                       <select
                         value={reviewData.decision}
-                        onChange={(e) => setReviewData(prev => ({ ...prev, decision: e.target.value }))}
+                        onChange={e =>
+                          setReviewData(prev => ({ ...prev, decision: e.target.value }))
+                        }
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                       >
                         <option value="">{t('review.selectDecision', 'Select decision...')}</option>
                         <option value="approved">{t('review.approved', 'Approved')}</option>
                         <option value="flagged">{t('review.flagged', 'Flagged')}</option>
                         <option value="dismissed">{t('review.dismissed', 'Dismissed')}</option>
-                        <option value="needs_attention">{t('review.needsAttention', 'Needs Attention')}</option>
+                        <option value="needs_attention">
+                          {t('review.needsAttention', 'Needs Attention')}
+                        </option>
                       </select>
                     </div>
 
@@ -598,7 +607,7 @@ const ManualReviewInterface = ({
                       </label>
                       <textarea
                         value={reviewData.notes}
-                        onChange={(e) => setReviewData(prev => ({ ...prev, notes: e.target.value }))}
+                        onChange={e => setReviewData(prev => ({ ...prev, notes: e.target.value }))}
                         placeholder={t('review.notesPlaceholder', 'Add your review notes...')}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
@@ -612,13 +621,21 @@ const ManualReviewInterface = ({
                       <input
                         type="number"
                         value={reviewData.trustScoreAdjustment}
-                        onChange={(e) => setReviewData(prev => ({ ...prev, trustScoreAdjustment: parseInt(e.target.value) || 0 }))}
+                        onChange={e =>
+                          setReviewData(prev => ({
+                            ...prev,
+                            trustScoreAdjustment: parseInt(e.target.value) || 0,
+                          }))
+                        }
                         min="-50"
                         max="50"
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {t('review.adjustmentHelp', 'Positive values increase trust score, negative values decrease it')}
+                        {t(
+                          'review.adjustmentHelp',
+                          'Positive values increase trust score, negative values decrease it'
+                        )}
                       </p>
                     </div>
 

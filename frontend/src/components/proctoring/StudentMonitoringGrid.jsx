@@ -53,7 +53,7 @@ const StudentMonitoringGrid = ({
     if (lastMessage) {
       try {
         const data = JSON.parse(lastMessage.data);
-        
+
         // Handle different message types
         if (data.type === 'student_update') {
           updateStudentData(data.student);
@@ -86,19 +86,19 @@ const StudentMonitoringGrid = ({
   }, [autoRefresh]);
 
   // Update student data when a WebSocket update is received
-  const updateStudentData = (updatedStudent) => {
-    setStudents(prevStudents => 
-      prevStudents.map(student => 
+  const updateStudentData = updatedStudent => {
+    setStudents(prevStudents =>
+      prevStudents.map(student =>
         student.id === updatedStudent.id ? { ...student, ...updatedStudent } : student
       )
     );
   };
 
   // Handle violation detection
-  const handleViolation = (violation) => {
+  const handleViolation = violation => {
     // Find the student who had the violation
     const student = students.find(s => s.id === violation.studentId);
-    
+
     if (student) {
       // Update the student's violation count
       updateStudentData({
@@ -106,16 +106,13 @@ const StudentMonitoringGrid = ({
         violations: (student.violations || 0) + 1,
         lastViolation: violation,
       });
-      
+
       // Show a toast notification
-      toast.error(
-        `${student.name}: ${t(`violationTypes.${violation.type}`, { ns: 'exams' })}`,
-        {
-          duration: 5000,
-          icon: <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />,
-        }
-      );
-      
+      toast.error(`${student.name}: ${t(`violationTypes.${violation.type}`, { ns: 'exams' })}`, {
+        duration: 5000,
+        icon: <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />,
+      });
+
       // Call the callback if provided
       if (onViolationDetected) {
         onViolationDetected(student, violation);
@@ -125,8 +122,8 @@ const StudentMonitoringGrid = ({
 
   // Update a student's trust score
   const updateTrustScore = (studentId, score) => {
-    setStudents(prevStudents => 
-      prevStudents.map(student => 
+    setStudents(prevStudents =>
+      prevStudents.map(student =>
         student.id === studentId ? { ...student, trustScore: score } : student
       )
     );
@@ -135,12 +132,12 @@ const StudentMonitoringGrid = ({
   // Refresh all student data
   const refreshStudentData = async () => {
     setIsLoading(true);
-    
+
     // In a real implementation, this would fetch fresh data from the server
     // For now, we'll simulate a refresh with a timeout
     setTimeout(() => {
       // Simulate updated data by slightly modifying trust scores
-      setStudents(prevStudents => 
+      setStudents(prevStudents =>
         prevStudents.map(student => ({
           ...student,
           trustScore: Math.max(0, Math.min(1, student.trustScore + (Math.random() * 0.1 - 0.05))),
@@ -151,14 +148,14 @@ const StudentMonitoringGrid = ({
   };
 
   // Handle student selection for detailed view
-  const handleStudentSelect = (student) => {
+  const handleStudentSelect = student => {
     if (onStudentSelect) {
       onStudentSelect(student);
     }
   };
 
   // Toggle expanded view for a student
-  const toggleExpandedView = (student) => {
+  const toggleExpandedView = student => {
     setExpandedStudent(expandedStudent?.id === student.id ? null : student);
   };
 
@@ -169,20 +166,20 @@ const StudentMonitoringGrid = ({
       if (filterStatus !== 'all' && student.status !== filterStatus) {
         return false;
       }
-      
+
       // Apply violations filter
       if (filterViolations === 'with_violations' && !student.violations) {
         return false;
       } else if (filterViolations === 'no_violations' && student.violations) {
         return false;
       }
-      
+
       return true;
     })
     .sort((a, b) => {
       // Apply sorting
       let comparison = 0;
-      
+
       if (sortBy === 'name') {
         comparison = a.name.localeCompare(b.name);
       } else if (sortBy === 'trustScore') {
@@ -192,7 +189,7 @@ const StudentMonitoringGrid = ({
       } else if (sortBy === 'status') {
         comparison = a.status.localeCompare(b.status);
       }
-      
+
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
@@ -204,7 +201,7 @@ const StudentMonitoringGrid = ({
           <h2 className="text-lg font-medium text-gray-900 dark:text-white">
             {t('studentMonitoring', { ns: 'exams' })}
           </h2>
-          
+
           <div className="flex items-center space-x-2">
             {/* Layout toggle */}
             <button
@@ -218,7 +215,7 @@ const StudentMonitoringGrid = ({
                 <ArrowsPointingOutIcon className="h-5 w-5" />
               )}
             </button>
-            
+
             {/* Refresh button */}
             <button
               onClick={refreshStudentData}
@@ -245,13 +242,13 @@ const StudentMonitoringGrid = ({
             </button>
           </div>
         </div>
-        
+
         {/* Filters and sorting */}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {/* Status filter */}
           <select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
+            onChange={e => setFilterStatus(e.target.value)}
             className="text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
             <option value="all">{t('allStatuses', { ns: 'exams' })}</option>
@@ -259,22 +256,22 @@ const StudentMonitoringGrid = ({
             <option value="completed">{t('completed', { ns: 'exams' })}</option>
             <option value="not_started">{t('notStarted', { ns: 'exams' })}</option>
           </select>
-          
+
           {/* Violations filter */}
           <select
             value={filterViolations}
-            onChange={(e) => setFilterViolations(e.target.value)}
+            onChange={e => setFilterViolations(e.target.value)}
             className="text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
             <option value="all">{t('allViolations', { ns: 'exams' })}</option>
             <option value="with_violations">{t('withViolations', { ns: 'exams' })}</option>
             <option value="no_violations">{t('noViolations', { ns: 'exams' })}</option>
           </select>
-          
+
           {/* Sort by */}
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={e => setSortBy(e.target.value)}
             className="text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
           >
             <option value="name">{t('sortByName', { ns: 'exams' })}</option>
@@ -282,7 +279,7 @@ const StudentMonitoringGrid = ({
             <option value="violations">{t('sortByViolations', { ns: 'exams' })}</option>
             <option value="status">{t('sortByStatus', { ns: 'exams' })}</option>
           </select>
-          
+
           {/* Sort order */}
           <button
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
@@ -291,7 +288,7 @@ const StudentMonitoringGrid = ({
           >
             {sortOrder === 'asc' ? '↑' : '↓'}
           </button>
-          
+
           {/* Auto-refresh toggle */}
           <div className="ml-auto flex items-center">
             <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">
@@ -321,7 +318,9 @@ const StudentMonitoringGrid = ({
       )}
 
       {/* Student grid/list */}
-      <div className={`p-4 ${layout === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'space-y-4'}`}>
+      <div
+        className={`p-4 ${layout === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'space-y-4'}`}
+      >
         <AnimatePresence>
           {sortedAndFilteredStudents.length > 0 ? (
             sortedAndFilteredStudents.map(student => (
@@ -354,14 +353,14 @@ const StudentMonitoringGrid = ({
 // Student card component
 const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t }) => {
   // Calculate trust score color based on value
-  const getTrustScoreColor = (score) => {
+  const getTrustScoreColor = score => {
     if (score > 0.8) return 'text-green-500 dark:text-green-400';
     if (score > 0.6) return 'text-yellow-500 dark:text-yellow-400';
     return 'text-red-500 dark:text-red-400';
   };
 
   // Get status badge color
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
@@ -380,11 +379,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
       exit={{ opacity: 0, y: -20 }}
       className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all ${
         isExpanded ? 'col-span-full' : ''
-      } ${
-        student.violations > 0
-          ? 'ring-2 ring-red-500/20 dark:ring-red-500/30'
-          : ''
-      }`}
+      } ${student.violations > 0 ? 'ring-2 ring-red-500/20 dark:ring-red-500/30' : ''}`}
     >
       <div className="p-4">
         {/* Header with student info and actions */}
@@ -394,12 +389,8 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
               <UserIcon className="h-6 w-6 text-gray-500 dark:text-gray-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                {student.name}
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {student.email}
-              </p>
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white">{student.name}</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{student.email}</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -414,7 +405,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
                   ? t('completed', { ns: 'exams' })
                   : t('notStarted', { ns: 'exams' })}
             </span>
-            
+
             {/* Expand/collapse button */}
             <button
               onClick={() => onToggleExpand(student)}
@@ -428,7 +419,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
             </button>
           </div>
         </div>
-        
+
         {/* Student metrics */}
         <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
           <div className="flex items-center">
@@ -439,12 +430,14 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
           </div>
           <div className="flex items-center">
             <ExclamationTriangleIcon className="h-4 w-4 text-gray-400 mr-1" />
-            <span className={`${student.violations ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>
+            <span
+              className={`${student.violations ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}
+            >
               {student.violations || 0} {t('violations', { ns: 'exams' })}
             </span>
           </div>
         </div>
-        
+
         {/* Expanded view with more details */}
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -456,13 +449,13 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
                   {t('webcamFeed', { ns: 'exams' })}
                 </span>
               </div>
-              
+
               {/* Detailed metrics */}
               <div className="space-y-4">
                 <h4 className="text-sm font-medium text-gray-900 dark:text-white">
                   {t('proctorMetrics', { ns: 'exams' })}
                 </h4>
-                
+
                 {/* Trust score components */}
                 <div className="space-y-2">
                   {/* Face detection score */}
@@ -489,7 +482,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
                       />
                     </div>
                   </div>
-                  
+
                   {/* Eye tracking score */}
                   <div>
                     <div className="flex items-center justify-between text-xs">
@@ -514,7 +507,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
                       />
                     </div>
                   </div>
-                  
+
                   {/* Audio analysis score */}
                   <div>
                     <div className="flex items-center justify-between text-xs">
@@ -539,7 +532,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
                       />
                     </div>
                   </div>
-                  
+
                   {/* Tab switching score */}
                   <div>
                     <div className="flex items-center justify-between text-xs">
@@ -564,7 +557,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
                       />
                     </div>
                   </div>
-                  
+
                   {/* Phone detection score */}
                   <div>
                     <div className="flex items-center justify-between text-xs">
@@ -592,7 +585,7 @@ const StudentCard = ({ student, layout, isExpanded, onSelect, onToggleExpand, t 
                 </div>
               </div>
             </div>
-            
+
             {/* Action buttons */}
             <div className="mt-4 flex justify-end space-x-2">
               <button

@@ -23,7 +23,7 @@ class SocialAuthService {
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
-      
+
       script.onload = () => {
         if (window.google) {
           window.google.accounts.id.initialize({
@@ -60,7 +60,7 @@ class SocialAuthService {
           appId: this.facebookAppId,
           cookie: true,
           xfbml: true,
-          version: 'v18.0'
+          version: 'v18.0',
         });
         this.isFacebookLoaded = true;
         resolve();
@@ -72,7 +72,7 @@ class SocialAuthService {
       script.defer = true;
       script.crossOrigin = 'anonymous';
       script.src = 'https://connect.facebook.net/en_US/sdk.js';
-      
+
       script.onerror = () => {
         reject(new Error('Failed to load Facebook SDK'));
       };
@@ -100,9 +100,9 @@ class SocialAuthService {
       return new Promise((resolve, reject) => {
         // Set up the callback handler
         const originalCallback = this.handleGoogleResponse.bind(this);
-        this.handleGoogleResponse = (response) => {
+        this.handleGoogleResponse = response => {
           originalCallback(response);
-          
+
           if (response.credential) {
             // Decode the JWT token to get user info
             const userInfo = this.parseJWT(response.credential);
@@ -114,8 +114,8 @@ class SocialAuthService {
                 email: userInfo.email,
                 name: userInfo.name,
                 picture: userInfo.picture,
-                email_verified: userInfo.email_verified
-              }
+                email_verified: userInfo.email_verified,
+              },
             });
           } else {
             reject(new Error('Google login was cancelled or failed'));
@@ -123,20 +123,17 @@ class SocialAuthService {
         };
 
         // Trigger the Google One Tap or popup
-        window.google.accounts.id.prompt((notification) => {
+        window.google.accounts.id.prompt(notification => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             // Fallback to popup if One Tap is not available
-            window.google.accounts.id.renderButton(
-              document.createElement('div'),
-              {
-                theme: 'outline',
-                size: 'large',
-                type: 'standard',
-                text: 'signin_with',
-                shape: 'rectangular',
-                logo_alignment: 'left'
-              }
-            );
+            window.google.accounts.id.renderButton(document.createElement('div'), {
+              theme: 'outline',
+              size: 'large',
+              type: 'standard',
+              text: 'signin_with',
+              shape: 'rectangular',
+              logo_alignment: 'left',
+            });
           }
         });
       });
@@ -154,25 +151,28 @@ class SocialAuthService {
       await this.initializeFacebook();
 
       return new Promise((resolve, reject) => {
-        window.FB.login((response) => {
-          if (response.authResponse) {
-            // Get user info
-            window.FB.api('/me', { fields: 'name,email,picture' }, (userInfo) => {
-              resolve({
-                provider: 'facebook',
-                token: response.authResponse.accessToken,
-                user: {
-                  id: userInfo.id,
-                  email: userInfo.email,
-                  name: userInfo.name,
-                  picture: userInfo.picture?.data?.url
-                }
+        window.FB.login(
+          response => {
+            if (response.authResponse) {
+              // Get user info
+              window.FB.api('/me', { fields: 'name,email,picture' }, userInfo => {
+                resolve({
+                  provider: 'facebook',
+                  token: response.authResponse.accessToken,
+                  user: {
+                    id: userInfo.id,
+                    email: userInfo.email,
+                    name: userInfo.name,
+                    picture: userInfo.picture?.data?.url,
+                  },
+                });
               });
-            });
-          } else {
-            reject(new Error('Facebook login was cancelled or failed'));
-          }
-        }, { scope: 'email,public_profile' });
+            } else {
+              reject(new Error('Facebook login was cancelled or failed'));
+            }
+          },
+          { scope: 'email,public_profile' }
+        );
       });
     } catch (error) {
       console.error('Facebook login error:', error);
@@ -214,7 +214,7 @@ class SocialAuthService {
    */
   async logoutFacebook() {
     if (window.FB) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         window.FB.logout(() => {
           resolve();
         });
@@ -228,7 +228,7 @@ class SocialAuthService {
   isAvailable() {
     return {
       google: !!this.googleClientId && this.googleClientId !== 'your-google-client-id',
-      facebook: !!this.facebookAppId && this.facebookAppId !== 'your-facebook-app-id'
+      facebook: !!this.facebookAppId && this.facebookAppId !== 'your-facebook-app-id',
     };
   }
 }

@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 const BackButton = ({ to, label, className = '' }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  
+
   const handleClick = () => {
     if (to) {
       navigate(to);

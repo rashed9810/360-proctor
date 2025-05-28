@@ -43,12 +43,12 @@ class WebSocketService {
       console.log(`WebSocket connected: ${endpoint}`);
       this.isConnected[endpoint] = true;
       this.reconnectAttempts[endpoint] = 0; // Reset reconnect attempts on successful connection
-      
+
       // Notify all listeners that connection is established
       this.notifyListeners(endpoint, { type: 'connection', status: 'connected' });
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = event => {
       try {
         const data = JSON.parse(event.data);
         // Notify all listeners about the new message
@@ -58,25 +58,25 @@ class WebSocketService {
       }
     };
 
-    ws.onclose = (event) => {
+    ws.onclose = event => {
       console.log(`WebSocket disconnected: ${endpoint}`, event.code, event.reason);
       this.isConnected[endpoint] = false;
-      
+
       // Notify all listeners that connection is closed
-      this.notifyListeners(endpoint, { 
-        type: 'connection', 
+      this.notifyListeners(endpoint, {
+        type: 'connection',
         status: 'disconnected',
         code: event.code,
-        reason: event.reason
+        reason: event.reason,
       });
-      
+
       // Attempt to reconnect if not closed cleanly and we haven't exceeded max attempts
       if (!event.wasClean && this.reconnectAttempts[endpoint] < this.maxReconnectAttempts) {
         this.reconnect(endpoint);
       }
     };
 
-    ws.onerror = (error) => {
+    ws.onerror = error => {
       console.error(`WebSocket error: ${endpoint}`, error);
       // Notify all listeners about the error
       this.notifyListeners(endpoint, { type: 'error', error });
@@ -107,18 +107,20 @@ class WebSocketService {
     // Add jitter to prevent all clients reconnecting simultaneously
     delay = delay * (0.8 + Math.random() * 0.4);
 
-    console.log(`Attempting to reconnect to ${endpoint} in ${Math.round(delay / 1000)}s (attempt ${attempt}/${this.maxReconnectAttempts})`);
+    console.log(
+      `Attempting to reconnect to ${endpoint} in ${Math.round(delay / 1000)}s (attempt ${attempt}/${this.maxReconnectAttempts})`
+    );
 
     // Set timeout for reconnection
     this.reconnectTimeouts[endpoint] = setTimeout(() => {
       console.log(`Reconnecting to ${endpoint}...`);
-      
+
       // Close existing connection if it exists
       if (this.connections[endpoint]) {
         this.connections[endpoint].close();
         delete this.connections[endpoint];
       }
-      
+
       // Attempt to reconnect
       this.connect(endpoint);
     }, delay);

@@ -18,7 +18,7 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     const count = notifications.filter(notification => !notification.read).length;
     setUnreadCount(count);
-    
+
     // Save notifications to localStorage
     localStorage.setItem('notifications', JSON.stringify(notifications));
   }, [notifications]);
@@ -44,12 +44,12 @@ export const NotificationProvider = ({ children }) => {
   }, [lastMessage]);
 
   // Add a new notification
-  const addNotification = (notification) => {
+  const addNotification = notification => {
     setNotifications(prev => [notification, ...prev].slice(0, 50)); // Keep only the latest 50 notifications
   };
 
   // Mark a notification as read
-  const markAsRead = (id) => {
+  const markAsRead = id => {
     setNotifications(prev =>
       prev.map(notification =>
         notification.id === id ? { ...notification, read: true } : notification
@@ -59,9 +59,7 @@ export const NotificationProvider = ({ children }) => {
 
   // Mark all notifications as read
   const markAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, read: true }))
-    );
+    setNotifications(prev => prev.map(notification => ({ ...notification, read: true })));
   };
 
   // Clear all notifications

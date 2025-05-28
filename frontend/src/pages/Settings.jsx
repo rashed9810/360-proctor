@@ -19,15 +19,15 @@ export default function Settings() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -49,7 +49,7 @@ export default function Settings() {
           newPassword: formData.newPassword,
         });
         setSuccess(t('settings.passwordChangeSuccess'));
-        setFormData((prev) => ({
+        setFormData(prev => ({
           ...prev,
           currentPassword: '',
           newPassword: '',
@@ -72,9 +72,7 @@ export default function Settings() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900">
-        {t('settings.title')}
-      </h1>
+      <h1 className="text-2xl font-semibold text-gray-900">{t('settings.title')}</h1>
 
       {error && (
         <div className="mt-4 rounded-md bg-red-50 p-4">
@@ -106,9 +104,9 @@ export default function Settings() {
             name="tabs"
             className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
             value={activeTab}
-            onChange={(e) => setActiveTab(e.target.value)}
+            onChange={e => setActiveTab(e.target.value)}
           >
-            {tabs.map((tab) => (
+            {tabs.map(tab => (
               <option key={tab.id} value={tab.id}>
                 {tab.name}
               </option>
@@ -118,7 +116,7 @@ export default function Settings() {
         <div className="hidden sm:block">
           <div className="border-b border-gray-200">
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-              {tabs.map((tab) => (
+              {tabs.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
@@ -140,10 +138,7 @@ export default function Settings() {
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     {t('auth.name')}
                   </label>
                   <div className="mt-1">
@@ -160,10 +155,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                     {t('auth.email')}
                   </label>
                   <div className="mt-1">
@@ -204,10 +196,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="newPassword"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
                     {t('auth.newPassword')}
                   </label>
                   <div className="mt-1">
@@ -259,15 +248,10 @@ export default function Settings() {
                     />
                   </div>
                   <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="emailNotifications"
-                      className="font-medium text-gray-700"
-                    >
+                    <label htmlFor="emailNotifications" className="font-medium text-gray-700">
                       {t('settings.emailNotifications')}
                     </label>
-                    <p className="text-gray-500">
-                      {t('settings.emailNotificationsDescription')}
-                    </p>
+                    <p className="text-gray-500">{t('settings.emailNotificationsDescription')}</p>
                   </div>
                 </div>
 
@@ -281,15 +265,10 @@ export default function Settings() {
                     />
                   </div>
                   <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="pushNotifications"
-                      className="font-medium text-gray-700"
-                    >
+                    <label htmlFor="pushNotifications" className="font-medium text-gray-700">
                       {t('settings.pushNotifications')}
                     </label>
-                    <p className="text-gray-500">
-                      {t('settings.pushNotificationsDescription')}
-                    </p>
+                    <p className="text-gray-500">{t('settings.pushNotificationsDescription')}</p>
                   </div>
                 </div>
               </div>
@@ -309,4 +288,4 @@ export default function Settings() {
       </div>
     </div>
   );
-} 
+}

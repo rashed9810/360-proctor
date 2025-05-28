@@ -128,7 +128,7 @@ class Alert(Base):
 
     # Additional alert data
     confidence_score = Column(Float, nullable=True)  # AI confidence in the detection
-    metadata = Column(JSON, nullable=True)  # Additional context data
+    alert_metadata = Column(JSON, nullable=True)  # Additional context data
     is_resolved = Column(Boolean, default=False)
     resolved_by_id = Column(Integer, ForeignKey("user.id"), nullable=True)
     resolution_notes = Column(Text, nullable=True)

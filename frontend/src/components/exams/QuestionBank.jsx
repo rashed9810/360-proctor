@@ -25,15 +25,15 @@ import toast from 'react-hot-toast';
  * Question Bank Management Component
  * Centralized repository for managing exam questions with categories and filtering
  */
-const QuestionBank = ({ 
-  questions = [], 
+const QuestionBank = ({
+  questions = [],
   onQuestionsChange,
   categories = [],
   onCategoriesChange,
   onSelectQuestions,
   selectionMode = false,
   selectedQuestions = [],
-  className = '' 
+  className = '',
 }) => {
   const { t } = useTranslation();
   const [filteredQuestions, setFilteredQuestions] = useState(questions);
@@ -54,10 +54,11 @@ const QuestionBank = ({
     // Search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(q => 
-        q.title?.toLowerCase().includes(term) ||
-        q.description?.toLowerCase().includes(term) ||
-        q.tags?.some(tag => tag.toLowerCase().includes(term))
+      filtered = filtered.filter(
+        q =>
+          q.title?.toLowerCase().includes(term) ||
+          q.description?.toLowerCase().includes(term) ||
+          q.tags?.some(tag => tag.toLowerCase().includes(term))
       );
     }
 
@@ -88,7 +89,9 @@ const QuestionBank = ({
           return (difficultyOrder[a.difficulty] || 2) - (difficultyOrder[b.difficulty] || 2);
         case 'difficulty_desc':
           const difficultyOrderDesc = { easy: 3, medium: 2, hard: 1 };
-          return (difficultyOrderDesc[a.difficulty] || 2) - (difficultyOrderDesc[b.difficulty] || 2);
+          return (
+            (difficultyOrderDesc[a.difficulty] || 2) - (difficultyOrderDesc[b.difficulty] || 2)
+          );
         case 'points_asc':
           return (a.points || 0) - (b.points || 0);
         case 'points_desc':
@@ -107,15 +110,18 @@ const QuestionBank = ({
   /**
    * Handle question selection
    */
-  const handleQuestionSelect = useCallback((questionId, selected) => {
-    if (!selectionMode) return;
+  const handleQuestionSelect = useCallback(
+    (questionId, selected) => {
+      if (!selectionMode) return;
 
-    const updatedSelection = selected
-      ? [...selectedQuestions, questionId]
-      : selectedQuestions.filter(id => id !== questionId);
+      const updatedSelection = selected
+        ? [...selectedQuestions, questionId]
+        : selectedQuestions.filter(id => id !== questionId);
 
-    onSelectQuestions?.(updatedSelection);
-  }, [selectionMode, selectedQuestions, onSelectQuestions]);
+      onSelectQuestions?.(updatedSelection);
+    },
+    [selectionMode, selectedQuestions, onSelectQuestions]
+  );
 
   /**
    * Handle select all/none
@@ -150,21 +156,24 @@ const QuestionBank = ({
   /**
    * Get question type display name
    */
-  const getQuestionTypeDisplay = useCallback((type) => {
-    const typeMap = {
-      multiple_choice: t('exams.multipleChoice', 'Multiple Choice'),
-      multiple_select: t('exams.multipleSelect', 'Multiple Select'),
-      true_false: t('exams.trueFalse', 'True/False'),
-      short_answer: t('exams.shortAnswer', 'Short Answer'),
-      essay: t('exams.essay', 'Essay'),
-    };
-    return typeMap[type] || type;
-  }, [t]);
+  const getQuestionTypeDisplay = useCallback(
+    type => {
+      const typeMap = {
+        multiple_choice: t('exams.multipleChoice', 'Multiple Choice'),
+        multiple_select: t('exams.multipleSelect', 'Multiple Select'),
+        true_false: t('exams.trueFalse', 'True/False'),
+        short_answer: t('exams.shortAnswer', 'Short Answer'),
+        essay: t('exams.essay', 'Essay'),
+      };
+      return typeMap[type] || type;
+    },
+    [t]
+  );
 
   /**
    * Get difficulty color
    */
-  const getDifficultyColor = useCallback((difficulty) => {
+  const getDifficultyColor = useCallback(difficulty => {
     const colorMap = {
       easy: 'green',
       medium: 'yellow',
@@ -177,14 +186,15 @@ const QuestionBank = ({
    * Export questions
    */
   const handleExportQuestions = useCallback(() => {
-    const questionsToExport = selectionMode && selectedQuestions.length > 0
-      ? questions.filter(q => selectedQuestions.includes(q.id))
-      : filteredQuestions;
+    const questionsToExport =
+      selectionMode && selectedQuestions.length > 0
+        ? questions.filter(q => selectedQuestions.includes(q.id))
+        : filteredQuestions;
 
     const dataStr = JSON.stringify(questionsToExport, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = `questions_${new Date().toISOString().split('T')[0]}.json`;
@@ -215,15 +225,10 @@ const QuestionBank = ({
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {selectedQuestions.length} {t('common.selected', 'selected')}
               </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSelectAll}
-              >
-                {selectedQuestions.length === filteredQuestions.length 
+              <Button variant="outline" size="sm" onClick={handleSelectAll}>
+                {selectedQuestions.length === filteredQuestions.length
                   ? t('common.selectNone', 'Select None')
-                  : t('common.selectAll', 'Select All')
-                }
+                  : t('common.selectAll', 'Select All')}
               </Button>
             </div>
           )}
@@ -259,7 +264,7 @@ const QuestionBank = ({
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               placeholder={t('exams.searchQuestions', 'Search questions...')}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
@@ -281,11 +286,11 @@ const QuestionBank = ({
                   </label>
                   <select
                     value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    onChange={e => setSelectedCategory(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                   >
                     <option value="all">{t('common.all', 'All')}</option>
-                    {categories.map((category) => (
+                    {categories.map(category => (
                       <option key={category.id} value={category.id}>
                         {category.name}
                       </option>
@@ -300,7 +305,7 @@ const QuestionBank = ({
                   </label>
                   <select
                     value={selectedDifficulty}
-                    onChange={(e) => setSelectedDifficulty(e.target.value)}
+                    onChange={e => setSelectedDifficulty(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                   >
                     <option value="all">{t('common.all', 'All')}</option>
@@ -317,12 +322,16 @@ const QuestionBank = ({
                   </label>
                   <select
                     value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
+                    onChange={e => setSelectedType(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                   >
                     <option value="all">{t('common.all', 'All')}</option>
-                    <option value="multiple_choice">{t('exams.multipleChoice', 'Multiple Choice')}</option>
-                    <option value="multiple_select">{t('exams.multipleSelect', 'Multiple Select')}</option>
+                    <option value="multiple_choice">
+                      {t('exams.multipleChoice', 'Multiple Choice')}
+                    </option>
+                    <option value="multiple_select">
+                      {t('exams.multipleSelect', 'Multiple Select')}
+                    </option>
                     <option value="true_false">{t('exams.trueFalse', 'True/False')}</option>
                     <option value="short_answer">{t('exams.shortAnswer', 'Short Answer')}</option>
                     <option value="essay">{t('exams.essay', 'Essay')}</option>
@@ -336,17 +345,23 @@ const QuestionBank = ({
                   </label>
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={e => setSortBy(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                   >
                     <option value="created_desc">{t('common.newestFirst', 'Newest First')}</option>
                     <option value="created_asc">{t('common.oldestFirst', 'Oldest First')}</option>
                     <option value="title_asc">{t('common.titleAZ', 'Title A-Z')}</option>
                     <option value="title_desc">{t('common.titleZA', 'Title Z-A')}</option>
-                    <option value="difficulty_asc">{t('common.easiestFirst', 'Easiest First')}</option>
-                    <option value="difficulty_desc">{t('common.hardestFirst', 'Hardest First')}</option>
+                    <option value="difficulty_asc">
+                      {t('common.easiestFirst', 'Easiest First')}
+                    </option>
+                    <option value="difficulty_desc">
+                      {t('common.hardestFirst', 'Hardest First')}
+                    </option>
                     <option value="points_asc">{t('common.lowestPoints', 'Lowest Points')}</option>
-                    <option value="points_desc">{t('common.highestPoints', 'Highest Points')}</option>
+                    <option value="points_desc">
+                      {t('common.highestPoints', 'Highest Points')}
+                    </option>
                   </select>
                 </div>
 
@@ -360,10 +375,10 @@ const QuestionBank = ({
                       <input
                         type="text"
                         value={newCategoryName}
-                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        onChange={e => setNewCategoryName(e.target.value)}
                         placeholder={t('exams.categoryName', 'Category name')}
                         className="flex-1 px-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100 text-sm"
-                        onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
+                        onKeyPress={e => e.key === 'Enter' && handleAddCategory()}
                       />
                       <button
                         onClick={handleAddCategory}
@@ -433,12 +448,18 @@ const QuestionBank = ({
                 transition={{ delay: index * 0.05 }}
                 className="group"
               >
-                <Card 
+                <Card
                   variant="default"
                   className={`transition-all duration-200 hover:shadow-md cursor-pointer ${
-                    isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'hover:border-gray-300 dark:hover:border-gray-600'
+                    isSelected
+                      ? 'ring-2 ring-blue-500 border-blue-500'
+                      : 'hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
-                  onClick={() => selectionMode ? handleQuestionSelect(question.id, !isSelected) : setEditingQuestion(question)}
+                  onClick={() =>
+                    selectionMode
+                      ? handleQuestionSelect(question.id, !isSelected)
+                      : setEditingQuestion(question)
+                  }
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
@@ -447,21 +468,23 @@ const QuestionBank = ({
                           <input
                             type="checkbox"
                             checked={isSelected}
-                            onChange={(e) => {
+                            onChange={e => {
                               e.stopPropagation();
                               handleQuestionSelect(question.id, e.target.checked);
                             }}
                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                           />
                         )}
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium bg-${difficultyColor}-100 text-${difficultyColor}-800 dark:bg-${difficultyColor}-900/20 dark:text-${difficultyColor}-400`}>
+                        <div
+                          className={`px-2 py-1 rounded-full text-xs font-medium bg-${difficultyColor}-100 text-${difficultyColor}-800 dark:bg-${difficultyColor}-900/20 dark:text-${difficultyColor}-400`}
+                        >
                           {question.difficulty} ({question.points} pts)
                         </div>
                       </div>
 
                       <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation();
                             setEditingQuestion(question);
                           }}
@@ -486,13 +509,14 @@ const QuestionBank = ({
                     <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                       <span>{getQuestionTypeDisplay(question.type)}</span>
                       <span>
-                        {categories.find(c => c.id === question.category)?.name || question.category}
+                        {categories.find(c => c.id === question.category)?.name ||
+                          question.category}
                       </span>
                     </div>
 
                     {question.tags && question.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-3">
-                        {question.tags.slice(0, 3).map((tag) => (
+                        {question.tags.slice(0, 3).map(tag => (
                           <span
                             key={tag}
                             className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
@@ -524,27 +548,34 @@ const QuestionBank = ({
         >
           <DocumentTextIcon className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-            {searchTerm || selectedCategory !== 'all' || selectedDifficulty !== 'all' || selectedType !== 'all'
+            {searchTerm ||
+            selectedCategory !== 'all' ||
+            selectedDifficulty !== 'all' ||
+            selectedType !== 'all'
               ? t('exams.noQuestionsFound', 'No questions found')
-              : t('exams.noQuestionsInBank', 'No questions in bank')
-            }
+              : t('exams.noQuestionsInBank', 'No questions in bank')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {searchTerm || selectedCategory !== 'all' || selectedDifficulty !== 'all' || selectedType !== 'all'
+            {searchTerm ||
+            selectedCategory !== 'all' ||
+            selectedDifficulty !== 'all' ||
+            selectedType !== 'all'
               ? t('exams.tryDifferentFilters', 'Try adjusting your search or filters')
-              : t('exams.startAddingQuestions', 'Start by adding questions to your bank')
-            }
+              : t('exams.startAddingQuestions', 'Start by adding questions to your bank')}
           </p>
-          {(!searchTerm && selectedCategory === 'all' && selectedDifficulty === 'all' && selectedType === 'all') && (
-            <Button
-              variant="primary"
-              onClick={() => setEditingQuestion({ type: 'multiple_choice' })}
-              className="flex items-center space-x-2"
-            >
-              <PlusIcon className="h-4 w-4" />
-              <span>{t('exams.addFirstQuestion', 'Add Your First Question')}</span>
-            </Button>
-          )}
+          {!searchTerm &&
+            selectedCategory === 'all' &&
+            selectedDifficulty === 'all' &&
+            selectedType === 'all' && (
+              <Button
+                variant="primary"
+                onClick={() => setEditingQuestion({ type: 'multiple_choice' })}
+                className="flex items-center space-x-2"
+              >
+                <PlusIcon className="h-4 w-4" />
+                <span>{t('exams.addFirstQuestion', 'Add Your First Question')}</span>
+              </Button>
+            )}
         </motion.div>
       )}
 
@@ -554,7 +585,7 @@ const QuestionBank = ({
           question={editingQuestion}
           categories={categories}
           isOpen={!!editingQuestion}
-          onSave={(updatedQuestion) => {
+          onSave={updatedQuestion => {
             if (editingQuestion.id) {
               // Update existing question
               const updatedQuestions = questions.map(q =>

@@ -5,14 +5,14 @@ Basic working version without complex dependencies
 
 import sys
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Add the current directory to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
     # Import FastAPI components
-    from fastapi import FastAPI, HTTPException, status
+    from fastapi import FastAPI, HTTPException
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
     from pydantic import BaseModel
@@ -56,7 +56,7 @@ async def health_check():
     """Health check endpoint"""
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": "1.0.0",
         "environment": "development"
     }
@@ -147,7 +147,7 @@ async def get_current_user():
         "bio": "Demo user for testing purposes",
         "avatar": None,
         "created_at": "2024-01-01T00:00:00Z",
-        "last_login": datetime.utcnow().isoformat()
+        "last_login": datetime.now(timezone.utc).isoformat()
     }
 
 # Basic exam endpoints
@@ -184,7 +184,7 @@ async def start_proctoring_session():
     return {
         "session_id": "session_12345",
         "status": "started",
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 @app.post("/api/proctoring/process-frame", tags=["Proctoring"])
@@ -194,7 +194,7 @@ async def process_frame():
         "session_id": "session_12345",
         "trust_score": 0.95,
         "alerts": [],
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 # Basic analytics endpoints
@@ -206,7 +206,7 @@ async def get_analytics_overview():
         "active_users": 45,
         "violations": 12,
         "trust_score": 87.5,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
 # Global exception handler
@@ -219,7 +219,7 @@ async def global_exception_handler(request, exc):
         content={
             "error": "Internal server error",
             "message": "An unexpected error occurred",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     )
 
@@ -232,7 +232,7 @@ async def http_exception_handler(request, exc):
         content={
             "error": exc.detail,
             "status_code": exc.status_code,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     )
 

@@ -111,7 +111,7 @@ const KeyboardShortcuts = ({ enabled = true }) => {
     let keys = [];
     let keyTimeout;
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = e => {
       // Don't trigger shortcuts when typing in input fields
       if (
         e.target.tagName === 'INPUT' ||
@@ -137,16 +137,16 @@ const KeyboardShortcuts = ({ enabled = true }) => {
 
       // Handle regular keys
       clearTimeout(keyTimeout);
-      
+
       // Add key to sequence
       keys.push(e.key.toLowerCase());
-      
+
       // Check if the sequence matches any shortcut
       const keySequence = keys.join(' ');
       const matchingShortcut = shortcuts.find(
         s => s.key.toLowerCase() === keySequence || s.key === e.key
       );
-      
+
       if (matchingShortcut) {
         matchingShortcut.action();
         keys = [];
@@ -159,7 +159,7 @@ const KeyboardShortcuts = ({ enabled = true }) => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       clearTimeout(keyTimeout);
@@ -266,7 +266,7 @@ const KeyboardShortcuts = ({ enabled = true }) => {
                     <input
                       type="text"
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={e => setSearchQuery(e.target.value)}
                       placeholder={t('search')}
                       className="block w-full pl-4 pr-10 py-3 border-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:ring-0 bg-transparent text-lg focus:outline-none"
                       autoFocus

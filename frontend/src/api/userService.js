@@ -13,18 +13,18 @@ class UserService {
   async getAllUsers(params = {}) {
     try {
       const { skip = 0, limit = 100, role, search, is_active } = params;
-      
+
       const queryParams = new URLSearchParams({
         skip: skip.toString(),
         limit: limit.toString(),
       });
-      
+
       if (role) queryParams.append('role', role);
       if (search) queryParams.append('search', search);
       if (is_active !== undefined) queryParams.append('is_active', is_active.toString());
 
       const response = await api.get(`/users?${queryParams}`);
-      
+
       return {
         success: true,
         data: response.data,
@@ -32,7 +32,7 @@ class UserService {
       };
     } catch (error) {
       console.error('Get users error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to fetch users',
@@ -49,14 +49,14 @@ class UserService {
   async getUserById(userId) {
     try {
       const response = await api.get(`/users/${userId}`);
-      
+
       return {
         success: true,
         data: response.data,
       };
     } catch (error) {
       console.error('Get user error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to fetch user',
@@ -80,7 +80,7 @@ class UserService {
         is_active: userData.is_active ?? true,
         preferred_language: userData.preferred_language || 'en',
       });
-      
+
       return {
         success: true,
         data: response.data,
@@ -88,14 +88,14 @@ class UserService {
       };
     } catch (error) {
       console.error('Create user error:', error);
-      
+
       // Handle validation errors
       if (error.response?.status === 422) {
         const validationErrors = error.response.data?.detail || [];
-        const errorMessages = validationErrors.map(err => 
-          `${err.loc?.[1] || 'Field'}: ${err.msg}`
-        ).join(', ');
-        
+        const errorMessages = validationErrors
+          .map(err => `${err.loc?.[1] || 'Field'}: ${err.msg}`)
+          .join(', ');
+
         return {
           success: false,
           message: errorMessages || 'Validation failed',
@@ -129,7 +129,7 @@ class UserService {
   async updateUser(userId, userData) {
     try {
       const response = await api.put(`/users/${userId}`, userData);
-      
+
       return {
         success: true,
         data: response.data,
@@ -137,7 +137,7 @@ class UserService {
       };
     } catch (error) {
       console.error('Update user error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to update user',
@@ -154,14 +154,14 @@ class UserService {
   async deleteUser(userId) {
     try {
       await api.delete(`/users/${userId}`);
-      
+
       return {
         success: true,
         message: 'User deleted successfully',
       };
     } catch (error) {
       console.error('Delete user error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to delete user',
@@ -181,11 +181,11 @@ class UserService {
         ...params,
         role: 'student',
       });
-      
+
       return response;
     } catch (error) {
       console.error('Get students error:', error);
-      
+
       return {
         success: false,
         message: 'Failed to fetch students',
@@ -205,11 +205,11 @@ class UserService {
         ...params,
         role: 'teacher',
       });
-      
+
       return response;
     } catch (error) {
       console.error('Get teachers error:', error);
-      
+
       return {
         success: false,
         message: 'Failed to fetch teachers',
@@ -225,18 +225,18 @@ class UserService {
   async getUserStats() {
     try {
       const response = await api.get('/users/stats');
-      
+
       return {
         success: true,
         data: response.data,
       };
     } catch (error) {
       console.error('Get user stats error:', error);
-      
+
       // Fallback to calculating stats from user list
       try {
         const usersResponse = await this.getAllUsers({ limit: 1000 });
-        
+
         if (usersResponse.success) {
           const users = usersResponse.data;
           const stats = {
@@ -246,7 +246,7 @@ class UserService {
             teachers: users.filter(u => u.role === 'teacher').length,
             admins: users.filter(u => u.role === 'admin').length,
           };
-          
+
           return {
             success: true,
             data: stats,
@@ -255,7 +255,7 @@ class UserService {
       } catch (fallbackError) {
         console.error('Fallback stats calculation error:', fallbackError);
       }
-      
+
       return {
         success: false,
         message: 'Failed to fetch user statistics',
@@ -279,14 +279,14 @@ class UserService {
   async setUserActiveStatus(userId, isActive) {
     try {
       const response = await this.updateUser(userId, { is_active: isActive });
-      
+
       return {
         ...response,
         message: `User ${isActive ? 'activated' : 'deactivated'} successfully`,
       };
     } catch (error) {
       console.error('Set user active status error:', error);
-      
+
       return {
         success: false,
         message: `Failed to ${isActive ? 'activate' : 'deactivate'} user`,
@@ -304,14 +304,14 @@ class UserService {
   async changeUserRole(userId, newRole) {
     try {
       const response = await this.updateUser(userId, { role: newRole });
-      
+
       return {
         ...response,
         message: `User role changed to ${newRole} successfully`,
       };
     } catch (error) {
       console.error('Change user role error:', error);
-      
+
       return {
         success: false,
         message: 'Failed to change user role',

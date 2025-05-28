@@ -14,7 +14,7 @@ class ExamBase(BaseModel):
     end_time: Optional[datetime] = None
     duration_minutes: Optional[int] = None
     status: Optional[ExamStatus] = None
-    
+
     # Proctoring settings
     enable_face_detection: Optional[bool] = True
     enable_multiple_face_detection: Optional[bool] = True
@@ -22,7 +22,7 @@ class ExamBase(BaseModel):
     enable_audio_detection: Optional[bool] = True
     enable_tab_switch_detection: Optional[bool] = True
     enable_phone_detection: Optional[bool] = True
-    
+
     # Trust score thresholds
     warning_threshold: Optional[float] = 0.7
     critical_threshold: Optional[float] = 0.5
@@ -49,7 +49,7 @@ class ExamInDBBase(ExamBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # Additional properties to return via API

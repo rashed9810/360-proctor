@@ -1,0 +1,21 @@
+{
+  "deployment_time": "2025-05-27T22:25:28.194296",
+  "duration_seconds": 9.95,
+  "status": "FAILED",
+  "errors": [
+    "Database Setup failed",
+    "Dependencies Check failed",
+    "Start Services failed",
+    "Health Check failed"
+  ],
+  "warnings": [
+    "Missing environment variables: POSTGRES_SERVER, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, SECRET_KEY",
+    "Basic tests had issues",
+    "Comprehensive tests had issues"
+  ],
+  "services": {
+    "backend": "http://localhost:8000",
+    "frontend": "http://localhost:3000",
+    "docs": "http://localhost:8000/docs"
+  }
+}

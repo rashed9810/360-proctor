@@ -30,7 +30,7 @@ const ExamPreview = ({ examData, className = '' }) => {
   /**
    * Get question type display name
    */
-  const getQuestionTypeDisplay = (type) => {
+  const getQuestionTypeDisplay = type => {
     const typeMap = {
       multiple_choice: t('exams.multipleChoice', 'Multiple Choice'),
       multiple_select: t('exams.multipleSelect', 'Multiple Select'),
@@ -44,7 +44,7 @@ const ExamPreview = ({ examData, className = '' }) => {
   /**
    * Get difficulty color
    */
-  const getDifficultyColor = (difficulty) => {
+  const getDifficultyColor = difficulty => {
     const colorMap = {
       easy: 'green',
       medium: 'yellow',
@@ -56,7 +56,7 @@ const ExamPreview = ({ examData, className = '' }) => {
   /**
    * Format date for display
    */
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     if (!dateString) return 'Not set';
     return new Date(dateString).toLocaleString();
   };
@@ -178,7 +178,9 @@ const ExamPreview = ({ examData, className = '' }) => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <DocumentTextIcon className="h-5 w-5" />
-            <span>{t('exams.questions', 'Questions')} ({examData.totalQuestions})</span>
+            <span>
+              {t('exams.questions', 'Questions')} ({examData.totalQuestions})
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -204,7 +206,9 @@ const ExamPreview = ({ examData, className = '' }) => {
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <StarIcon className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                {examData.totalPoints > 0 ? Math.round((examData.totalPoints / examData.totalQuestions) * 10) / 10 : 0}
+                {examData.totalPoints > 0
+                  ? Math.round((examData.totalPoints / examData.totalQuestions) * 10) / 10
+                  : 0}
               </p>
               <p className="text-sm text-green-700 dark:text-green-300">
                 {t('exams.avgPointsPerQuestion', 'Avg Points/Question')}
@@ -236,7 +240,9 @@ const ExamPreview = ({ examData, className = '' }) => {
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         {getQuestionTypeDisplay(question.type)}
                       </span>
-                      <div className={`px-2 py-1 rounded-full text-xs font-medium bg-${difficultyColor}-100 text-${difficultyColor}-800 dark:bg-${difficultyColor}-900/20 dark:text-${difficultyColor}-400`}>
+                      <div
+                        className={`px-2 py-1 rounded-full text-xs font-medium bg-${difficultyColor}-100 text-${difficultyColor}-800 dark:bg-${difficultyColor}-900/20 dark:text-${difficultyColor}-400`}
+                      >
                         {question.difficulty} ({question.points}pts)
                       </div>
                     </div>
@@ -284,10 +290,9 @@ const ExamPreview = ({ examData, className = '' }) => {
                     {t('exams.settings.maxAttempts', 'Max Attempts')}:
                   </span>
                   <span className="text-gray-900 dark:text-gray-100">
-                    {examData.settings?.maxAttempts === -1 
-                      ? t('exams.settings.unlimited', 'Unlimited') 
-                      : examData.settings?.maxAttempts || 1
-                    }
+                    {examData.settings?.maxAttempts === -1
+                      ? t('exams.settings.unlimited', 'Unlimited')
+                      : examData.settings?.maxAttempts || 1}
                   </span>
                 </div>
               </div>
@@ -377,7 +382,9 @@ const ExamPreview = ({ examData, className = '' }) => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <UserGroupIcon className="h-5 w-5" />
-            <span>{t('exams.students', 'Students')} ({examData.assignedStudents?.length || 0})</span>
+            <span>
+              {t('exams.students', 'Students')} ({examData.assignedStudents?.length || 0})
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -385,7 +392,8 @@ const ExamPreview = ({ examData, className = '' }) => {
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
               <UserGroupIcon className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <p className="text-lg font-semibold text-green-600 dark:text-green-400">
-                {examData.assignedStudents.length} {t('exams.studentsAssigned', 'students assigned')}
+                {examData.assignedStudents.length}{' '}
+                {t('exams.studentsAssigned', 'students assigned')}
               </p>
             </div>
           ) : (
@@ -395,7 +403,10 @@ const ExamPreview = ({ examData, className = '' }) => {
                 {t('exams.noStudentsAssigned', 'No students assigned yet')}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {t('exams.assignStudentsBeforePublishing', 'Assign students before publishing the exam')}
+                {t(
+                  'exams.assignStudentsBeforePublishing',
+                  'Assign students before publishing the exam'
+                )}
               </p>
             </div>
           )}

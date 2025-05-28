@@ -9,7 +9,16 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from '@heroicons/react/24/outline';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 /**
  * Trust Score component for visualizing student trust scores
@@ -27,15 +36,17 @@ const TrustScore = ({ student, trustHistory = [], violations = [] }) => {
   const currentScore = student?.trustScore || 0;
 
   // Determine score color and icon
-  const getScoreColor = (score) => {
+  const getScoreColor = score => {
     if (score >= 80) return 'text-green-500 dark:text-green-400';
     if (score >= 60) return 'text-yellow-500 dark:text-yellow-400';
     return 'text-red-500 dark:text-red-400';
   };
 
-  const getScoreIcon = (score) => {
-    if (score >= 80) return <ShieldCheckIcon className="h-6 w-6 text-green-500 dark:text-green-400" />;
-    if (score >= 60) return <ShieldExclamationIcon className="h-6 w-6 text-yellow-500 dark:text-yellow-400" />;
+  const getScoreIcon = score => {
+    if (score >= 80)
+      return <ShieldCheckIcon className="h-6 w-6 text-green-500 dark:text-green-400" />;
+    if (score >= 60)
+      return <ShieldExclamationIcon className="h-6 w-6 text-yellow-500 dark:text-yellow-400" />;
     return <ExclamationTriangleIcon className="h-6 w-6 text-red-500 dark:text-red-400" />;
   };
 
@@ -74,7 +85,7 @@ const TrustScore = ({ student, trustHistory = [], violations = [] }) => {
   ];
 
   // Format trust history data for chart
-  const formattedHistory = trustHistory.map((item) => ({
+  const formattedHistory = trustHistory.map(item => ({
     time: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     score: item.score,
   }));
@@ -198,12 +209,7 @@ const TrustScore = ({ student, trustHistory = [], violations = [] }) => {
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
                   <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="score"
-                    stroke="#3B82F6"
-                    activeDot={{ r: 8 }}
-                  />
+                  <Line type="monotone" dataKey="score" stroke="#3B82F6" activeDot={{ r: 8 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -215,7 +221,7 @@ const TrustScore = ({ student, trustHistory = [], violations = [] }) => {
                   {t('exams.recentViolations')}
                 </h4>
                 <div className="space-y-2">
-                  {violations.slice(0, 3).map((violation) => (
+                  {violations.slice(0, 3).map(violation => (
                     <div
                       key={violation.id}
                       className="p-2 border border-gray-200 dark:border-gray-700 rounded-md"
@@ -287,8 +293,11 @@ const TrustScore = ({ student, trustHistory = [], violations = [] }) => {
             exit={{ opacity: 0, height: 0 }}
             className="mt-4 space-y-4"
           >
-            {trustFactors.map((factor) => (
-              <div key={factor.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            {trustFactors.map(factor => (
+              <div
+                key={factor.id}
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
+              >
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-medium text-gray-900 dark:text-white">
                     {factor.name}
@@ -317,9 +326,7 @@ const TrustScore = ({ student, trustHistory = [], violations = [] }) => {
                     }`}
                   ></div>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {factor.description}
-                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{factor.description}</p>
               </div>
             ))}
 

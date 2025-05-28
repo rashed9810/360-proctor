@@ -62,19 +62,27 @@ const EnhancedAnalyticsPage = () => {
 
   const getConnectionStatusColor = () => {
     switch (connectionStatus) {
-      case 'connected': return 'text-green-500';
-      case 'connecting': return 'text-yellow-500';
-      case 'disconnected': return 'text-red-500';
-      default: return 'text-gray-500';
+      case 'connected':
+        return 'text-green-500';
+      case 'connecting':
+        return 'text-yellow-500';
+      case 'disconnected':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
     }
   };
 
   const getConnectionStatusIcon = () => {
     switch (connectionStatus) {
-      case 'connected': return <WifiIcon className="h-4 w-4" />;
-      case 'connecting': return <ArrowPathIcon className="h-4 w-4 animate-spin" />;
-      case 'disconnected': return <ExclamationTriangleIcon className="h-4 w-4" />;
-      default: return <SignalIcon className="h-4 w-4" />;
+      case 'connected':
+        return <WifiIcon className="h-4 w-4" />;
+      case 'connecting':
+        return <ArrowPathIcon className="h-4 w-4 animate-spin" />;
+      case 'disconnected':
+        return <ExclamationTriangleIcon className="h-4 w-4" />;
+      default:
+        return <SignalIcon className="h-4 w-4" />;
     }
   };
 
@@ -105,7 +113,10 @@ const EnhancedAnalyticsPage = () => {
                   </motion.div>
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {t('analytics.realTimeInsights', 'Real-time insights and comprehensive analytics')}
+                  {t(
+                    'analytics.realTimeInsights',
+                    'Real-time insights and comprehensive analytics'
+                  )}
                 </p>
               </div>
             </div>
@@ -115,21 +126,17 @@ const EnhancedAnalyticsPage = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-lg border ${
-                  isConnected 
-                    ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' 
+                  isConnected
+                    ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
                     : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'
                 }`}
               >
-                <div className={getConnectionStatusColor()}>
-                  {getConnectionStatusIcon()}
-                </div>
+                <div className={getConnectionStatusColor()}>{getConnectionStatusIcon()}</div>
                 <span className={`text-sm font-medium ${getConnectionStatusColor()}`}>
                   {t(`analytics.status.${connectionStatus}`, connectionStatus)}
                 </span>
                 {reconnectAttempts > 0 && (
-                  <span className="text-xs text-gray-500">
-                    ({reconnectAttempts} attempts)
-                  </span>
+                  <span className="text-xs text-gray-500">({reconnectAttempts} attempts)</span>
                 )}
               </motion.div>
 
@@ -150,10 +157,9 @@ const EnhancedAnalyticsPage = () => {
                   <PlayIcon className="h-4 w-4" />
                 )}
                 <span className="text-sm font-medium">
-                  {isRealTimeEnabled 
-                    ? t('analytics.pauseRealTime', 'Pause Real-Time') 
-                    : t('analytics.enableRealTime', 'Enable Real-Time')
-                  }
+                  {isRealTimeEnabled
+                    ? t('analytics.pauseRealTime', 'Pause Real-Time')
+                    : t('analytics.enableRealTime', 'Enable Real-Time')}
                 </span>
               </motion.button>
 
@@ -165,9 +171,7 @@ const EnhancedAnalyticsPage = () => {
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
               >
                 <ArrowPathIcon className="h-4 w-4" />
-                <span className="text-sm font-medium">
-                  {t('common.refresh', 'Refresh')}
-                </span>
+                <span className="text-sm font-medium">{t('common.refresh', 'Refresh')}</span>
               </motion.button>
 
               {/* Settings Button */}
@@ -178,9 +182,7 @@ const EnhancedAnalyticsPage = () => {
                 className="flex items-center space-x-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200"
               >
                 <Cog6ToothIcon className="h-4 w-4" />
-                <span className="text-sm font-medium">
-                  {t('common.settings', 'Settings')}
-                </span>
+                <span className="text-sm font-medium">{t('common.settings', 'Settings')}</span>
               </motion.button>
             </div>
           </div>
@@ -200,7 +202,8 @@ const EnhancedAnalyticsPage = () => {
                 <div className="flex items-center space-x-2">
                   <ClockIcon className="h-4 w-4" />
                   <span>
-                    {t('analytics.lastUpdate', 'Last Update')}: {analyticsData.lastUpdate.toLocaleTimeString()}
+                    {t('analytics.lastUpdate', 'Last Update')}:{' '}
+                    {analyticsData.lastUpdate.toLocaleTimeString()}
                   </span>
                 </div>
               </div>
@@ -210,15 +213,17 @@ const EnhancedAnalyticsPage = () => {
                   <div className="flex items-center space-x-2">
                     <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />
                     <span className="text-red-600 dark:text-red-400">
-                      {analyticsData.recentViolations.length} {t('analytics.recentViolations', 'recent violations')}
+                      {analyticsData.recentViolations.length}{' '}
+                      {t('analytics.recentViolations', 'recent violations')}
                     </span>
                   </div>
                 )}
-                
+
                 <div className="flex items-center space-x-2">
                   <EyeIcon className="h-4 w-4 text-blue-500" />
                   <span className="text-blue-600 dark:text-blue-400">
-                    {analyticsData.overview.activeUsers} {t('analytics.activeUsers', 'active users')}
+                    {analyticsData.overview.activeUsers}{' '}
+                    {t('analytics.activeUsers', 'active users')}
                   </span>
                 </div>
               </div>
@@ -243,7 +248,8 @@ const EnhancedAnalyticsPage = () => {
                   {t('analytics.connectionError', 'Connection Error')}
                 </h3>
                 <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                  {error.message || t('analytics.connectionErrorDesc', 'Unable to connect to real-time analytics')}
+                  {error.message ||
+                    t('analytics.connectionErrorDesc', 'Unable to connect to real-time analytics')}
                 </p>
               </div>
               <motion.button
@@ -272,7 +278,7 @@ const EnhancedAnalyticsPage = () => {
               <Cog6ToothIcon className="h-5 w-5 mr-2" />
               {t('analytics.settings', 'Analytics Settings')}
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -280,7 +286,7 @@ const EnhancedAnalyticsPage = () => {
                 </label>
                 <select
                   value={selectedTimeRange}
-                  onChange={(e) => setSelectedTimeRange(e.target.value)}
+                  onChange={e => setSelectedTimeRange(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 >
                   <option value="1h">{t('analytics.last1Hour', 'Last 1 Hour')}</option>
@@ -308,13 +314,21 @@ const EnhancedAnalyticsPage = () => {
                 </label>
                 <div className="space-y-2">
                   <label className="flex items-center">
-                    <input type="checkbox" defaultChecked className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       {t('analytics.violationAlerts', 'Violation Alerts')}
                     </span>
                   </label>
                   <label className="flex items-center">
-                    <input type="checkbox" defaultChecked className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
                     <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                       {t('analytics.trustScoreAlerts', 'Trust Score Alerts')}
                     </span>

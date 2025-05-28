@@ -1,9 +1,70 @@
+"""
+Alert Service for 360° Proctor
+Handles creation and management of alerts
+"""
+
+import logging
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Union, List
 
 from sqlalchemy.orm import Session
 
 from app.db.models.exam import Alert, AlertType, AlertSeverity
 from app.schemas.alert import AlertCreate
+from app.db.session import SessionLocal
+
+logger = logging.getLogger(__name__)
+
+
+class AlertService:
+    """Service for managing alerts"""
+
+    def __init__(self):
+        pass
+
+    async def create_alert(
+        self,
+        exam_session_id: int,
+        alert_type: AlertType,
+        severity: AlertSeverity,
+        description: str,
+        trust_score_impact: float = 0.0,
+        alert_metadata: Optional[Dict[str, Any]] = None,
+        screenshot_path: Optional[str] = None,
+        confidence_score: Optional[float] = None
+    ) -> Alert:
+        """Create a new alert"""
+        try:
+            db = SessionLocal()
+
+            alert = Alert(
+                exam_session_id=exam_session_id,
+                alert_type=alert_type,
+                severity=severity,
+                description=description,
+                trust_score_impact=trust_score_impact,
+                alert_metadata=alert_metadata,
+                screenshot_path=screenshot_path,
+                confidence_score=confidence_score,
+                timestamp=datetime.now(timezone.utc)
+            )
+
+            db.add(alert)
+            db.commit()
+            db.refresh(alert)
+
+            logger.info(f"Created alert {alert.id} for session {exam_session_id}")
+
+            return alert
+
+        except Exception as e:
+            logger.error(f"Error creating alert: {e}")
+            if db:
+                db.rollback()
+            raise
+        finally:
+            if db:
+                db.close()
 
 
 def get(db: Session, id: int) -> Optional[Alert]:
@@ -27,3 +88,6 @@ def create(db: Session, *, obj_in: AlertCreate) -> Alert:
     db.commit()
     db.refresh(db_obj)
     return db_obj
+
+# Global instance
+alert_service = AlertService()

@@ -21,13 +21,7 @@ import toast from 'react-hot-toast';
  * Question Editor Component
  * Detailed editor for individual questions with all features
  */
-const QuestionEditor = ({ 
-  question, 
-  onSave, 
-  onCancel, 
-  categories = [],
-  isOpen = false 
-}) => {
+const QuestionEditor = ({ question, onSave, onCancel, categories = [], isOpen = false }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
@@ -41,12 +35,14 @@ const QuestionEditor = ({
         ...question,
         options: question.options ? [...question.options] : [],
         tags: question.tags ? [...question.tags] : [],
-        media: question.media ? { ...question.media } : {
-          images: [],
-          videos: [],
-          audio: [],
-          documents: [],
-        },
+        media: question.media
+          ? { ...question.media }
+          : {
+              images: [],
+              videos: [],
+              audio: [],
+              documents: [],
+            },
       });
     }
   }, [question]);
@@ -54,20 +50,23 @@ const QuestionEditor = ({
   /**
    * Handle form field changes
    */
-  const handleFieldChange = useCallback((field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-    
-    // Clear error for this field
-    if (errors[field]) {
-      setErrors(prev => ({
+  const handleFieldChange = useCallback(
+    (field, value) => {
+      setFormData(prev => ({
         ...prev,
-        [field]: null,
+        [field]: value,
       }));
-    }
-  }, [errors]);
+
+      // Clear error for this field
+      if (errors[field]) {
+        setErrors(prev => ({
+          ...prev,
+          [field]: null,
+        }));
+      }
+    },
+    [errors]
+  );
 
   /**
    * Handle option changes
@@ -76,9 +75,7 @@ const QuestionEditor = ({
     setFormData(prev => ({
       ...prev,
       options: prev.options.map(option =>
-        option.id === optionId
-          ? { ...option, [field]: value }
-          : option
+        option.id === optionId ? { ...option, [field]: value } : option
       ),
     }));
   }, []);
@@ -102,7 +99,7 @@ const QuestionEditor = ({
   /**
    * Remove option
    */
-  const handleRemoveOption = useCallback((optionId) => {
+  const handleRemoveOption = useCallback(optionId => {
     setFormData(prev => ({
       ...prev,
       options: prev.options.filter(option => option.id !== optionId),
@@ -112,16 +109,19 @@ const QuestionEditor = ({
   /**
    * Handle tag management
    */
-  const handleAddTag = useCallback((tag) => {
-    if (tag && !formData.tags.includes(tag)) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, tag],
-      }));
-    }
-  }, [formData.tags]);
+  const handleAddTag = useCallback(
+    tag => {
+      if (tag && !formData.tags.includes(tag)) {
+        setFormData(prev => ({
+          ...prev,
+          tags: [...prev.tags, tag],
+        }));
+      }
+    },
+    [formData.tags]
+  );
 
-  const handleRemoveTag = useCallback((tagToRemove) => {
+  const handleRemoveTag = useCallback(tagToRemove => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove),
@@ -152,18 +152,27 @@ const QuestionEditor = ({
 
       const correctOptions = formData.options?.filter(opt => opt.isCorrect) || [];
       if (correctOptions.length === 0) {
-        newErrors.correctAnswer = t('exams.validation.correctAnswerRequired', 'At least one correct answer required');
+        newErrors.correctAnswer = t(
+          'exams.validation.correctAnswerRequired',
+          'At least one correct answer required'
+        );
       }
 
       if (formData.type === 'multiple_choice' && correctOptions.length > 1) {
-        newErrors.correctAnswer = t('exams.validation.singleCorrectAnswer', 'Only one correct answer allowed for multiple choice');
+        newErrors.correctAnswer = t(
+          'exams.validation.singleCorrectAnswer',
+          'Only one correct answer allowed for multiple choice'
+        );
       }
     }
 
     // Short answer and essay validation
     if (['short_answer', 'essay'].includes(formData.type)) {
       if (!formData.correctAnswer?.trim()) {
-        newErrors.correctAnswer = t('exams.validation.correctAnswerRequired', 'Correct answer is required');
+        newErrors.correctAnswer = t(
+          'exams.validation.correctAnswerRequired',
+          'Correct answer is required'
+        );
       }
     }
 
@@ -174,31 +183,34 @@ const QuestionEditor = ({
   /**
    * Handle form submission
    */
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      toast.error(t('validation.formErrors', 'Please fix the errors in the form'));
-      return;
-    }
+  const handleSubmit = useCallback(
+    async e => {
+      e.preventDefault();
 
-    setIsLoading(true);
-    
-    try {
-      const updatedQuestion = {
-        ...formData,
-        updatedAt: new Date().toISOString(),
-      };
+      if (!validateForm()) {
+        toast.error(t('validation.formErrors', 'Please fix the errors in the form'));
+        return;
+      }
 
-      await onSave(updatedQuestion);
-      toast.success(t('exams.questionSaved', 'Question saved successfully'));
-    } catch (error) {
-      console.error('Error saving question:', error);
-      toast.error(t('exams.questionSaveError', 'Failed to save question'));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [formData, validateForm, onSave, t]);
+      setIsLoading(true);
+
+      try {
+        const updatedQuestion = {
+          ...formData,
+          updatedAt: new Date().toISOString(),
+        };
+
+        await onSave(updatedQuestion);
+        toast.success(t('exams.questionSaved', 'Question saved successfully'));
+      } catch (error) {
+        console.error('Error saving question:', error);
+        toast.error(t('exams.questionSaveError', 'Failed to save question'));
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [formData, validateForm, onSave, t]
+  );
 
   /**
    * Render option editor
@@ -241,7 +253,7 @@ const QuestionEditor = ({
                   type={formData.type === 'multiple_select' ? 'checkbox' : 'radio'}
                   name="correctAnswer"
                   checked={option.isCorrect}
-                  onChange={(e) => {
+                  onChange={e => {
                     if (formData.type === 'multiple_choice') {
                       // For single choice, uncheck all others
                       setFormData(prev => ({
@@ -263,7 +275,7 @@ const QuestionEditor = ({
                 <input
                   type="text"
                   value={option.text}
-                  onChange={(e) => handleOptionChange(option.id, 'text', e.target.value)}
+                  onChange={e => handleOptionChange(option.id, 'text', e.target.value)}
                   placeholder={`${t('exams.option', 'Option')} ${index + 1}`}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
@@ -304,17 +316,17 @@ const QuestionEditor = ({
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {formData.type === 'essay' 
-              ? t('exams.sampleAnswer', 'Sample Answer') 
-              : t('exams.correctAnswer', 'Correct Answer')
-            }
+            {formData.type === 'essay'
+              ? t('exams.sampleAnswer', 'Sample Answer')
+              : t('exams.correctAnswer', 'Correct Answer')}
           </label>
           <textarea
             value={formData.correctAnswer || ''}
-            onChange={(e) => handleFieldChange('correctAnswer', e.target.value)}
-            placeholder={formData.type === 'essay' 
-              ? t('exams.sampleAnswerPlaceholder', 'Provide a sample answer or key points...') 
-              : t('exams.correctAnswerPlaceholder', 'Enter the correct answer...')
+            onChange={e => handleFieldChange('correctAnswer', e.target.value)}
+            placeholder={
+              formData.type === 'essay'
+                ? t('exams.sampleAnswerPlaceholder', 'Provide a sample answer or key points...')
+                : t('exams.correctAnswerPlaceholder', 'Enter the correct answer...')
             }
             rows={formData.type === 'essay' ? 6 : 3}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
@@ -332,7 +344,15 @@ const QuestionEditor = ({
             <input
               type="text"
               value={formData.keywords?.join(', ') || ''}
-              onChange={(e) => handleFieldChange('keywords', e.target.value.split(',').map(k => k.trim()).filter(k => k))}
+              onChange={e =>
+                handleFieldChange(
+                  'keywords',
+                  e.target.value
+                    .split(',')
+                    .map(k => k.trim())
+                    .filter(k => k)
+                )
+              }
               placeholder={t('exams.keywordsPlaceholder', 'Enter keywords separated by commas...')}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
@@ -349,7 +369,7 @@ const QuestionEditor = ({
           <input
             type="number"
             value={formData.maxLength || ''}
-            onChange={(e) => handleFieldChange('maxLength', parseInt(e.target.value) || null)}
+            onChange={e => handleFieldChange('maxLength', parseInt(e.target.value) || null)}
             placeholder={formData.type === 'essay' ? '1000' : '100'}
             min="1"
             max={formData.type === 'essay' ? '5000' : '500'}
@@ -374,7 +394,7 @@ const QuestionEditor = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-        onClick={(e) => e.target === e.currentTarget && onCancel()}
+        onClick={e => e.target === e.currentTarget && onCancel()}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
@@ -407,7 +427,7 @@ const QuestionEditor = ({
               { id: 'content', name: t('exams.content', 'Content') },
               { id: 'settings', name: t('exams.settings', 'Settings') },
               { id: 'media', name: t('exams.media', 'Media') },
-            ].map((tab) => (
+            ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -435,7 +455,7 @@ const QuestionEditor = ({
                     <input
                       type="text"
                       value={formData.title || ''}
-                      onChange={(e) => handleFieldChange('title', e.target.value)}
+                      onChange={e => handleFieldChange('title', e.target.value)}
                       placeholder={t('exams.questionTitlePlaceholder', 'Enter your question...')}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                     />
@@ -450,8 +470,11 @@ const QuestionEditor = ({
                     </label>
                     <textarea
                       value={formData.description || ''}
-                      onChange={(e) => handleFieldChange('description', e.target.value)}
-                      placeholder={t('exams.descriptionPlaceholder', 'Additional context or instructions...')}
+                      onChange={e => handleFieldChange('description', e.target.value)}
+                      placeholder={t(
+                        'exams.descriptionPlaceholder',
+                        'Additional context or instructions...'
+                      )}
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                     />
@@ -465,13 +488,15 @@ const QuestionEditor = ({
                       <input
                         type="number"
                         value={formData.points || ''}
-                        onChange={(e) => handleFieldChange('points', parseInt(e.target.value) || 1)}
+                        onChange={e => handleFieldChange('points', parseInt(e.target.value) || 1)}
                         min="1"
                         max="100"
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                       />
                       {errors.points && (
-                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">{errors.points}</p>
+                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                          {errors.points}
+                        </p>
                       )}
                     </div>
 
@@ -481,7 +506,7 @@ const QuestionEditor = ({
                       </label>
                       <select
                         value={formData.difficulty || 'medium'}
-                        onChange={(e) => handleFieldChange('difficulty', e.target.value)}
+                        onChange={e => handleFieldChange('difficulty', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                       >
                         <option value="easy">{t('exams.easy', 'Easy')}</option>
@@ -496,10 +521,10 @@ const QuestionEditor = ({
                       </label>
                       <select
                         value={formData.category || 'general'}
-                        onChange={(e) => handleFieldChange('category', e.target.value)}
+                        onChange={e => handleFieldChange('category', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                       >
-                        {categories.map((category) => (
+                        {categories.map(category => (
                           <option key={category.id} value={category.id}>
                             {category.name}
                           </option>
@@ -515,20 +540,26 @@ const QuestionEditor = ({
                 <div className="space-y-6">
                   {renderOptionEditor()}
                   {renderTextAnswerEditor()}
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t('exams.explanation', 'Explanation')} ({t('common.optional', 'Optional')})
                     </label>
                     <textarea
                       value={formData.explanation || ''}
-                      onChange={(e) => handleFieldChange('explanation', e.target.value)}
-                      placeholder={t('exams.explanationPlaceholder', 'Explain why this is the correct answer...')}
+                      onChange={e => handleFieldChange('explanation', e.target.value)}
+                      placeholder={t(
+                        'exams.explanationPlaceholder',
+                        'Explain why this is the correct answer...'
+                      )}
                       rows={4}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      {t('exams.explanationHelp', 'This will be shown to students after they answer')}
+                      {t(
+                        'exams.explanationHelp',
+                        'This will be shown to students after they answer'
+                      )}
                     </p>
                   </div>
                 </div>
@@ -545,7 +576,9 @@ const QuestionEditor = ({
                       <input
                         type="number"
                         value={formData.timeLimit || ''}
-                        onChange={(e) => handleFieldChange('timeLimit', parseInt(e.target.value) || null)}
+                        onChange={e =>
+                          handleFieldChange('timeLimit', parseInt(e.target.value) || null)
+                        }
                         placeholder="60"
                         min="1"
                         max="3600"
@@ -565,7 +598,7 @@ const QuestionEditor = ({
                       type="checkbox"
                       id="required"
                       checked={formData.required !== false}
-                      onChange={(e) => handleFieldChange('required', e.target.checked)}
+                      onChange={e => handleFieldChange('required', e.target.checked)}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label htmlFor="required" className="text-sm text-gray-700 dark:text-gray-300">
@@ -579,10 +612,13 @@ const QuestionEditor = ({
                         type="checkbox"
                         id="randomizeOptions"
                         checked={formData.randomizeOptions || false}
-                        onChange={(e) => handleFieldChange('randomizeOptions', e.target.checked)}
+                        onChange={e => handleFieldChange('randomizeOptions', e.target.checked)}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
-                      <label htmlFor="randomizeOptions" className="text-sm text-gray-700 dark:text-gray-300">
+                      <label
+                        htmlFor="randomizeOptions"
+                        className="text-sm text-gray-700 dark:text-gray-300"
+                      >
                         {t('exams.randomizeOptions', 'Randomize Option Order')}
                       </label>
                     </div>
@@ -593,7 +629,7 @@ const QuestionEditor = ({
                       {t('exams.tags', 'Tags')}
                     </label>
                     <div className="flex flex-wrap gap-2 mb-2">
-                      {formData.tags?.map((tag) => (
+                      {formData.tags?.map(tag => (
                         <span
                           key={tag}
                           className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
@@ -612,7 +648,7 @@ const QuestionEditor = ({
                     <input
                       type="text"
                       placeholder={t('exams.addTagPlaceholder', 'Add a tag and press Enter...')}
-                      onKeyPress={(e) => {
+                      onKeyPress={e => {
                         if (e.key === 'Enter') {
                           e.preventDefault();
                           const tag = e.target.value.trim();
@@ -637,7 +673,10 @@ const QuestionEditor = ({
                       {t('exams.mediaSupport', 'Media Support')}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                      {t('exams.mediaSupportDesc', 'Media upload functionality will be available soon')}
+                      {t(
+                        'exams.mediaSupportDesc',
+                        'Media upload functionality will be available soon'
+                      )}
                     </p>
                   </div>
                 </div>
@@ -646,12 +685,7 @@ const QuestionEditor = ({
 
             {/* Footer */}
             <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={isLoading}
-              >
+              <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
                 {t('common.cancel', 'Cancel')}
               </Button>
               <Button

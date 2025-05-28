@@ -357,7 +357,8 @@ const EnhancedExamTable = ({ exams = [], onExport, type = 'upcoming' }) => {
                 const hoursUntil = timeUntil / (1000 * 60 * 60);
 
                 // Determine status color and text
-                let statusColor = 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+                let statusColor =
+                  'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
                 let statusText = t('scheduled');
                 let progressWidth = '25%';
 
@@ -391,8 +392,8 @@ const EnhancedExamTable = ({ exams = [], onExport, type = 'upcoming' }) => {
                                   minutes: Math.max(1, Math.floor(timeUntil / 60000)),
                                 })
                               : hoursUntil < 24
-                              ? t('startsInHours', { hours: Math.floor(hoursUntil) })
-                              : t('startsInDays', { days: Math.floor(hoursUntil / 24) })}
+                                ? t('startsInHours', { hours: Math.floor(hoursUntil) })
+                                : t('startsInDays', { days: Math.floor(hoursUntil / 24) })}
                           </div>
                         )}
                       </div>

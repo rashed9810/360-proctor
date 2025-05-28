@@ -13,17 +13,17 @@ class ExamService {
   async getAllExams(params = {}) {
     try {
       const { skip = 0, limit = 100, status, search } = params;
-      
+
       const queryParams = new URLSearchParams({
         skip: skip.toString(),
         limit: limit.toString(),
       });
-      
+
       if (status) queryParams.append('status', status);
       if (search) queryParams.append('search', search);
 
       const response = await api.get(`/exams?${queryParams}`);
-      
+
       return {
         success: true,
         data: response.data,
@@ -31,7 +31,7 @@ class ExamService {
       };
     } catch (error) {
       console.error('Get exams error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to fetch exams',
@@ -48,14 +48,14 @@ class ExamService {
   async getExamById(examId) {
     try {
       const response = await api.get(`/exams/${examId}`);
-      
+
       return {
         success: true,
         data: response.data,
       };
     } catch (error) {
       console.error('Get exam error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to fetch exam',
@@ -73,9 +73,9 @@ class ExamService {
     try {
       // Transform frontend data to backend format
       const backendData = this.transformToBackendFormat(examData);
-      
+
       const response = await api.post('/exams', backendData);
-      
+
       return {
         success: true,
         data: response.data,
@@ -83,14 +83,14 @@ class ExamService {
       };
     } catch (error) {
       console.error('Create exam error:', error);
-      
+
       // Handle validation errors
       if (error.response?.status === 422) {
         const validationErrors = error.response.data?.detail || [];
-        const errorMessages = validationErrors.map(err => 
-          `${err.loc?.[1] || 'Field'}: ${err.msg}`
-        ).join(', ');
-        
+        const errorMessages = validationErrors
+          .map(err => `${err.loc?.[1] || 'Field'}: ${err.msg}`)
+          .join(', ');
+
         return {
           success: false,
           message: errorMessages || 'Validation failed',
@@ -116,9 +116,9 @@ class ExamService {
     try {
       // Transform frontend data to backend format
       const backendData = this.transformToBackendFormat(examData);
-      
+
       const response = await api.put(`/exams/${examId}`, backendData);
-      
+
       return {
         success: true,
         data: response.data,
@@ -126,7 +126,7 @@ class ExamService {
       };
     } catch (error) {
       console.error('Update exam error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to update exam',
@@ -143,14 +143,14 @@ class ExamService {
   async deleteExam(examId) {
     try {
       await api.delete(`/exams/${examId}`);
-      
+
       return {
         success: true,
         message: 'Exam deleted successfully',
       };
     } catch (error) {
       console.error('Delete exam error:', error);
-      
+
       return {
         success: false,
         message: error.response?.data?.detail || 'Failed to delete exam',
@@ -168,7 +168,7 @@ class ExamService {
   async getExamsForCalendar(startDate, endDate) {
     try {
       const response = await this.getAllExams();
-      
+
       if (!response.success) {
         return response;
       }
@@ -197,7 +197,7 @@ class ExamService {
       };
     } catch (error) {
       console.error('Get calendar exams error:', error);
-      
+
       return {
         success: false,
         message: 'Failed to fetch calendar data',
@@ -219,7 +219,7 @@ class ExamService {
       end_time: this.combineDateAndTime(frontendData.endDate, frontendData.endTime),
       duration_minutes: parseInt(frontendData.duration) || 60,
       status: frontendData.status || 'draft',
-      
+
       // Proctoring settings
       enable_face_detection: frontendData.enableFaceDetection ?? true,
       enable_multiple_face_detection: frontendData.enableMultipleFaceDetection ?? true,
@@ -227,7 +227,7 @@ class ExamService {
       enable_audio_detection: frontendData.enableAudioDetection ?? true,
       enable_tab_switch_detection: frontendData.enableTabSwitchDetection ?? true,
       enable_phone_detection: frontendData.enablePhoneDetection ?? true,
-      
+
       // Trust score thresholds (convert percentage to decimal)
       warning_threshold: (frontendData.warningThreshold || 70) / 100,
       critical_threshold: (frontendData.criticalThreshold || 50) / 100,
@@ -253,7 +253,7 @@ class ExamService {
       endTime: endDate.toTimeString().slice(0, 5),
       duration: backendData.duration_minutes,
       status: backendData.status,
-      
+
       // Proctoring settings
       enableFaceDetection: backendData.enable_face_detection,
       enableMultipleFaceDetection: backendData.enable_multiple_face_detection,
@@ -261,11 +261,11 @@ class ExamService {
       enableAudioDetection: backendData.enable_audio_detection,
       enableTabSwitchDetection: backendData.enable_tab_switch_detection,
       enablePhoneDetection: backendData.enable_phone_detection,
-      
+
       // Trust score thresholds (convert decimal to percentage)
       warningThreshold: Math.round((backendData.warning_threshold || 0.7) * 100),
       criticalThreshold: Math.round((backendData.critical_threshold || 0.5) * 100),
-      
+
       // Additional metadata
       createdAt: backendData.created_at,
       updatedAt: backendData.updated_at,
@@ -282,7 +282,7 @@ class ExamService {
     if (!date || !time) {
       return new Date().toISOString();
     }
-    
+
     return new Date(`${date}T${time}:00`).toISOString();
   }
 }

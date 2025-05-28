@@ -7,93 +7,78 @@ import { cn } from '../../utils/cn';
  * Beautiful, modern card component with variants and animations
  */
 
-const cardVariants = cva(
-  'card',
-  {
-    variants: {
-      variant: {
-        default: '',
-        glass: 'card-glass',
-        gradient: 'card-gradient',
-        success: 'card-success',
-        warning: 'card-warning',
-        error: 'card-error',
-      },
-      size: {
-        sm: 'p-4',
-        md: 'p-6',
-        lg: 'p-8',
-        xl: 'p-10',
-      },
-      shadow: {
-        none: 'shadow-none',
-        soft: 'shadow-soft',
-        medium: 'shadow-medium',
-        large: 'shadow-large',
-        colored: 'shadow-colored',
-      },
-      hover: {
-        none: '',
-        lift: 'hover-lift',
-        scale: 'hover-scale',
-        glow: 'hover:glow',
-      },
+const cardVariants = cva('card', {
+  variants: {
+    variant: {
+      default: '',
+      glass: 'card-glass',
+      gradient: 'card-gradient',
+      success: 'card-success',
+      warning: 'card-warning',
+      error: 'card-error',
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
-      shadow: 'soft',
-      hover: 'lift',
+    size: {
+      sm: 'p-4',
+      md: 'p-6',
+      lg: 'p-8',
+      xl: 'p-10',
     },
-  }
-);
+    shadow: {
+      none: 'shadow-none',
+      soft: 'shadow-soft',
+      medium: 'shadow-medium',
+      large: 'shadow-large',
+      colored: 'shadow-colored',
+    },
+    hover: {
+      none: '',
+      lift: 'hover-lift',
+      scale: 'hover-scale',
+      glow: 'hover:glow',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+    size: 'md',
+    shadow: 'soft',
+    hover: 'lift',
+  },
+});
 
-const Card = forwardRef(({
-  className,
-  variant,
-  size,
-  shadow,
-  hover,
-  children,
-  animate = true,
-  delay = 0,
-  ...props
-}, ref) => {
-  const cardClasses = cn(
-    cardVariants({ variant, size, shadow, hover }),
-    className
-  );
+const Card = forwardRef(
+  (
+    { className, variant, size, shadow, hover, children, animate = true, delay = 0, ...props },
+    ref
+  ) => {
+    const cardClasses = cn(cardVariants({ variant, size, shadow, hover }), className);
 
-  if (animate) {
+    if (animate) {
+      return (
+        <motion.div
+          ref={ref}
+          className={cardClasses}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 30,
+            delay,
+          }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      );
+    }
+
     return (
-      <motion.div
-        ref={ref}
-        className={cardClasses}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          type: 'spring',
-          stiffness: 300,
-          damping: 30,
-          delay,
-        }}
-        {...props}
-      >
+      <div ref={ref} className={cardClasses} {...props}>
         {children}
-      </motion.div>
+      </div>
     );
   }
-
-  return (
-    <div
-      ref={ref}
-      className={cardClasses}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-});
+);
 
 Card.displayName = 'Card';
 
@@ -135,11 +120,7 @@ const CardDescription = forwardRef(({ className, children, ...props }, ref) => (
 CardDescription.displayName = 'CardDescription';
 
 const CardContent = forwardRef(({ className, children, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('', className)}
-    {...props}
-  >
+  <div ref={ref} className={cn('', className)} {...props}>
     {children}
   </div>
 ));
@@ -149,7 +130,10 @@ CardContent.displayName = 'CardContent';
 const CardFooter = forwardRef(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between', className)}
+    className={cn(
+      'mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between',
+      className
+    )}
     {...props}
   >
     {children}
@@ -159,13 +143,6 @@ const CardFooter = forwardRef(({ className, children, ...props }, ref) => (
 CardFooter.displayName = 'CardFooter';
 
 // Export all components
-export {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-};
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };
 
 export default Card;

@@ -63,7 +63,7 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
         video: { width: 640, height: 480 },
         audio: true,
       });
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         setConnectionStatus('connected');
@@ -116,7 +116,8 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
       'audioDetected',
     ];
 
-    if (Math.random() < 0.02) { // 2% chance of violation per second
+    if (Math.random() < 0.02) {
+      // 2% chance of violation per second
       const violationType = violationTypes[Math.floor(Math.random() * violationTypes.length)];
       const newViolation = {
         id: Date.now(),
@@ -127,7 +128,7 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
 
       setViolations(prev => [newViolation, ...prev.slice(0, 9)]);
       setTrustScore(prev => Math.max(0, prev - Math.random() * 10));
-      
+
       if (onViolationDetected) {
         onViolationDetected(newViolation);
       }
@@ -142,19 +143,27 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
 
   const getConnectionStatusColor = () => {
     switch (connectionStatus) {
-      case 'connected': return 'text-green-500';
-      case 'monitoring': return 'text-blue-500';
-      case 'error': return 'text-red-500';
-      default: return 'text-gray-500';
+      case 'connected':
+        return 'text-green-500';
+      case 'monitoring':
+        return 'text-blue-500';
+      case 'error':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
     }
   };
 
   const getConnectionStatusIcon = () => {
     switch (connectionStatus) {
-      case 'connected': return <WifiIcon className="h-4 w-4" />;
-      case 'monitoring': return <SignalIcon className="h-4 w-4" />;
-      case 'error': return <ExclamationTriangleIcon className="h-4 w-4" />;
-      default: return <ComputerDesktopIcon className="h-4 w-4" />;
+      case 'connected':
+        return <WifiIcon className="h-4 w-4" />;
+      case 'monitoring':
+        return <SignalIcon className="h-4 w-4" />;
+      case 'error':
+        return <ExclamationTriangleIcon className="h-4 w-4" />;
+      default:
+        return <ComputerDesktopIcon className="h-4 w-4" />;
     }
   };
 
@@ -252,18 +261,13 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
               </h3>
             </div>
             <div className="relative bg-gray-900 aspect-video">
-              <video
-                ref={videoRef}
-                autoPlay
-                muted
-                className="w-full h-full object-cover"
-              />
+              <video ref={videoRef} autoPlay muted className="w-full h-full object-cover" />
               <canvas
                 ref={canvasRef}
                 className="absolute inset-0 w-full h-full"
                 style={{ display: 'none' }}
               />
-              
+
               {/* Overlay indicators */}
               <div className="absolute top-4 left-4 space-y-2">
                 <AnimatePresence>
@@ -309,7 +313,7 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
               <ChartBarIcon className="h-5 w-5 mr-2" />
               {t('proctoring.detectionStats', 'Detection Stats')}
             </h3>
-            
+
             <div className="space-y-4">
               {/* Face Detection */}
               <div className="flex items-center justify-between">
@@ -317,7 +321,9 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
                   <EyeIcon className="h-4 w-4 text-blue-500" />
                   <span className="text-sm text-gray-700 dark:text-gray-300">Face</span>
                 </div>
-                <div className={`w-3 h-3 rounded-full ${detectionStats.faceDetected ? 'bg-green-500' : 'bg-red-500'}`} />
+                <div
+                  className={`w-3 h-3 rounded-full ${detectionStats.faceDetected ? 'bg-green-500' : 'bg-red-500'}`}
+                />
               </div>
 
               {/* Audio Level */}
@@ -353,7 +359,7 @@ const LiveProctoringInterface = ({ examId, studentId, onViolationDetected }) => 
               <ExclamationTriangleIcon className="h-5 w-5 mr-2 text-red-500" />
               {t('proctoring.recentViolations', 'Recent Violations')}
             </h3>
-            
+
             <div className="space-y-3 max-h-64 overflow-y-auto">
               <AnimatePresence>
                 {violations.length === 0 ? (

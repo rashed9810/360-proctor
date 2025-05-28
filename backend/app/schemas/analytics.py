@@ -155,8 +155,8 @@ class ComparativeAnalytics(BaseModel):
 
 # Export Data Schema
 class ExportRequest(BaseModel):
-    format: str = Field(..., regex="^(csv|json|xlsx|pdf)$")
-    data_type: str = Field(..., regex="^(overview|violations|performance|students|exams)$")
+    format: str = Field(..., pattern="^(csv|json|xlsx|pdf)$")
+    data_type: str = Field(..., pattern="^(overview|violations|performance|students|exams)$")
     date_range: dict
     filters: Optional[dict] = None
     include_charts: bool = False

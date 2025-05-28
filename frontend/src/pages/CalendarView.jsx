@@ -34,18 +34,18 @@ const CalendarView = () => {
   }, []);
 
   // Handle exam click
-  const handleExamClick = (exam) => {
+  const handleExamClick = exam => {
     setSelectedExam(exam);
     setShowExamDetails(true);
   };
 
   // Handle date click
-  const handleDateClick = (date) => {
+  const handleDateClick = date => {
     console.log('Date clicked:', date);
   };
 
   // Format date for display
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     const date = new Date(dateString);
     return date.toLocaleDateString(undefined, {
       weekday: 'long',
@@ -56,7 +56,7 @@ const CalendarView = () => {
   };
 
   // Get exam status and color
-  const getExamStatus = (exam) => {
+  const getExamStatus = exam => {
     const examDate = new Date(exam.date + ' ' + exam.time);
     const now = new Date();
     const timeUntil = examDate - now;
@@ -100,11 +100,7 @@ const CalendarView = () => {
           <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : (
-        <ExamCalendar
-          exams={exams}
-          onExamClick={handleExamClick}
-          onDateClick={handleDateClick}
-        />
+        <ExamCalendar exams={exams} onExamClick={handleExamClick} onDateClick={handleDateClick} />
       )}
 
       {/* Exam details modal */}

@@ -133,9 +133,7 @@ const EnhancedStudentAssignment = ({
   return (
     <div className="bg-gray-900 rounded-lg shadow-xl overflow-hidden">
       <div className="p-6 border-b border-gray-800">
-        <h2 className="text-xl font-bold text-white mb-2">
-          {t('exams.studentAssignment')}
-        </h2>
+        <h2 className="text-xl font-bold text-white mb-2">{t('exams.studentAssignment')}</h2>
         <p className="text-gray-400 text-sm">
           Assign students to this exam or manage existing assignments
         </p>
@@ -172,7 +170,10 @@ const EnhancedStudentAssignment = ({
         <table className="w-full">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+              >
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -182,10 +183,14 @@ const EnhancedStudentAssignment = ({
                       paginatedStudents.every(student => selectedStudents.includes(student.id))
                     }
                     onChange={() => {
-                      if (paginatedStudents.every(student => selectedStudents.includes(student.id))) {
-                        setSelectedStudents(selectedStudents.filter(
-                          id => !paginatedStudents.some(student => student.id === id)
-                        ));
+                      if (
+                        paginatedStudents.every(student => selectedStudents.includes(student.id))
+                      ) {
+                        setSelectedStudents(
+                          selectedStudents.filter(
+                            id => !paginatedStudents.some(student => student.id === id)
+                          )
+                        );
                       } else {
                         const newSelectedIds = paginatedStudents
                           .filter(student => !selectedStudents.includes(student.id))
@@ -196,19 +201,34 @@ const EnhancedStudentAssignment = ({
                   />
                 </div>
               </th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+              >
                 {t('exams.studentName')}
               </th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+              >
                 {t('exams.email')}
               </th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+              >
                 {t('exams.group')}
               </th>
-              <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider"
+              >
                 {t('exams.status')}
               </th>
-              <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider">
+              <th
+                scope="col"
+                className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider"
+              >
                 {t('exams.actions')}
               </th>
             </tr>
@@ -237,9 +257,7 @@ const EnhancedStudentAssignment = ({
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="text-sm font-medium text-white">
-                        {student.name}
-                      </div>
+                      <div className="text-sm font-medium text-white">{student.name}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
                       {student.email}
@@ -297,9 +315,14 @@ const EnhancedStudentAssignment = ({
       {/* Pagination */}
       <div className="bg-gray-800 px-4 py-3 flex items-center justify-between">
         <div className="text-sm text-gray-400">
-          {t('common.showing')} <span className="font-medium text-white">{currentPage * pageSize + 1}</span> {t('common.to')}{' '}
-          <span className="font-medium text-white">{Math.min((currentPage + 1) * pageSize, filteredStudents.length)}</span> {t('common.of')}{' '}
-          <span className="font-medium text-white">{filteredStudents.length}</span> {t('common.results')}
+          {t('common.showing')}{' '}
+          <span className="font-medium text-white">{currentPage * pageSize + 1}</span>{' '}
+          {t('common.to')}{' '}
+          <span className="font-medium text-white">
+            {Math.min((currentPage + 1) * pageSize, filteredStudents.length)}
+          </span>{' '}
+          {t('common.of')} <span className="font-medium text-white">{filteredStudents.length}</span>{' '}
+          {t('common.results')}
         </div>
         <div className="flex space-x-2">
           <button

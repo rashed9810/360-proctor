@@ -6,11 +6,7 @@ import { cn } from '../../utils/cn';
  */
 
 // Spinner Loading
-export const LoadingSpinner = ({ 
-  size = 'md', 
-  color = 'primary',
-  className 
-}) => {
+export const LoadingSpinner = ({ size = 'md', color = 'primary', className }) => {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-6 h-6',
@@ -27,23 +23,12 @@ export const LoadingSpinner = ({
   };
 
   return (
-    <div
-      className={cn(
-        'loading-spinner',
-        sizeClasses[size],
-        colorClasses[color],
-        className
-      )}
-    />
+    <div className={cn('loading-spinner', sizeClasses[size], colorClasses[color], className)} />
   );
 };
 
 // Dots Loading
-export const LoadingDots = ({ 
-  size = 'md', 
-  color = 'primary',
-  className 
-}) => {
+export const LoadingDots = ({ size = 'md', color = 'primary', className }) => {
   const sizeClasses = {
     sm: 'w-1 h-1',
     md: 'w-2 h-2',
@@ -60,14 +45,10 @@ export const LoadingDots = ({
 
   return (
     <div className={cn('loading-dots', className)}>
-      {[0, 1, 2].map((i) => (
+      {[0, 1, 2].map(i => (
         <motion.div
           key={i}
-          className={cn(
-            'rounded-full',
-            sizeClasses[size],
-            colorClasses[color]
-          )}
+          className={cn('rounded-full', sizeClasses[size], colorClasses[color])}
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.7, 1, 0.7],
@@ -84,31 +65,18 @@ export const LoadingDots = ({
 };
 
 // Pulse Loading
-export const LoadingPulse = ({ 
-  className,
-  children 
-}) => {
-  return (
-    <div className={cn('loading-pulse rounded-lg', className)}>
-      {children}
-    </div>
-  );
+export const LoadingPulse = ({ className, children }) => {
+  return <div className={cn('loading-pulse rounded-lg', className)}>{children}</div>;
 };
 
 // Skeleton Loading
-export const LoadingSkeleton = ({ 
-  lines = 3,
-  className 
-}) => {
+export const LoadingSkeleton = ({ lines = 3, className }) => {
   return (
     <div className={cn('space-y-3', className)}>
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
-          className={cn(
-            'loading-pulse h-4 rounded',
-            i === lines - 1 ? 'w-3/4' : 'w-full'
-          )}
+          className={cn('loading-pulse h-4 rounded', i === lines - 1 ? 'w-3/4' : 'w-full')}
         />
       ))}
     </div>
@@ -136,10 +104,7 @@ export const LoadingCardSkeleton = ({ className }) => {
 };
 
 // Full Page Loading
-export const LoadingPage = ({ 
-  message = 'Loading...',
-  showLogo = true 
-}) => {
+export const LoadingPage = ({ message = 'Loading...', showLogo = true }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
       <motion.div
@@ -151,17 +116,15 @@ export const LoadingPage = ({
         {showLogo && (
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             className="w-16 h-16 mx-auto"
           >
             <div className="w-full h-full rounded-full border-4 border-blue-200 border-t-blue-600" />
           </motion.div>
         )}
-        
+
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            360° Proctor
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">360° Proctor</h2>
           <p className="text-gray-600 dark:text-gray-400">{message}</p>
         </div>
 
@@ -172,11 +135,7 @@ export const LoadingPage = ({
 };
 
 // Overlay Loading
-export const LoadingOverlay = ({ 
-  show = false,
-  message = 'Loading...',
-  className 
-}) => {
+export const LoadingOverlay = ({ show = false, message = 'Loading...', className }) => {
   if (!show) return null;
 
   return (
@@ -196,21 +155,14 @@ export const LoadingOverlay = ({
         className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl text-center space-y-4"
       >
         <LoadingSpinner size="lg" color="primary" />
-        <p className="text-gray-700 dark:text-gray-300 font-medium">
-          {message}
-        </p>
+        <p className="text-gray-700 dark:text-gray-300 font-medium">{message}</p>
       </motion.div>
     </motion.div>
   );
 };
 
 // Button Loading
-export const LoadingButton = ({ 
-  loading = false,
-  children,
-  className,
-  ...props 
-}) => {
+export const LoadingButton = ({ loading = false, children, className, ...props }) => {
   return (
     <button
       className={cn(
@@ -221,9 +173,7 @@ export const LoadingButton = ({
       disabled={loading}
       {...props}
     >
-      {loading && (
-        <LoadingSpinner size="sm" color="white" className="mr-2" />
-      )}
+      {loading && <LoadingSpinner size="sm" color="white" className="mr-2" />}
       {children}
     </button>
   );

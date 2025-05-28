@@ -12,7 +12,7 @@
 export const announceToScreenReader = (message, politeness = 'polite') => {
   // Create a live region if it doesn't exist
   let liveRegion = document.getElementById(`sr-${politeness}`);
-  
+
   if (!liveRegion) {
     liveRegion = document.createElement('div');
     liveRegion.id = `sr-${politeness}`;
@@ -29,10 +29,10 @@ export const announceToScreenReader = (message, politeness = 'polite') => {
     liveRegion.style.border = '0';
     document.body.appendChild(liveRegion);
   }
-  
+
   // Clear the region first (for some screen readers)
   liveRegion.textContent = '';
-  
+
   // Set the message after a small delay to ensure announcement
   setTimeout(() => {
     liveRegion.textContent = message;
@@ -44,24 +44,24 @@ export const announceToScreenReader = (message, politeness = 'polite') => {
  * @param {HTMLElement} element - The element to trap focus within
  * @returns {Function} - A function to remove the trap
  */
-export const trapFocus = (element) => {
+export const trapFocus = element => {
   if (!element) return () => {};
-  
+
   // Find all focusable elements
   const focusableElements = element.querySelectorAll(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   );
-  
+
   if (focusableElements.length === 0) return () => {};
-  
+
   const firstElement = focusableElements[0];
   const lastElement = focusableElements[focusableElements.length - 1];
-  
+
   // Focus the first element
   firstElement.focus();
-  
+
   // Handle keydown events
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     if (e.key === 'Tab') {
       // Shift + Tab on first element should go to last element
       if (e.shiftKey && document.activeElement === firstElement) {
@@ -82,10 +82,10 @@ export const trapFocus = (element) => {
       }
     }
   };
-  
+
   // Add event listener
   element.addEventListener('keydown', handleKeyDown);
-  
+
   // Return function to remove trap
   return () => {
     element.removeEventListener('keydown', handleKeyDown);
@@ -98,7 +98,7 @@ export const trapFocus = (element) => {
  */
 export const saveFocus = () => {
   const activeElement = document.activeElement;
-  
+
   return () => {
     if (activeElement && typeof activeElement.focus === 'function') {
       activeElement.focus();
@@ -111,18 +111,18 @@ export const saveFocus = () => {
  * @param {string} modalId - The ID of the modal element
  * @returns {Object} - An object with functions to activate and deactivate the trap
  */
-export const createModalFocusTrap = (modalId) => {
+export const createModalFocusTrap = modalId => {
   let removeTrap = null;
   let restoreFocus = null;
-  
+
   return {
     activate: () => {
       const modal = document.getElementById(modalId);
       if (!modal) return;
-      
+
       // Save current focus to restore later
       restoreFocus = saveFocus();
-      
+
       // Trap focus in modal
       removeTrap = trapFocus(modal);
     },
@@ -132,13 +132,13 @@ export const createModalFocusTrap = (modalId) => {
         removeTrap();
         removeTrap = null;
       }
-      
+
       // Restore focus
       if (restoreFocus) {
         restoreFocus();
         restoreFocus = null;
       }
-    }
+    },
   };
 };
 
@@ -149,28 +149,28 @@ export const createModalFocusTrap = (modalId) => {
  */
 export const setupDropdownKeyboardNav = (triggerElement, menuElement) => {
   if (!triggerElement || !menuElement) return;
-  
+
   const menuItems = menuElement.querySelectorAll('[role="menuitem"]');
   if (menuItems.length === 0) return;
-  
+
   // Handle keydown on trigger button
-  triggerElement.addEventListener('keydown', (e) => {
+  triggerElement.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      
+
       // Show menu if hidden
       if (menuElement.classList.contains('hidden')) {
         triggerElement.click();
       }
-      
+
       // Focus first menu item
       menuItems[0].focus();
     }
   });
-  
+
   // Handle keydown on menu items
   menuItems.forEach((item, index) => {
-    item.addEventListener('keydown', (e) => {
+    item.addEventListener('keydown', e => {
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();

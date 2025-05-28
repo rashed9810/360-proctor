@@ -29,20 +29,20 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
   useEffect(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    
+
     // Get the first day of the month
     const firstDay = new Date(year, month, 1);
     const firstDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    
+
     // Get the last day of the month
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
-    
+
     // Get the last day of the previous month
     const prevMonthLastDay = new Date(year, month, 0).getDate();
-    
+
     const days = [];
-    
+
     // Add days from previous month to fill the first week
     for (let i = firstDayOfWeek - 1; i >= 0; i--) {
       const date = new Date(year, month - 1, prevMonthLastDay - i);
@@ -54,7 +54,7 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
         exams: examsOnDate(date),
       });
     }
-    
+
     // Add days from current month
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(year, month, i);
@@ -66,7 +66,7 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
         exams: examsOnDate(date),
       });
     }
-    
+
     // Add days from next month to fill the last week
     const remainingDays = 42 - days.length; // 6 rows of 7 days
     for (let i = 1; i <= remainingDays; i++) {
@@ -79,14 +79,16 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
         exams: examsOnDate(date),
       });
     }
-    
+
     setCalendarDays(days);
-    
+
     // If no date is selected, select today or the first day with exams
     if (!selectedDate) {
       const today = days.find(day => day.isToday);
       const firstDayWithExams = days.find(day => day.hasExams && day.isCurrentMonth);
-      setSelectedDate(today?.date || firstDayWithExams?.date || days.find(day => day.isCurrentMonth)?.date);
+      setSelectedDate(
+        today?.date || firstDayWithExams?.date || days.find(day => day.isCurrentMonth)?.date
+      );
     }
   }, [currentDate, exams, selectedDate]);
 
@@ -107,7 +109,7 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
   };
 
   // Get exams on a specific date
-  const examsOnDate = (date) => {
+  const examsOnDate = date => {
     return exams.filter(exam => {
       const examDate = new Date(exam.date);
       return isSameDay(examDate, date);
@@ -134,7 +136,7 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
   };
 
   // Handle date click
-  const handleDateClick = (date) => {
+  const handleDateClick = date => {
     setSelectedDate(date);
     if (onDateClick) {
       onDateClick(date);
@@ -142,14 +144,14 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
   };
 
   // Handle exam click
-  const handleExamClick = (exam) => {
+  const handleExamClick = exam => {
     if (onExamClick) {
       onExamClick(exam);
     }
   };
 
   // Format date for display
-  const formatDate = (date) => {
+  const formatDate = date => {
     return date.toLocaleDateString(undefined, {
       weekday: 'long',
       year: 'numeric',
@@ -159,7 +161,7 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
   };
 
   // Get exam status and color
-  const getExamStatus = (exam) => {
+  const getExamStatus = exam => {
     const examDate = new Date(exam.date + ' ' + exam.time);
     const now = new Date();
     const timeUntil = examDate - now;
@@ -242,7 +244,9 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
               <div
                 key={index}
                 className={`min-h-[80px] p-2 bg-white dark:bg-gray-800 ${
-                  !day.isCurrentMonth ? 'bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-600' : ''
+                  !day.isCurrentMonth
+                    ? 'bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-600'
+                    : ''
                 } ${
                   isSameDay(day.date, selectedDate)
                     ? 'ring-2 ring-indigo-500 dark:ring-indigo-400 z-10'
@@ -267,7 +271,7 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
                         className={`px-2 py-1 text-xs rounded truncate cursor-pointer ${
                           getExamStatus(exam).color
                         }`}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           handleExamClick(exam);
                         }}
@@ -292,11 +296,9 @@ const ExamCalendar = ({ exams = [], onExamClick, onDateClick }) => {
           <h3 className="font-medium text-gray-900 dark:text-gray-100">
             {selectedDate ? formatDate(selectedDate) : t('selectDate')}
           </h3>
-          
+
           {examsOnSelectedDate.length === 0 ? (
-            <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm">
-              {t('noExamsScheduled')}
-            </p>
+            <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm">{t('noExamsScheduled')}</p>
           ) : (
             <div className="mt-4 space-y-4">
               {examsOnSelectedDate.map((exam, index) => (
