@@ -76,4 +76,23 @@ class Settings:
     REDIS_PORT: int = int(os.getenv("REDIS_PORT", "6379"))
     REDIS_DB: int = int(os.getenv("REDIS_DB", "0"))
 
+    # Enhanced Proctoring Settings
+    TRUST_SCORE_THRESHOLD: float = float(os.getenv("TRUST_SCORE_THRESHOLD", "0.5"))
+    VIOLATION_ALERT_THRESHOLD: int = int(os.getenv("VIOLATION_ALERT_THRESHOLD", "3"))
+    SESSION_RECORDING_ENABLED: bool = os.getenv("SESSION_RECORDING_ENABLED", "true").lower() == "true"
+
+    # AI Detection Settings
+    FACE_DETECTION_ENABLED: bool = os.getenv("FACE_DETECTION_ENABLED", "false").lower() == "true"
+    AUDIO_DETECTION_ENABLED: bool = os.getenv("AUDIO_DETECTION_ENABLED", "true").lower() == "true"
+    SCREEN_MONITORING_ENABLED: bool = os.getenv("SCREEN_MONITORING_ENABLED", "true").lower() == "true"
+
+    # Performance Settings
+    MAX_CONCURRENT_SESSIONS: int = int(os.getenv("MAX_CONCURRENT_SESSIONS", "100"))
+    SESSION_CLEANUP_INTERVAL: int = int(os.getenv("SESSION_CLEANUP_INTERVAL", "3600"))  # 1 hour
+
+    # Security Settings
+    ENABLE_RATE_LIMITING: bool = os.getenv("ENABLE_RATE_LIMITING", "true").lower() == "true"
+    MAX_LOGIN_ATTEMPTS: int = int(os.getenv("MAX_LOGIN_ATTEMPTS", "5"))
+    LOCKOUT_DURATION: int = int(os.getenv("LOCKOUT_DURATION", "900"))  # 15 minutes
+
 settings = Settings()

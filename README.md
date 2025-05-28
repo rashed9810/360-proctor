@@ -1,28 +1,11 @@
 # 360° Proctor
 
-A full-featured, multilingual (Bangla & English) online exam proctoring system designed specifically for the Bangladeshi education market. The system features a responsive design that works seamlessly across desktop, tablet, and mobile devices.
-
-<div align="center">
-  <img src="frontend/public/logo.svg" alt="360° Proctor Logo" width="400">
-</div>
-
-<p align="center">
-  <a href="#features">Features</a> •
-  <a href="#tech-stack">Tech Stack</a> •
-  <a href="#responsive-design">Responsive Design</a> •
-  <a href="#dashboard-showcase">Dashboard Showcase</a> •
-  <a href="#getting-started">Getting Started</a> •
-  <a href="#roadmap">Roadmap</a>
-</p>
+## Overview
+360° Proctor is a comprehensive online exam proctoring system designed to ensure the integrity of online exams through advanced AI-powered monitoring and analytics. The system is tailored for the Bangladeshi education market, offering multilingual support (Bangla & English) and a responsive design compatible with desktop, tablet, and mobile devices.
 
 ## Features
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/proctor.png" alt="360° Proctor Features" width="100%">
-</div>
-
 ### Proctoring Capabilities
-
 - Real-time AI-powered proctoring
   - Face detection and verification
   - Multiple people detection
@@ -37,7 +20,6 @@ A full-featured, multilingual (Bangla & English) online exam proctoring system d
 - Window focus tracking to prevent cheating attempts
 
 ### User Experience
-
 - Fully responsive admin and teacher dashboards
 - Multilingual support (Bangla & English) with easy language switching
 - Intuitive exam management interface with consistent navigation
@@ -47,338 +29,60 @@ A full-featured, multilingual (Bangla & English) online exam proctoring system d
 - Feedback system with form validation and accessibility features
 
 ### Technical Features
-
 - JWT Authentication and role-based access control
 - WebSocket-based real-time communication
-- Secure API endpoints with proper validation
-- Optimized database queries for performance
+- AI-powered violation detection using OpenCV and TensorFlow
+- PostgreSQL database with SQLAlchemy ORM
+- FastAPI backend for high-performance API
 
 ## Tech Stack
+- **Frontend**: React.js, Tailwind CSS
+- **Backend**: FastAPI, PostgreSQL, SQLAlchemy
+- **AI**: OpenCV, TensorFlow
+- **Authentication**: JWT
+- **Real-time Communication**: WebSockets
+
+## Installation
 
 ### Backend
-
-- **FastAPI** (Python) - High-performance web framework
-- **PostgreSQL** - Relational database
-- **WebSockets** - For real-time communication
-- **JWT** - For secure authentication
-- **AI models** - For proctoring features
-
-### Frontend
-
-- **React.js** - UI library
-- **Tailwind CSS** - Utility-first CSS framework
-- **Headless UI** - Unstyled, accessible UI components
-- **react-i18next** - Internationalization
-- **Recharts** - Responsive charting library
-- **Axios** - HTTP client
-
-## Responsive Design
-
-The application features a comprehensive responsive design that works across all device sizes:
-
-### Mobile Experience
-
-- Slide-in drawer navigation
-- Optimized tables with horizontal scrolling
-- Touch-friendly controls and forms
-- Stacked layouts for better readability
-- Properly sized touch targets
-
-### Tablet Experience
-
-- Adaptive layouts that make use of available space
-- Collapsible sidebar
-- Responsive tables with prioritized columns
-- Optimized forms and modals
-
-### Desktop Experience
-
-- Expanded layouts with multi-column content
-- Hover-expandable sidebar
-- Full-featured tables and data visualization
-- Advanced filtering and search capabilities
-
-### UI Components
-
-- **BackButton**: Clean, integrated back navigation with proper styling and accessibility
-- **PageHeader**: Consistent page headers with title and optional actions
-- **FeedbackForm**: Interactive feedback system with validation and character counting
-- **NotificationBell**: Real-time notification system with unread indicators
-- **DarkModeToggle**: Persistent theme preference with smooth transitions
-
-### Dashboard Showcase
-
-<div align="center">
-  <p><strong>Main Dashboard Overview</strong></p>
-  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/dashboard.png" alt="360° Proctor Dashboard" width="100%">
-  <br><br>
-  <p><strong>Exam Management Interface</strong></p>
-  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/dashboard2.png" alt="Exam Management Interface" width="100%">
-  <br><br>
-  <p><strong>Analytics and Reporting</strong></p>
-  <img src="https://raw.githubusercontent.com/rashed9810/360-proctor/main/docs/images/dashboard3.png" alt="Analytics and Reporting" width="100%">
-</div>
-
-## Project Structure
-
-```bash
-360-proctor/
-├── backend/                # FastAPI backend
-│   ├── app/
-│   │   ├── api/            # API routes
-│   │   ├── core/           # Core functionality
-│   │   ├── db/             # Database models
-│   │   ├── schemas/        # Pydantic schemas
-│   │   ├── services/       # Business logic
-│   │   ├── ai/             # AI models integration
-│   │   └── websockets/     # WebSocket handlers
-│   └── tests/              # Backend tests
-├── frontend/               # React.js frontend
-│   ├── public/             # Static files
-│   │   ├── logo.svg        # 360° Proctor logo
-│   │   └── favicon.svg     # 360° Proctor favicon
-│   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   │   ├── common/     # Common UI elements (BackButton, FeedbackForm, etc.)
-│   │   │   ├── layout/     # Layout components (PageHeader, Sidebar, etc.)
-│   │   │   ├── dashboard/  # Dashboard-specific components
-│   │   │   └── notifications/ # Notification system components
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API service functions
-│   │   ├── utils/          # Utility functions
-│   │   ├── locales/        # Translation files
-│   │   └── App.jsx         # Main application component
-│   └── package.json        # Frontend dependencies
-├── docs/                   # Documentation
-└── scripts/                # Utility scripts
-```
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.9+
-- Node.js 16+
-- PostgreSQL
-- npm or yarn
-
-### Backend Setup
-
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create a virtual environment
-python -m venv venv
-
-# Activate the virtual environment
-# On Windows
-venv\Scripts\activate
-# On macOS/Linux
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-# The .env file is already provided with default settings
-# Edit .env with your database credentials if needed
-
-# Initialize the database
-python init_db.py
-
-# Start the development server (Full version)
-python -m uvicorn app.main:app --reload
-
-# Or start the simple server (Lightweight version)
-python simple_main.py
-
-# Run tests
-python run_tests.py
-```
-
-#### Backend Features Implemented
-
-- **Authentication System**: JWT-based authentication with user roles (admin, teacher, student)
-- **Social Authentication**: Google and Facebook OAuth integration with secure token handling
-- **User Management**: Complete CRUD operations for users with different roles and permissions
-- **Exam Management**: Advanced exam creation, editing, and management with question builder
-- **Proctoring Infrastructure**: Real-time WebSocket-based proctoring with AI detection
-- **Trust Score Calculation**: Advanced algorithm to calculate trust scores based on violations
-- **Violation Detection**: Comprehensive detection of tab switching, audio, face detection, and other violations
-- **Real-time Analytics**: Live analytics dashboard with WebSocket integration
-- **Multilingual Support**: Full backend support for English and Bangla
-- **API Integration**: Complete REST API with proper error handling, validation, and documentation
-- **Database Optimization**: Efficient database models and queries for performance
-- **Security Enhancements**: Enhanced security validation and protection mechanisms
-
-#### Frontend Features Implemented
-
-- ✅ **Responsive Design**: Mobile-first design with collapsible sidebar and adaptive layouts
-- ✅ **Social Authentication**: Beautiful Google and Facebook login integration
-- ✅ **Enhanced UI/UX**: Stunning login/registration pages with animations and validation
-- ✅ **Advanced Dashboard**: Interactive analytics dashboard with real-time data
-- ✅ **Exam Management**: Complete exam creation, editing, and question builder interface
-- ✅ **Live Proctoring Interface**: Real-time monitoring with violation detection
-- ✅ **Student Dashboard**: Comprehensive student interface with exam taking capabilities
-- ✅ **Admin Profile Management**: Complete admin profile and settings management
-- ✅ **Notification System**: Real-time notifications with WebSocket integration
-- ✅ **Dark/Light Mode**: Persistent theme toggle with smooth transitions
-- ✅ **Multilingual Support**: Complete i18n implementation for Bangla and English
-- ✅ **Accessibility Features**: ARIA labels, keyboard navigation, and screen reader support
-- ✅ **Performance Optimization**: Lazy loading, code splitting, and optimized rendering
-
-#### Frontend-Backend Integration Status
-
-- ✅ **API Service Layer**: Comprehensive API service classes for all operations
-- ✅ **Authentication Integration**: Real JWT-based auth with social login support
-- ✅ **Exam Management Integration**: Create, read, update, delete exams via API
-- ✅ **User Management Integration**: Complete user CRUD operations with role management
-- ✅ **Real-time Communication**: WebSocket integration for live updates
-- ✅ **Error Handling**: Centralized error handling with user-friendly messages
-- ✅ **Loading States**: Proper loading indicators throughout the application
-- ✅ **Permission System**: Role-based access control integrated with UI
-
-#### Recent Updates & Fixes
-
-- ✅ **Backend Stability**: Fixed all import issues and deprecated datetime warnings in simple_main.py
-- ✅ **UI Improvements**: Resolved header black shadow overlay issues and enhanced visual design
-- ✅ **Code Cleanup**: Removed debug components and cleaned up medical terminology
-- ✅ **Enhanced Security**: Improved validation and error handling across the application
-- ✅ **Performance Optimization**: Optimized database queries and API responses
-- ✅ **Testing Infrastructure**: Comprehensive testing setup with automated validation
-
-#### Backend Features To Be Implemented
-
-- **Facial Detection**: Will be implemented later with GPU resources
-- **Advanced Analytics**: More comprehensive analytics and reporting
-- **Performance Optimization**: Further optimization for large-scale deployments
-- **File Upload**: Support for exam materials and result attachments
-- **Email Notifications**: Automated email alerts for exam events
-
-### Frontend Setup
-
-```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-# or
-yarn install
-
-# Start the development server
-npm run dev
-# or
-yarn dev
-```
-
-### Accessing the Application
-
-- Backend API: `http://localhost:8000`
-- Frontend: `http://localhost:3000`
-- API Documentation: `http://localhost:8000/docs`
-
-### Testing the Integration
-
-To test the complete backend-frontend integration:
-
-1. **Start the Backend**:
-
+1. Navigate to the `backend` directory:
    ```bash
    cd backend
-   python -m uvicorn app.main:app --reload
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Start the server:
+   ```bash
+   python simple_main.py
    ```
 
-2. **Start the Frontend**:
-
+### Frontend
+1. Navigate to the `frontend` directory:
    ```bash
    cd frontend
-   npm run dev
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm start
    ```
 
-3. **Test Authentication**:
-
-   - Register a new user at `http://localhost:3000/register`
-   - Login with the created credentials
-   - Verify JWT token is stored and API calls include authorization headers
-
-4. **Test Exam Management**:
-
-   - Create a new exam (requires teacher/admin role)
-   - View exam list with real data from backend
-   - Edit and delete exams (with proper permission checks)
-
-5. **Test API Integration**:
-   - Check browser network tab to see real API calls
-   - Verify error handling with invalid data
-   - Test loading states and user feedback
-
-### Default Test Users
-
-The system includes default users for testing:
-
-- **Admin**: `admin@360proctor.com` / `admin123`
-- **Teacher**: `teacher@360proctor.com` / `teacher123`
-- **Student**: `student@360proctor.com` / `student123`
-
-_Note: These users are created automatically when initializing the database._
-
-## Development Guidelines
-
-### Code Style
-
-- Backend: Follow PEP 8 guidelines
-- Frontend: ESLint and Prettier configuration provided
-
-### Branching Strategy
-
-- `main`: Production-ready code
-- `develop`: Development branch
-- Feature branches: `feature/feature-name`
-- Bug fixes: `fix/bug-name`
-
-### Commit Messages
-
-Follow conventional commits format:
-
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes
-- `refactor`: Code refactoring
-- `test`: Adding or updating tests
-- `chore`: Maintenance tasks
-
 ## Roadmap
+- Implement TensorFlow-based AI models for proctoring
+- Add advanced analytics dashboards
+- Enhance multilingual support
+- Integrate third-party services for notifications
 
-### Short-term Goals
-
-- Enhanced mobile experience
-- AI-driven cheating pattern detection
-- Alerting via email or SMS
-
-### Mid-term Goals
-
-- Offline/unstable network tolerance
-- Integration with popular LMS platforms
-- Advanced analytics dashboard
-
-### Long-term Goals
-
-- Marketplace for exam packages
-- Browser extension for enhanced proctoring
-- Machine learning for personalized exam security
+## Contribution
+Contributions are welcome! Please fork the repository and submit a pull request.
 
 ## License
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgements
-
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [React](https://reactjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Headless UI](https://headlessui.dev/)
-- [react-i18next](https://react.i18next.com/)
+## Contact
+For inquiries, please contact [rashed9810](https://github.com/rashed9810).
