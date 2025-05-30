@@ -93,6 +93,9 @@
     "windowBlur": "Window focus lost",
     "fullscreenExit": "Exited fullscreen mode",
     "phoneDetected": "Phone detected",
+    "bookDetected": "Book detected",
+    "laptopDetected": "Laptop detected",
+    "unauthorizedObject": "Unauthorized object detected",
     "cameraError": "Camera error"
   },
   "errors": {

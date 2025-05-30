@@ -158,11 +158,13 @@ async def websocket_endpoint(
         client_id: Unique client identifier
         token: JWT authentication token
     """
+    logger.debug(f"WebSocket connection attempt: client_type={client_type}, client_id={client_id}, token={token}")
     try:
         # Verify authentication
         if token:
             user = await verify_token(token)
             if not user:
+                logger.warning(f"WebSocket authentication failed for client_id={client_id}")
                 await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
                 return
 
@@ -185,13 +187,16 @@ async def websocket_endpoint(
             try:
                 data = await websocket.receive_text()
                 message = json.loads(data)
+                logger.debug(f"Received WebSocket message: {message}")
 
                 # Handle different message types
                 await handle_websocket_message(client_id, client_type, message)
 
             except WebSocketDisconnect:
+                logger.info(f"WebSocket disconnected: {client_type}:{client_id}")
                 break
             except json.JSONDecodeError:
+                logger.error(f"Invalid JSON format received from client_id={client_id}")
                 await websocket_manager.send_personal_message(
                     client_id,
                     {
@@ -201,7 +206,7 @@ async def websocket_endpoint(
                     }
                 )
             except Exception as e:
-                logger.error(f"WebSocket error for {client_id}: {str(e)}")
+                logger.error(f"WebSocket error for client_id={client_id}: {str(e)}")
                 await websocket_manager.send_personal_message(
                     client_id,
                     {
@@ -215,7 +220,7 @@ async def websocket_endpoint(
         logger.error(f"WebSocket connection error: {str(e)}")
     finally:
         await websocket_manager.disconnect(client_id)
-        logger.info(f"WebSocket disconnected: {client_type}:{client_id}")
+        logger.info(f"WebSocket cleanup completed for client_type={client_type}, client_id={client_id}")
 
 async def handle_websocket_message(client_id: str, client_type: str, message: dict):
     """Handle incoming WebSocket messages"""

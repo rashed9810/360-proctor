@@ -14,20 +14,23 @@ class WebSocketService {
     this.isConnected = {};
     this.maxReconnectAttempts = 5;
     this.reconnectAttempts = {};
-    this.baseUrl = 'ws://localhost:8000/ws'; // Will be replaced with environment variable in production
+    this.baseUrl = 'ws://localhost:8000/ws'; // Base WebSocket URL
   }
 
   /**
    * Connect to a WebSocket endpoint
-   * @param {string} endpoint - The endpoint to connect to (e.g., 'notifications', 'proctoring')
+   * @param {string} clientType - The type of client (e.g., 'admin', 'student', 'proctor')
+   * @param {string} clientId - The unique client identifier
+   * @param {string} [token] - Optional JWT token for authentication
    * @returns {WebSocket} - The WebSocket connection
    */
-  connect(endpoint) {
+  connect(clientType, clientId, token = null) {
+    const endpoint = `${clientType}/${clientId}`;
     if (this.connections[endpoint]) {
       return this.connections[endpoint];
     }
 
-    const url = `${this.baseUrl}/${endpoint}`;
+    const url = `${this.baseUrl}/${endpoint}${token ? `?token=${encodeURIComponent(token)}` : ''}`;
     const ws = new WebSocket(url);
 
     // Initialize listener array for this endpoint if it doesn't exist
@@ -71,7 +74,7 @@ class WebSocketService {
       });
 
       // Attempt to reconnect if not closed cleanly and we haven't exceeded max attempts
-      if (!event.wasClean && this.reconnectAttempts[endpoint] < this.maxReconnectAttempts) {
+      if (this.reconnectAttempts[endpoint] < this.maxReconnectAttempts) {
         this.reconnect(endpoint);
       }
     };

@@ -93,6 +93,9 @@
     "windowBlur": "উইন্ডো ফোকাস হারিয়েছে",
     "fullscreenExit": "পূর্ণ স্ক্রিন মোড থেকে প্রস্থান করেছে",
     "phoneDetected": "ফোন শনাক্ত করা হয়েছে",
+    "bookDetected": "বই শনাক্ত করা হয়েছে",
+    "laptopDetected": "ল্যাপটপ শনাক্ত করা হয়েছে",
+    "unauthorizedObject": "অননুমোদিত বস্তু শনাক্ত করা হয়েছে",
     "cameraError": "ক্যামেরা সমস্যা"
   },
   "errors": {

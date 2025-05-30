@@ -405,7 +405,10 @@
       "faceNotDetected": "Face not detected in camera",
       "multipleFaces": "Multiple faces detected",
       "lookingAway": "Student looking away from screen",
-      "phoneDetected": "Mobile phone detected"
+      "phoneDetected": "Mobile phone detected",
+      "bookDetected": "Book detected during exam",
+      "laptopDetected": "Laptop detected during exam",
+      "unauthorizedObject": "Unauthorized object detected"
     }
   },
   "profile": {

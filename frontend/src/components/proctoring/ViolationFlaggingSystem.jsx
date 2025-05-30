@@ -75,6 +75,36 @@ const VIOLATION_TYPES = {
     autoFlag: true,
     points: 12,
   },
+  BOOK_DETECTED: {
+    id: 'book_detected',
+    name: 'Book Detected',
+    icon: DocumentTextIcon,
+    severity: 'high',
+    threshold: 1500, // 1.5 seconds
+    description: 'Book detected in camera view',
+    autoFlag: true,
+    points: 10,
+  },
+  LAPTOP_DETECTED: {
+    id: 'laptop_detected',
+    name: 'Laptop Detected',
+    icon: ComputerDesktopIcon,
+    severity: 'high',
+    threshold: 1500, // 1.5 seconds
+    description: 'Laptop detected in camera view',
+    autoFlag: true,
+    points: 12,
+  },
+  UNAUTHORIZED_OBJECT: {
+    id: 'unauthorized_object',
+    name: 'Unauthorized Object',
+    icon: ExclamationTriangleIcon,
+    severity: 'medium',
+    threshold: 2000, // 2 seconds
+    description: 'Unauthorized object detected in camera view',
+    autoFlag: true,
+    points: 8,
+  },
   COPY_PASTE_ATTEMPT: {
     id: 'copy_paste_attempt',
     name: 'Copy/Paste Attempt',

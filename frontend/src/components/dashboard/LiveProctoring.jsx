@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import { toast } from 'react-hot-toast';
 
 // Mock student webcam images (in a real app, these would be live streams)
 // Using placeholder images instead of actual files to avoid file dependencies
@@ -34,6 +35,8 @@ const LiveProctoring = ({ exams = [] }) => {
     }))
   );
   const [violations, setViolations] = useState([]);
+  const [error, setError] = useState(null);
+  const [enableNotifications, setEnableNotifications] = useState(true);
 
   // WebSocket connection for real-time updates
   const { lastMessage } = useWebSocket('ws://localhost:8000/ws/proctoring');
@@ -48,6 +51,14 @@ const LiveProctoring = ({ exams = [] }) => {
       }
     }
   }, [lastMessage]);
+
+  useEffect(() => {
+    if (error && enableNotifications) {
+      toast.dismiss();
+      toast.error('Analytics connection error', { id: 'analytics-error' });
+      setError(null);
+    }
+  }, [error, enableNotifications]);
 
   const currentExam = exams.find(exam => exam.id === selectedExam) ||
     exams[0] || {

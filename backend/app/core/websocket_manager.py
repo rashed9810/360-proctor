@@ -34,16 +34,22 @@ class WebSocketManager:
     
     async def connect(self, websocket: WebSocket, client_type: str, client_id: str):
         """Accept a new WebSocket connection"""
-        await websocket.accept()
-        self.active_connections[client_id] = websocket
-        
-        if client_type not in self.connections_by_type:
-            self.connections_by_type[client_type] = []
-        
-        if client_id not in self.connections_by_type[client_type]:
-            self.connections_by_type[client_type].append(client_id)
-        
-        logger.info(f"Client {client_id} ({client_type}) connected")
+        try:
+            await websocket.accept()
+            self.active_connections[client_id] = websocket
+            
+            if client_type not in self.connections_by_type:
+                self.connections_by_type[client_type] = []
+            
+            if client_id not in self.connections_by_type[client_type]:
+                self.connections_by_type[client_type].append(client_id)
+            
+            logger.info(f"Client {client_id} ({client_type}) connected")
+            return True
+        except Exception as e:
+            logger.error(f"Error accepting WebSocket connection for {client_id}: {str(e)}")
+            await websocket.close(code=1011)
+            return False
     
     async def disconnect(self, client_id: str):
         """Remove a WebSocket connection"""

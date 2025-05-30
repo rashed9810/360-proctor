@@ -19,11 +19,23 @@ class RealTimeAnalyticsService {
    * Connect to WebSocket server
    */
   connect() {
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/analytics';
+    const clientId = `analytics_client_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const wsUrl =
+      import.meta.env.VITE_WS_URL || `ws://localhost:8000/ws/analytics_client/${clientId}`;
 
     try {
       this.ws = new WebSocket(wsUrl);
       this.setupEventHandlers();
+      
+      // Add connection timeout
+      this.connectionTimeout = setTimeout(() => {
+        if (!this.isConnected) {
+          console.warn('WebSocket connection timeout');
+          this.ws.close();
+          this.handleReconnect();
+        }
+      }, 10000); // 10 second timeout
+      
     } catch (error) {
       console.error('WebSocket connection error:', error);
       this.handleReconnect();
@@ -94,8 +106,9 @@ class RealTimeAnalyticsService {
       case 'system_metrics':
         this.emit('systemMetrics', payload);
         break;
-      case 'heartbeat':
-        this.lastHeartbeat = new Date();
+      case 'heartbeat_ack': // Changed from 'heartbeat' to 'heartbeat_ack'
+        this.lastHeartbeat = new Date(payload.timestamp); // Use timestamp from server ack
+        console.log('Heartbeat acknowledged by server');
         break;
       default:
         console.warn('Unknown message type:', type);

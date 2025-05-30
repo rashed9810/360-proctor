@@ -1,6 +1,6 @@
-"""
-AI Detection Service for 360° Proctor
+"""AI Detection Service for 360° Proctor
 Handles AI-powered detection of violations using computer vision
+Integrates with advanced object detection for improved accuracy
 """
 
 import cv2
@@ -11,6 +11,9 @@ from datetime import datetime
 import base64
 import io
 from PIL import Image
+
+# Import advanced object detection
+from app.services.advanced_object_detection import advanced_object_detection_service
 
 logger = logging.getLogger(__name__)
 
@@ -33,20 +36,38 @@ class AIDetectionService:
             logger.error(f"Error initializing AI detectors: {e}")
     
     def process_frame(self, frame_data: str) -> Dict[str, Any]:
-        """Process a video frame for violations"""
+        """Process a video frame for violations with enhanced detection"""
         try:
             # Decode base64 image
             image_data = base64.b64decode(frame_data.split(',')[1])
             image = Image.open(io.BytesIO(image_data))
             frame = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
             
+            # Basic detection results
             results = {
                 "timestamp": datetime.utcnow().isoformat(),
                 "face_detection": self.detect_faces(frame),
                 "eye_tracking": self.detect_eyes(frame),
                 "motion_analysis": self.analyze_motion(frame),
-                "frame_quality": self.assess_frame_quality(frame)
+                "frame_quality": self.assess_frame_quality(frame),
+                "phone_detection": self.detect_phone_usage(frame)
             }
+            
+            # Try to add advanced object detection results
+            try:
+                # Get full object detection results
+                advanced_results = advanced_object_detection_service.detect_objects(frame)
+                if "error" not in advanced_results:
+                    results["object_detection"] = {
+                        "objects": advanced_results.get("objects_detected", []),
+                        "person_count": advanced_results.get("person_count", 0),
+                        "phone_count": advanced_results.get("phone_count", 0),
+                        "book_count": advanced_results.get("book_count", 0),
+                        "laptop_count": advanced_results.get("laptop_count", 0),
+                        "detection_method": "advanced"
+                    }
+            except Exception as adv_error:
+                logger.warning(f"Advanced object detection failed: {adv_error}")
             
             return results
             
@@ -58,8 +79,49 @@ class AIDetectionService:
             }
     
     def detect_faces(self, frame: np.ndarray) -> Dict[str, Any]:
-        """Detect faces in the frame"""
+        """Detect faces in the frame with enhanced multiple face detection"""
         try:
+            # Try to use advanced object detection for multiple person detection
+            try:
+                # Use the advanced object detection service
+                person_detection = advanced_object_detection_service.detect_multiple_persons(frame)
+                if person_detection.get("person_count", 0) > 0:
+                    # If advanced detection found people, use that result
+                    person_count = person_detection.get("person_count", 0)
+                    confidence = person_detection.get("confidence", 0.9)
+                    
+                    # Still use basic face detection for face positions and analysis
+                    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    faces = self.face_cascade.detectMultiScale(
+                        gray, 
+                        scaleFactor=1.1, 
+                        minNeighbors=5, 
+                        minSize=(30, 30)
+                    )
+                    
+                    face_data = {
+                        "faces_detected": max(len(faces), person_count),  # Use the higher count
+                        "confidence": confidence,
+                        "face_positions": [],
+                        "face_sizes": [],
+                        "detection_method": "advanced"
+                    }
+                    
+                    # If we have face positions from basic detection, use them
+                    for (x, y, w, h) in faces:
+                        face_data["face_positions"].append({"x": int(x), "y": int(y)})
+                        face_data["face_sizes"].append({"width": int(w), "height": int(h)})
+                    
+                    # Analyze face positioning if we have exactly one face
+                    if len(faces) == 1:
+                        face_data["face_centered"] = self.is_face_centered(faces[0], frame.shape)
+                        face_data["face_size_appropriate"] = self.is_face_size_appropriate(faces[0], frame.shape)
+                    
+                    return face_data
+            except Exception as adv_error:
+                logger.warning(f"Advanced face detection failed, falling back to basic detection: {adv_error}")
+            
+            # Fallback to basic face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.face_cascade.detectMultiScale(
                 gray, 
@@ -72,7 +134,8 @@ class AIDetectionService:
                 "faces_detected": len(faces),
                 "confidence": 0.9 if len(faces) > 0 else 0.1,
                 "face_positions": [],
-                "face_sizes": []
+                "face_sizes": [],
+                "detection_method": "basic"
             }
             
             for (x, y, w, h) in faces:
@@ -231,10 +294,23 @@ class AIDetectionService:
         return deviation > 0.3  # 30% deviation threshold
     
     def detect_phone_usage(self, frame: np.ndarray) -> Dict[str, Any]:
-        """Detect potential phone usage (simplified)"""
+        """Detect potential phone usage using advanced object detection"""
         try:
-            # This is a simplified implementation
-            # In practice, you'd use more sophisticated object detection
+            # Try to use advanced object detection first
+            try:
+                # Use the advanced object detection service
+                phone_detection = advanced_object_detection_service.detect_phone(frame)
+                if phone_detection.get("phone_detected"):
+                    return {
+                        "phone_detected": True,
+                        "confidence": phone_detection.get("confidence", 0.8),
+                        "candidates_found": phone_detection.get("phone_count", 1),
+                        "detection_method": "advanced"
+                    }
+            except Exception as adv_error:
+                logger.warning(f"Advanced phone detection failed, falling back to basic detection: {adv_error}")
+            
+            # Fallback to basic detection if advanced detection fails or finds nothing
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             
             # Look for rectangular objects that might be phones
@@ -253,7 +329,8 @@ class AIDetectionService:
             return {
                 "phone_detected": phone_candidates > 0,
                 "confidence": 0.6 if phone_candidates > 0 else 0.9,
-                "candidates_found": phone_candidates
+                "candidates_found": phone_candidates,
+                "detection_method": "basic"
             }
             
         except Exception as e:

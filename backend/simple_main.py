@@ -12,12 +12,17 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
     # Import FastAPI components
-    from fastapi import FastAPI, HTTPException
+    from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
     from pydantic import BaseModel
     import uvicorn
     import logging
+    from sqlalchemy.orm import Session
+
+    # Import database dependencies
+    from app.db.models.exam import Exam
+    from app.core.database import get_db
 
     print("✅ All imports successful!")
 
@@ -48,6 +53,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],  # Expose headers for WebSocket
 )
 
 # Health check endpoint
@@ -152,19 +158,18 @@ async def get_current_user():
 
 # Basic exam endpoints
 @app.get("/api/exams", tags=["Exams"])
-async def get_exams():
+async def get_exams(db: Session = Depends(get_db)):
     """Get all exams"""
-    return {
-        "exams": [
-            {
-                "id": 1,
-                "title": "Sample Exam",
-                "description": "A sample exam for testing",
-                "duration_minutes": 60,
-                "status": "active"
-            }
-        ]
-    }
+    exams = db.query(Exam).all()
+    return {"exams": [
+        {
+            "id": exam.id,
+            "title": exam.title,
+            "description": exam.description,
+            "duration_minutes": exam.duration_minutes,
+            "status": exam.status
+        } for exam in exams
+    ]}
 
 @app.get("/api/exams/{exam_id}", tags=["Exams"])
 async def get_exam(exam_id: int):
@@ -235,6 +240,28 @@ async def http_exception_handler(request, exc):
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
     )
+
+# WebSocket debug logs
+@app.websocket("/ws/{client_type}/{client_id}")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    client_type: str,
+    client_id: str
+):
+    logger.debug(f"WebSocket connection attempt: client_type={client_type}, client_id={client_id}")
+    try:
+        await websocket.accept()
+        logger.info(f"WebSocket connected: {client_type}:{client_id}")
+
+        while True:
+            data = await websocket.receive_text()
+            logger.debug(f"Received WebSocket message: {data}")
+            await websocket.send_text(f"Echo: {data}")
+
+    except WebSocketDisconnect:
+        logger.info(f"WebSocket disconnected: {client_type}:{client_id}")
+    except Exception as e:
+        logger.error(f"WebSocket error: {str(e)}")
 
 if __name__ == "__main__":
     print("Starting 360° Proctor Backend Server...")

@@ -11,21 +11,15 @@ class AnalyticsService {
    * @returns {Promise<Object>} API response
    */
   async getAdvancedAnalytics(params = {}) {
-    try {
-      const response = await api.get('/analytics/advanced', {
-        params,
-      });
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error('Error fetching advanced analytics:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch advanced analytics',
-      };
-    }
+    // Endpoint /analytics/advanced not implemented on the backend.
+    console.warn(
+      'getAdvancedAnalytics: Endpoint /analytics/advanced not implemented on the backend.'
+    );
+    return {
+      success: false,
+      error: 'This analytics feature (Advanced Analytics) is not currently available.',
+      data: null,
+    };
   }
 
   /**
@@ -81,7 +75,7 @@ class AnalyticsService {
    */
   async getTrustScoreDistribution(params = {}) {
     try {
-      const response = await api.get('/analytics/trust-score/distribution', {
+      const response = await api.get('/analytics/trust-scores/distribution', {
         params,
       });
       return {
@@ -127,7 +121,7 @@ class AnalyticsService {
    */
   async getStudentAnalytics(params = {}) {
     try {
-      const response = await api.get('/analytics/students', {
+      const response = await api.get('/analytics/students/performance', {
         params,
       });
       return {
@@ -149,21 +143,15 @@ class AnalyticsService {
    * @returns {Promise<Object>} API response
    */
   async getDepartmentAnalytics(params = {}) {
-    try {
-      const response = await api.get('/analytics/departments', {
-        params,
-      });
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error('Error fetching department analytics:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch department analytics',
-      };
-    }
+    // Endpoint /analytics/departments not implemented on the backend.
+    console.warn(
+      'getDepartmentAnalytics: Endpoint /analytics/departments not implemented on the backend.'
+    );
+    return {
+      success: false,
+      error: 'This analytics feature (Department Analytics) is not currently available.',
+      data: null,
+    };
   }
 
   /**
@@ -171,19 +159,15 @@ class AnalyticsService {
    * @returns {Promise<Object>} API response
    */
   async getRealTimeMetrics() {
-    try {
-      const response = await api.get('/analytics/real-time');
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error('Error fetching real-time metrics:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch real-time metrics',
-      };
-    }
+    // Endpoint /analytics/real-time not implemented on the backend.
+    console.warn(
+      'getRealTimeMetrics: Endpoint /analytics/real-time not implemented on the backend.'
+    );
+    return {
+      success: false,
+      error: 'This analytics feature (Real-Time Metrics) is not currently available.',
+      data: null,
+    };
   }
 
   /**
@@ -193,9 +177,7 @@ class AnalyticsService {
    */
   async exportAnalytics(params = {}) {
     try {
-      const response = await api.post('/analytics/export', params, {
-        responseType: 'blob',
-      });
+      const response = await api.get('/analytics/export', { params, responseType: 'blob' });
       return {
         success: true,
         data: response.data,
@@ -214,19 +196,13 @@ class AnalyticsService {
    * @returns {Promise<Object>} API response
    */
   async getFilters() {
-    try {
-      const response = await api.get('/analytics/filters');
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error('Error fetching analytics filters:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch analytics filters',
-      };
-    }
+    // Endpoint /analytics/filters not implemented on the backend.
+    console.warn('getFilters: Endpoint /analytics/filters not implemented on the backend.');
+    return {
+      success: false,
+      error: 'This analytics feature (Filters) is not currently available.',
+      data: null,
+    };
   }
 
   /**
@@ -235,19 +211,13 @@ class AnalyticsService {
    * @returns {Promise<Object>} API response
    */
   async generateReport(params = {}) {
-    try {
-      const response = await api.post('/analytics/reports', params);
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error('Error generating analytics report:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to generate analytics report',
-      };
-    }
+    // Endpoint /analytics/reports not implemented on the backend.
+    console.warn('generateReport: Endpoint /analytics/reports not implemented on the backend.');
+    return {
+      success: false,
+      error: 'This analytics feature (Report Generation) is not currently available.',
+      data: null,
+    };
   }
 
   /**
@@ -279,21 +249,15 @@ class AnalyticsService {
    * @returns {Promise<Object>} API response
    */
   async getComparativeAnalytics(params = {}) {
-    try {
-      const response = await api.get('/analytics/comparative', {
-        params,
-      });
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error('Error fetching comparative analytics:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch comparative analytics',
-      };
-    }
+    // Endpoint /analytics/comparative not implemented on the backend.
+    console.warn(
+      'getComparativeAnalytics: Endpoint /analytics/comparative not implemented on the backend.'
+    );
+    return {
+      success: false,
+      error: 'This analytics feature (Comparative Analytics) is not currently available.',
+      data: null,
+    };
   }
 
   /**
@@ -302,21 +266,15 @@ class AnalyticsService {
    * @returns {Promise<Object>} API response
    */
   async getPredictiveInsights(params = {}) {
-    try {
-      const response = await api.get('/analytics/predictive', {
-        params,
-      });
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error('Error fetching predictive insights:', error);
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Failed to fetch predictive insights',
-      };
-    }
+    // Endpoint /analytics/predictive not implemented on the backend.
+    console.warn(
+      'getPredictiveInsights: Endpoint /analytics/predictive not implemented on the backend.'
+    );
+    return {
+      success: false,
+      error: 'This analytics feature (Predictive Insights) is not currently available.',
+      data: null,
+    };
   }
 }
 

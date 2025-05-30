@@ -30,6 +30,9 @@ class ViolationType(Enum):
     COPY_PASTE = "copy_paste"
     RIGHT_CLICK = "right_click"
     FULLSCREEN_EXIT = "fullscreen_exit"
+    BOOK_DETECTED = "book_detected"
+    LAPTOP_DETECTED = "laptop_detected"
+    UNAUTHORIZED_OBJECT = "unauthorized_object"
 
 @dataclass
 class ViolationEvent:
@@ -109,6 +112,21 @@ class ViolationDetectionService:
                 "max_count": 2,
                 "trust_score_impact": 0.20,
                 "severity": AlertSeverity.HIGH
+            },
+            ViolationType.BOOK_DETECTED: {
+                "max_count": 1,
+                "trust_score_impact": 0.15,
+                "severity": AlertSeverity.MEDIUM
+            },
+            ViolationType.LAPTOP_DETECTED: {
+                "max_count": 1,
+                "trust_score_impact": 0.20,
+                "severity": AlertSeverity.HIGH
+            },
+            ViolationType.UNAUTHORIZED_OBJECT: {
+                "max_count": 1,
+                "trust_score_impact": 0.10,
+                "severity": AlertSeverity.MEDIUM
             }
         }
 
@@ -137,6 +155,20 @@ class ViolationDetectionService:
                     session_id, user_id, frame_data["audio_data"]
                 )
                 violations.extend(audio_violations)
+                
+            # Phone detection violations
+            if "phone_detection" in frame_data:
+                phone_violations = await self._detect_phone_violations(
+                    session_id, user_id, frame_data["phone_detection"]
+                )
+                violations.extend(phone_violations)
+                
+            # Advanced object detection violations
+            if "object_detection" in frame_data:
+                object_violations = await self._detect_object_violations(
+                    session_id, user_id, frame_data["object_detection"]
+                )
+                violations.extend(object_violations)
 
             # Process detected violations
             for violation in violations:
@@ -239,6 +271,7 @@ class ViolationDetectionService:
 
         faces_detected = face_data.get("faces_detected", 0)
         confidence = face_data.get("confidence", 0.0)
+        detection_method = face_data.get("detection_method", "basic")
 
         # No face detected
         if faces_detected == 0:
@@ -250,13 +283,17 @@ class ViolationDetectionService:
                 session_id=session_id,
                 user_id=user_id,
                 description="No face detected in frame",
-                metadata=face_data,
+                metadata={**face_data, "detection_method": detection_method},
                 trust_score_impact=self.violation_thresholds[ViolationType.FACE_NOT_DETECTED]["trust_score_impact"]
             )
             violations.append(violation)
 
         # Multiple faces detected
         elif faces_detected > 1:
+            # Increase confidence if using advanced detection
+            if detection_method == "advanced":
+                confidence = max(confidence, 0.95)  # Higher confidence with advanced detection
+                
             violation = ViolationEvent(
                 violation_type=ViolationType.MULTIPLE_FACES,
                 severity=self.violation_thresholds[ViolationType.MULTIPLE_FACES]["severity"],
@@ -265,7 +302,7 @@ class ViolationDetectionService:
                 session_id=session_id,
                 user_id=user_id,
                 description=f"Multiple faces detected: {faces_detected}",
-                metadata=face_data,
+                metadata={**face_data, "detection_method": detection_method},
                 trust_score_impact=self.violation_thresholds[ViolationType.MULTIPLE_FACES]["trust_score_impact"]
             )
             violations.append(violation)
@@ -316,6 +353,106 @@ class ViolationDetectionService:
             )
             violations.append(violation)
 
+        return violations
+        
+    async def _detect_phone_violations(self, session_id: int, user_id: int, phone_data: Dict[str, Any]) -> List[ViolationEvent]:
+        """Detect phone-related violations"""
+        violations = []
+
+        phone_detected = phone_data.get("phone_detected", False)
+        confidence = phone_data.get("confidence", 0.0)
+        detection_method = phone_data.get("detection_method", "basic")
+
+        if phone_detected:
+            # Increase confidence if using advanced detection
+            if detection_method == "advanced":
+                confidence = max(confidence, 0.9)  # Higher confidence with advanced detection
+                
+            violation = ViolationEvent(
+                violation_type=ViolationType.PHONE_DETECTED,
+                severity=self.violation_thresholds[ViolationType.PHONE_DETECTED]["severity"],
+                confidence=confidence,
+                timestamp=datetime.utcnow(),
+                session_id=session_id,
+                user_id=user_id,
+                description="Phone detected during exam",
+                metadata={**phone_data, "detection_method": detection_method},
+                trust_score_impact=self.violation_thresholds[ViolationType.PHONE_DETECTED]["trust_score_impact"]
+            )
+            violations.append(violation)
+
+        return violations
+        
+    async def _detect_object_violations(self, session_id: int, user_id: int, object_data: Dict[str, Any]) -> List[ViolationEvent]:
+        """Detect violations from advanced object detection"""
+        violations = []
+        
+        # Get object counts
+        book_count = object_data.get("book_count", 0)
+        laptop_count = object_data.get("laptop_count", 0)
+        
+        # Get all detected objects
+        objects = object_data.get("objects", [])
+        
+        # Check for books
+        if book_count > 0:
+            violation = ViolationEvent(
+                violation_type=ViolationType.BOOK_DETECTED,
+                severity=self.violation_thresholds[ViolationType.BOOK_DETECTED]["severity"],
+                confidence=0.85,  # Default confidence for book detection
+                timestamp=datetime.utcnow(),
+                session_id=session_id,
+                user_id=user_id,
+                description=f"Book detected during exam: {book_count} found",
+                metadata={"book_count": book_count, "detection_method": "advanced"},
+                trust_score_impact=self.violation_thresholds[ViolationType.BOOK_DETECTED]["trust_score_impact"]
+            )
+            violations.append(violation)
+            
+        # Check for laptops
+        if laptop_count > 0:
+            violation = ViolationEvent(
+                violation_type=ViolationType.LAPTOP_DETECTED,
+                severity=self.violation_thresholds[ViolationType.LAPTOP_DETECTED]["severity"],
+                confidence=0.9,  # Default confidence for laptop detection
+                timestamp=datetime.utcnow(),
+                session_id=session_id,
+                user_id=user_id,
+                description=f"Laptop detected during exam: {laptop_count} found",
+                metadata={"laptop_count": laptop_count, "detection_method": "advanced"},
+                trust_score_impact=self.violation_thresholds[ViolationType.LAPTOP_DETECTED]["trust_score_impact"]
+            )
+            violations.append(violation)
+            
+        # Check for other unauthorized objects
+        unauthorized_objects = []
+        for obj in objects:
+            label = obj.get("label")
+            # Skip already handled objects and common/expected objects
+            if label in ["person", "cell phone", "book", "laptop"] or not label:
+                continue
+                
+            # Add to unauthorized objects list
+            unauthorized_objects.append({
+                "label": label,
+                "confidence": obj.get("confidence", 0.0)
+            })
+        
+        # Create violation for unauthorized objects
+        if unauthorized_objects:
+            violation = ViolationEvent(
+                violation_type=ViolationType.UNAUTHORIZED_OBJECT,
+                severity=self.violation_thresholds[ViolationType.UNAUTHORIZED_OBJECT]["severity"],
+                confidence=0.8,  # Default confidence for unauthorized objects
+                timestamp=datetime.utcnow(),
+                session_id=session_id,
+                user_id=user_id,
+                description=f"Unauthorized objects detected: {', '.join([obj['label'] for obj in unauthorized_objects])}",
+                metadata={"unauthorized_objects": unauthorized_objects, "detection_method": "advanced"},
+                trust_score_impact=self.violation_thresholds[ViolationType.UNAUTHORIZED_OBJECT]["trust_score_impact"]
+            )
+            violations.append(violation)
+            
         return violations
 
     async def _process_violation(self, violation: ViolationEvent):
